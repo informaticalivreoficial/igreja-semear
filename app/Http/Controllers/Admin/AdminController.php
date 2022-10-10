@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Analytics;
-use App\Models\Apartamento;
 use App\Models\Newsletter;
 use App\Models\NewsletterCat;
 use Illuminate\Support\Facades\DB;
@@ -34,18 +33,7 @@ class AdminController extends Controller
         $postsArtigos = Post::where('tipo', 'artigo')->count();
         $postsPaginas = Post::where('tipo', 'pagina')->count();
         $postsNoticias = Post::where('tipo', 'noticia')->count();
-        //Apartamentos
-        $apartamentosAvailable = Apartamento::available()->count();
-        $apartamentosUnavailable = Apartamento::unavailable()->count();
-        $apartamentosTop = Apartamento::orderBy('views', 'DESC')
-                ->limit(6)
-                ->available()   
-                ->get();                
-        $totalViewsApartamentos = Apartamento::orderBy('views', 'DESC')
-                ->available()
-                ->limit(6)
-                ->get()
-                ->sum('views');        
+                
         //Artigos
         $artigosAvailable = Post::postson()->where('tipo', 'artigo')->count();
         $artigosUnavailable = Post::postsoff()->where('tipo', 'artigo')->count();
@@ -93,12 +81,7 @@ class AdminController extends Controller
             'listas' => $listas,
             'emails' => $emails,
             'emailsCount' => $emailsCount->sum('count'),
-            'time' => $time,
-            //Notícias
-            'apartamentosAvailable' => $apartamentosAvailable,
-            'apartamentosUnavailable' => $apartamentosUnavailable,
-            'apartamentosTop' => $apartamentosTop,
-            'apartamentostotalviews' => $totalViewsApartamentos,
+            'time' => $time,            
             //Artigos
             'artigosAvailable' => $artigosAvailable,
             'artigosUnavailable' => $artigosUnavailable,

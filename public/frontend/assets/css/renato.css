@@ -1,64 +1,38 @@
-/*AJAX*/
-.load{
-    text-align: center;
-    color: #ccc;
-    font-size: 15px;
-    letter-spacing: 0.3px;
-    line-height: 27px;
-}
-.mensagem{
-    text-align: center;
-    border-radius: 4px;
+p {
+    margin: 0 0 10px;
+    color: #7a7676;
     line-height: 20px;
-    padding:5px 10px 5px 10px;
+    font-size: 14px;
 }
-.erro{
-    color:#ac1818; 
-    border-color:#ffc9c9; 
-    background-color:#ffc9c9; 
-    
-}
-.accept{
-    color:#045702; 
-    background-color:#bdedbc; 
-    border-color:#bdedbc; 
-}
-.lipaginas{
-  list-style: none;display: inline-block;
-    padding-left: 5px;
-    padding-right: 5px;  
-}
-
-.fb_iframe_widget span {
+h2{
+    font-size: 30px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-weight: 500;
+    line-height: 1.1;
+    color: #7a7676;
     width: 100%;
 }
-
-/* CSS do VIDEO*/
-#video{
-    position: relative;
-    padding-bottom: 56.25%; 
-    padding-top: 25px;
-    height: 0;
-    margin:0 auto;
+.logo{
+    text-align: center; 
 }
-#video iframe{
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+.logo img{
+    width: 90%;
+    max-width: 470px;
 }
-
-@media only screen and (max-width: 960px) {
-    .offer-box img{
-        height: auto !important;
-    }
-  }
-@media only screen and (min-width: 960px) {
-    .imful{
-        min-height:300px;
-    }
-    .imful1{
-        min-height:296px;
-    }
-  }
+.container{
+      margin: 0 auto;
+      width: 90%;
+      background: #fff;
+      padding: 50px 0 50px 0;    
+}
+.informacoes{
+    width: 90%;
+    text-align: center;
+    margin-left: 30px;
+}
+.informativos{
+    width: 90%;
+    text-align: center;
+    margin-left: 30px;
+}

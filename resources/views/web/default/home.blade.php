@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="logo">
-        <img src="images/logomarca.png"/>
+        <img src="{{url('frontend/assets/images/logomarca.png')}}"/>
     </div>
 
     <div class="informacoes" style="margin-top: 50px;">

@@ -32,13 +32,13 @@
     </div>
     <div class="col-12 col-sm-6 col-md-4 col-lg-3">
         <div class="info-box">
-            <span class="info-box-icon bg-info"><a href="{{ route('apartamentos.index') }}" title="Apartamentos"><i class="fa far fa-building"></i></a></span>
+            <span class="info-box-icon bg-info"><a href="" title="Apartamentos"><i class="fa far fa-building"></i></a></span>
 
             <div class="info-box-content">
                 <span class="info-box-text"><b>Apartamentos</b></span>
-                <span class="info-box-text">Publicado: {{ $apartamentosAvailable }}</span>
-                <span class="info-box-text">Rascunho: {{ $apartamentosUnavailable }}</span>
-                <span class="info-box-text">Total: {{ $apartamentosAvailable + $apartamentosUnavailable }}</span>
+                <span class="info-box-text">Publicado: </span>
+                <span class="info-box-text">Rascunho: </span>
+                <span class="info-box-text">Total: </span>
             </div>            
         </div>
     </div>
@@ -140,57 +140,6 @@
         </div>
     </div>
 </div>
-
-@if(!empty($apartamentosTop) && $apartamentosTop->count() > 0)
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">Apartamentos mais visitados</h3>
-        </div>
-        <div class="card-body p-0">
-          <table class="table table-sm">
-            <thead>
-              <tr>
-                    <th>Foto</th>
-                    <th>Título</th>
-                    <th></th>
-                    <th class="text-center">Visitas</th>
-              </tr>
-            </thead>
-            <tbody>                            
-                @foreach($apartamentosTop as $apartamentotop)
-                @php
-                    //REALIZA PORCENTAGEM DE VISITAS!
-                    if($apartamentotop->views == 0){
-                        $percent = 1;
-                    }else{
-                        $percent = substr(( $apartamentotop->views / $apartamentostotalviews ) * 100, 0, 5);
-                    }                    
-                    $percenttag = str_replace(",", ".", $percent);
-                @endphp
-                <tr>
-                    <td>
-                        <a href="{{url($apartamentotop->cover())}}" data-title="{{$apartamentotop->titulo}}" data-toggle="lightbox"> 
-                            <img src="{{url($apartamentotop->cover())}}" alt="{{$apartamentotop->titulo}}" class="img-size-50">
-                        </a>
-                    </td>
-                    <td>{{$apartamentotop->titulo}}</td>
-                    <td style="width:10%;">
-                      <div class="progress progress-md progress-striped active">
-                        <div class="progress-bar bg-success" style="width: {{$percenttag}}%" title="{{$percenttag}}%"></div>
-                      </div>
-                    </td>
-                    <td class="text-center">
-                      <span class="badge bg-success">{{$apartamentotop->views}}</span>
-                      <a data-toggle="tooltip" data-placement="top" title="Editar Apartamento" href="{{route('posts.edit', ['id' => $apartamentotop->id])}}" class="btn btn-xs btn-default ml-2"><i class="fas fa-pen"></i></a>
-                      <a target="_blank" href="{{route('web.acomodacao',['slug' => $apartamentotop->slug])}}" class="btn btn-xs btn-info text-white"><i class="fas fa-search"></i></a>
-                    </td>
-                </tr>
-                @endforeach                            
-            </tbody>
-          </table>
-        </div>
-    </div>
-@endif
 
 @if(!empty($artigosTop) && $artigosTop->count() > 0)
     <div class="card">

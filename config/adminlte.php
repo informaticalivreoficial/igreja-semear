@@ -243,34 +243,6 @@ return [
             'icon' => 'fas fa-cog',
         ],
         [
-            'text' => 'Apartamentos',            
-            'icon' => 'fas fa-building',
-            'submenu' => [
-                [
-                    'text' => 'Listar Todos',
-                    'url'  => 'admin/apartamentos',
-                ],
-                [
-                    'text' => 'Criar Novo',
-                    'url'  => 'admin/apartamentos/create',
-                ]
-            ]
-        ],
-        [
-            'text' => 'Reservas',            
-            'icon' => 'fas fa-store',
-            'submenu' => [
-                [
-                    'text' => 'Pendentes',
-                    'url'  => 'admin/reservas-pendentes',
-                ],
-                [
-                    'text' => 'Finalizadas',
-                    'url'  => 'admin/reservas-finalizadas',
-                ]
-            ]
-        ],
-        [
             'text' => 'Usuários',            
             'icon' => 'fas fa-fw fa-users',
             'submenu' => [
@@ -310,11 +282,6 @@ return [
                 ]
             ]
         ],
-        [
-            'text' => 'Avaliações',
-            'url'  => 'admin/avaliacoes',
-            'icon' => 'fas fa-bullhorn',
-        ], 
         [
             'text' => 'Banner Slides',
             'url'  => 'admin/slides',

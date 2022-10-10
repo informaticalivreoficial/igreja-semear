@@ -22,8 +22,8 @@
         <link rel="apple-touch-icon" sizes="72x72" href="{{$configuracoes->getfaveicon()}}"/>
         <link rel="apple-touch-icon" sizes="114x114" href="{{$configuracoes->getfaveicon()}}"/>
         
-        <link rel="stylesheet" type="text/css" href="https://semearubatuba.com.br/css/reset.css"/>
-        <link rel="stylesheet" type="text/css" href="https://semearubatuba.com.br/css/renato.css"/>        
+        <link rel="stylesheet" type="text/css" href="{{url('frontend/assets/css/reset.css')}}"/>
+        <link rel="stylesheet" type="text/css" href="{{url('frontend/assets/css/renato.css')}}"/>        
 
         @hasSection('css')
             @yield('css')
@@ -39,5 +39,15 @@
     @hasSection('js')
         @yield('js')
     @endif 
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-PWLNNT4LW4"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-PWLNNT4LW4');
+    </script>
 </body>
 </html>
