@@ -277,52 +277,47 @@
             });
         }); 
 
-        @php
-        if($analyticsData->rows != null){
-        @endphp
-            var areaChartData = {
-                labels  : [
-                @foreach($analyticsData->rows as $dataMonth)                
-                    'Mês/{{substr($dataMonth[0], -2)}}',                                 
-                @endforeach
-                ],
-                datasets: [
-                    {
-                    label               : 'Visitas Únicas',
-                    backgroundColor     : 'rgba(60,141,188,0.9)',
-                    borderColor         : 'rgba(60,141,188,0.8)',
-                    pointRadius          : false,
-                    pointColor          : '#3b8bba',
-                    pointStrokeColor    : 'rgba(60,141,188,1)',
-                    pointHighlightFill  : '#fff',
-                    pointHighlightStroke: 'rgba(60,141,188,1)',
-                    data                : [
-                                        @foreach($analyticsData->rows as $dataMonth)                
-                                            '{{$dataMonth[2]}}',                                 
-                                        @endforeach
-                                        ]
-                    },
-                    {
-                    label               : 'Visitas',
-                    backgroundColor     : 'rgba(210, 214, 222, 1)',
-                    borderColor         : 'rgba(210, 214, 222, 1)',
-                    pointRadius         : false,
-                    pointColor          : 'rgba(210, 214, 222, 1)',
-                    pointStrokeColor    : '#c1c7d1',
-                    pointHighlightFill  : '#fff',
-                    pointHighlightStroke: 'rgba(220,220,220,1)',
-                    data                : [
-                                        @foreach($analyticsData->rows as $dataMonth)                
-                                            '{{$dataMonth[1]}}',                                 
-                                        @endforeach
-                                        ]
-                    },
-                ]
-            }
-        @php    
-        }
-        @endphp
         
+        var areaChartData = {
+            labels  : [
+                @foreach($analyticsData as $analitics)                
+                    'Mês/{{$analitics['month']}}',                                 
+                @endforeach
+            ],
+            datasets: [
+                {
+                label               : 'Visitas Únicas',
+                backgroundColor     : 'rgba(60,141,188,0.9)',
+                borderColor         : 'rgba(60,141,188,0.8)',
+                pointRadius          : false,
+                pointColor          : '#3b8bba',
+                pointStrokeColor    : 'rgba(60,141,188,1)',
+                pointHighlightFill  : '#fff',
+                pointHighlightStroke: 'rgba(60,141,188,1)',
+                data                : [
+                    @foreach($analyticsData as $analitics)                
+                        '{{$analitics['totalUsers']}}',                                 
+                    @endforeach
+                                    ]
+                },
+                {
+                label               : 'Visitas',
+                backgroundColor     : 'rgba(210, 214, 222, 1)',
+                borderColor         : 'rgba(210, 214, 222, 1)',
+                pointRadius         : false,
+                pointColor          : 'rgba(210, 214, 222, 1)',
+                pointStrokeColor    : '#c1c7d1',
+                pointHighlightFill  : '#fff',
+                pointHighlightStroke: 'rgba(220,220,220,1)',
+                data                : [
+                    @foreach($analyticsData as $analitics)                
+                        '{{$analitics['sessions']}}',                                 
+                    @endforeach
+                                    ]
+                },
+            ]
+        }
+                
 
         //-------------
         //- BAR CHART -
@@ -378,7 +373,7 @@
               data: [
                 @if(!empty($top_browser))
                   @foreach($top_browser as $key => $browser)
-                    {{$browser['sessions']}},
+                    {{$browser['screenPageViews']}},
                   @endforeach
                 @else
                   700,500,400,600,300,100
