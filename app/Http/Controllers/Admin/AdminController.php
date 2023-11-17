@@ -71,9 +71,10 @@ class AdminController extends Controller
         $analyticsData = Analytics::get(
                 Period::months(6), 
                 metrics: ['totalUsers', 'sessions', 'screenPageViews'], 
-                dimensions: ['month']
+                dimensions: ['month'],
+                //orderBy: [OrderBy::metric('data', true)],
         );  
-        
+        dd($analyticsData);
         return view('admin.dashboard',[
             //Newsletter
             'listas' => $listas,
