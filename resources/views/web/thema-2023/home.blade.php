@@ -878,15 +878,15 @@
                         <div class="row">
                             <div class="col-md-6 form-group">
                                 <input type="text" name="name" class="form-control" id="name"
-                                    placeholder="Seu Nome" required>
+                                    placeholder="Seu Nome" >
                             </div>
                             <div class="col-md-6 form-group mt-3 mt-md-0">
                                 <input type="email" class="form-control" name="email" id="email"
-                                    placeholder="Seu Email" required>
+                                    placeholder="Seu Email" >
                             </div>
                         </div>
                         <div class="form-group mt-3">
-                            <textarea class="form-control" name="message" placeholder="Message" required></textarea>
+                            <textarea class="form-control" name="message" placeholder="Message" ></textarea>
                         </div>
                         <div class="my-3">
                             <div class="loading">Loading</div>
