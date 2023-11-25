@@ -43,9 +43,11 @@ class AppServiceProvider extends ServiceProvider
         $paginas = Post::where('tipo', 'pagina')->where('menu', 1)->postson()->get();
         View()->share('viewPaginas', $paginas);
 
+        //Config
         $configuracoes = \App\Models\Configuracoes::find(1); 
         View()->share('configuracoes', $configuracoes);
 
+        //Paginator do Bootstrap css
         Paginator::useBootstrap();
     }
 }
