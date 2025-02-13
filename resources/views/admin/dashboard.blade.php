@@ -18,6 +18,7 @@
 
 @section('content')
 <div class="row">
+    {{--
     <div class="col-12 col-sm-6 col-md-4 col-lg-3">
         <div class="info-box">
             <span class="info-box-icon bg-info"><a href="" title="Reservas"><i class="fa far fa-store"></i></a></span>
@@ -42,15 +43,16 @@
             </div>            
         </div>
     </div>
+    --}}
     <div class="col-12 col-sm-6 col-md-4 col-lg-3">
         <div class="info-box">
             <span class="info-box-icon bg-teal"><a href="{{ route('posts.artigos') }}" title="Artigos"><i class="fa far fa-users"></i></a></span>
 
             <div class="info-box-content">
-                <span class="info-box-text"><b>Clientes</b></span>
-                <span class="info-box-text">Ativos: {{ $clientesAvailable }}</span>
-                <span class="info-box-text">Inativos: {{ $clientesUnavailable }}</span>
-                <span class="info-box-text">Total: {{ $clientesAvailable + $clientesUnavailable }}</span>
+                <span class="info-box-text"><b>Membros</b></span>
+                <span class="info-box-text">Ativos: {{ $membersAvailable }}</span>
+                <span class="info-box-text">Inativos: {{ $membersUnavailable }}</span>
+                <span class="info-box-text">Total: {{ $membersAvailable + $membersUnavailable }}</span>
             </div>
         </div>
     </div> 

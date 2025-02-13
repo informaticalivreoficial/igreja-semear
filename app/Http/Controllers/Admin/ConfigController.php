@@ -3,15 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\Configuracoes as ConfiguracoesRequest;
-use App\Models\Configuracoes;
+use App\Http\Requests\Admin\Configuracoes as ConfigRequest;
+use App\Models\Config;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 use App\Support\Cropper;
-use App\Models\Estados;
-use App\Models\Cidades;
 use App\Models\Template;
 use Carbon\Carbon;
 
@@ -19,9 +17,7 @@ class ConfigController extends Controller
 {
     public function editar()
     {
-        $config = Configuracoes::where('id', '1')->first();
-        $estados = Estados::orderBy('estado_nome', 'ASC')->get();
-        $cidades = Cidades::orderBy('cidade_nome', 'ASC')->get();
+        $config = Config::where('id', '1')->first();        
 
         $templates = Template::orderBy('created_at', 'DESC')
                 ->available()
@@ -36,79 +32,71 @@ class ConfigController extends Controller
         $feeddatadiferenca = $feeddatahoje->diffInDays($feeddata); // saída: X dias
 
         return view('admin.configuracoes',[
-            'config' => $config,
-            'estados' => $estados,
-            'cidades' => $cidades,
+            'config' => $config,            
             'diferenca' => $diferenca,
             'templates' => $templates,
             'feeddatadiferenca' => $feeddatadiferenca
         ]);
-    }
+    }    
 
-    public function fetchCity(Request $request)
+    public function update(ConfigRequest $request, $id)
     {
-        $data['cidades'] = Cidades::where("estado_id",$request->estado_id)->get(["cidade_nome", "cidade_id"]);
-        return response()->json($data);
-    }
-
-    public function update(ConfiguracoesRequest $request, $id)
-    {
-        $config = Configuracoes::where('id', $id)->first(); 
+        $config = Config::where('id', $id)->first(); 
 
         if(!empty($request->file('metaimg'))){
-            Storage::delete($config->metaimg);
-            $config->metaimg = '';
+            !is_null($config->metaimg) && Storage::delete($config->metaimg);
+            $config->metaimg = null;
         }
         
-        if(!empty($request->file('logomarca'))){
-            Storage::delete($config->logomarca);
-            $config->logomarca = '';
+        if(!empty($request->file('logo'))){
+            !is_null($config->logo) && Storage::delete($config->logo);
+            $config->logo = null;
         }
         
-        if(!empty($request->file('logomarca_admin'))){
-            Storage::delete($config->logomarca_admin);
-            $config->logomarca_admin = '';
+        if(!empty($request->file('logo_admin'))){
+            !is_null($config->logo_admin) && Storage::delete($config->logo_admin);
+            $config->logo_admin = null;
         }
         
         if(!empty($request->file('favicon'))){
-            Storage::delete($config->favicon);
-            $config->favicon = '';
+            !is_null($config->favicon) && Storage::delete($config->favicon);
+            $config->favicon = null;
         }
         
-        if(!empty($request->file('marcadagua'))){
-            Storage::delete($config->marcadagua);
-            $config->marcadagua = '';
+        if(!empty($request->file('watermark'))){
+            !is_null($config->watermark) && Storage::delete($config->watermark);
+            $config->watermark = null;
         }
         
         if(!empty($request->file('imgheader'))){
-            Storage::delete($config->imgheader);
-            $config->imgheader = '';
+            !is_null($config->imgheader) && Storage::delete($config->imgheader);
+            $config->imgheader = null;
         }
         
         $config->fill($request->all());
         
         if(!empty($request->file('metaimg'))){
-            $config->metaimg = $request->file('metaimg')->storeAs(env('AWS_PASTA') . 'configuracoes', 'metaimg-'.Str::slug($request->nomedosite)  . '.' . $request->file('metaimg')->extension());
+            $config->metaimg = $request->file('metaimg')->storeAs(env('AWS_PASTA') . 'config/', 'metaimg-'.Str::slug($request->app_name)  . '.' . $request->file('metaimg')->extension());
         }
         
-        if(!empty($request->file('logomarca'))){
-            $config->logomarca = $request->file('logomarca')->storeAs(env('AWS_PASTA') . 'configuracoes', 'logomarca-'.Str::slug($request->nomedosite)  . '.' . $request->file('logomarca')->extension());
+        if(!empty($request->file('logo'))){
+            $config->logo = $request->file('logo')->storeAs(env('AWS_PASTA') . 'config/', 'logo-'.Str::slug($request->app_name)  . '.' . $request->file('logo')->extension());
         }
         
-        if(!empty($request->file('logomarca_admin'))){
-            $config->logomarca_admin = $request->file('logomarca_admin')->storeAs(env('AWS_PASTA') . 'configuracoes', 'logomarca-admin-'.Str::slug($request->nomedosite)  . '.' . $request->file('logomarca_admin')->extension());
+        if(!empty($request->file('logo_admin'))){
+            $config->logo_admin = $request->file('logo_admin')->storeAs(env('AWS_PASTA') . 'config/', 'logo-admin-'.Str::slug($request->app_name)  . '.' . $request->file('logo_admin')->extension());
         }
         
         if(!empty($request->file('favicon'))){
-            $config->favicon = $request->file('favicon')->storeAs(env('AWS_PASTA') . 'configuracoes', 'favivon-'.Str::slug($request->nomedosite)  . '.' . $request->file('favicon')->extension());
+            $config->favicon = $request->file('favicon')->storeAs(env('AWS_PASTA') . 'config/', 'favivon-'.Str::slug($request->app_name)  . '.' . $request->file('favicon')->extension());
         }
         
-        if(!empty($request->file('marcadagua'))){
-            $config->marcadagua = $request->file('marcadagua')->storeAs(env('AWS_PASTA') . 'configuracoes', 'marcadagua-'.Str::slug($request->nomedosite)  . '.' . $request->file('marcadagua')->extension());
+        if(!empty($request->file('watermark'))){
+            $config->watermark = $request->file('watermark')->storeAs(env('AWS_PASTA') . 'config/', 'watermark-'.Str::slug($request->app_name)  . '.' . $request->file('watermark')->extension());
         }
         
         if(!empty($request->file('imgheader'))){
-            $config->imgheader = $request->file('imgheader')->storeAs(env('AWS_PASTA') . 'configuracoes', 'imgheader-'.Str::slug($request->nomedosite)  . '.' . $request->file('imgheader')->extension());
+            $config->imgheader = $request->file('imgheader')->storeAs(env('AWS_PASTA') . 'config/', 'imgheader-'.Str::slug($request->app_name)  . '.' . $request->file('imgheader')->extension());
         }
         
         if(!$config->save()){
