@@ -2,13 +2,13 @@
 
 namespace App\Repositories;
 
-use App\Models\Configuracoes;
+use App\Models\Config;
 
 class ConfigRepository
 {
     protected $model;
 
-    public function __construct(Configuracoes $model)
+    public function __construct(Config $model)
     {
         $this->model = $model;
     }

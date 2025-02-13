@@ -145,4 +145,17 @@ class WebController extends Controller
         $data = file_get_contents($url);
         return response($data, 200, ['Content-Type' => 'application/xml']);
     }
+
+    public function createMember()
+    {
+        $head = $this->seo->render('Cadastro de Membro(a) - ' . $this->configService->getConfig()->app_name,
+            'Nossa equipe está pronta para melhor atender as demandas de nossos clientes!',
+            route('web.create.member'),
+            $this->configService->getMetaImg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
+        );
+
+        return view('web.'.$this->configService->getConfig()->template.'.membro.cadastro', [
+            'head' => $head            
+        ]);
+    }
 }

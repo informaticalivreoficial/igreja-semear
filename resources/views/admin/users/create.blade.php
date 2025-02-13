@@ -84,7 +84,7 @@
                                                     <div class="form-group">
                                                         <label class="labelforms text-muted"><b>*Data de Nascimento</b></label>
                                                         <div class="input-group">
-                                                            <input type="text" class="form-control datepicker-here" data-language='pt-BR' name="nasc" value="{{ old('nasc') }}"/>
+                                                            <input type="text" class="form-control datepicker-here" data-language='pt-BR' name="birthday" value="{{ old('birthday') }}"/>
                                                             <div class="input-group-append">
                                                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                                             </div>
@@ -94,22 +94,22 @@
                                                 <div class="col-12 col-md-6 col-lg-4 mb-2"> 
                                                     <div class="form-group">
                                                         <label class="labelforms text-muted"><b>*Genero</b></label>
-                                                        <select class="form-control" name="genero">
-                                                            <option value="masculino" {{(old('genero') == 'masculino' ? 'selected' : '') }}>Masculino</option>
-                                                            <option value="feminino" {{(old('genero') == 'feminino' ? 'selected' : '') }}>Feminino</option>
+                                                        <select class="form-control" name="gender">
+                                                            <option value="masculino" {{(old('gender') == 'masculino' ? 'selected' : '') }}>Masculino</option>
+                                                            <option value="feminino" {{(old('gender') == 'feminino' ? 'selected' : '') }}>Feminino</option>
                                                         </select>
                                                     </div>
                                                 </div>
                                                  <div class="col-12 col-md-6 col-lg-4 mb-2"> 
                                                     <div class="form-group">
                                                         <label class="labelforms text-muted"><b>*Estado Civil</b></label>
-                                                        <select class="form-control" name="estado_civil">
+                                                        <select class="form-control" name="civil_status">
                                                             <optgroup label="Cônjuge Obrigatório">
-                                                                <option value="casado" {{ (old('estado_civil') == 'casado' ? 'selected' : '') }}>Casado</option>
-                                                                <option value="separado" {{ (old('estado_civil') == 'separado' ? 'selected' : '') }}>Separado</option>
-                                                                <option value="solteiro" {{ (old('estado_civil') == 'solteiro' ? 'selected' : '') }}>Solteiro</option>
-                                                                <option value="divorciado" {{ (old('estado_civil') == 'divorciado' ? 'selected' : '') }}>Divorciado</option>
-                                                                <option value="viuvo" {{ (old('estado_civil') == 'viuvo' ? 'selected' : '') }}>Viúvo(a)</option>
+                                                                <option value="casado" {{ (old('civil_status') == 'casado' ? 'selected' : '') }}>Casado</option>
+                                                                <option value="separado" {{ (old('civil_status') == 'separado' ? 'selected' : '') }}>Separado</option>
+                                                                <option value="solteiro" {{ (old('civil_status') == 'solteiro' ? 'selected' : '') }}>Solteiro</option>
+                                                                <option value="divorciado" {{ (old('civil_status') == 'divorciado' ? 'selected' : '') }}>Divorciado</option>
+                                                                <option value="viuvo" {{ (old('civil_status') == 'viuvo' ? 'selected' : '') }}>Viúvo(a)</option>
                                                             </optgroup>
                                                         </select>
                                                     </div>

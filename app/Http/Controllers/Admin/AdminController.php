@@ -74,7 +74,7 @@ class AdminController extends Controller
                 dimensions: ['month'],
                 //orderBy: [OrderBy::metric('data', true)],
         );  
-        dd($analyticsData);
+        //dd($analyticsData);
         return view('admin.dashboard',[
             //Newsletter
             'listas' => $listas,

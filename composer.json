@@ -5,8 +5,9 @@
     "keywords": ["framework", "laravel"],
     "license": "MIT",
     "require": {
-        "php": "^8.1",        
-        "coffeecode/optimizer": "^2.1",
+        "php": "^8.1",    
+        "coffeecode/cropper": "^2.0.4",    
+        "coffeecode/optimizer": "^2.1.1",
         "guzzlehttp/guzzle": "^7.2",
         "intervention/image": "^2.5",
         "jeroennoten/laravel-adminlte": "^3.7",
@@ -24,7 +25,7 @@
         "spatie/laravel-ignition": "^2.0",
         "fakerphp/faker": "^1.9.1",
         "laravel/sail": "^1.18",
-        "lucascudo/laravel-pt-br-localization": "^1.1",
+        "lucascudo/laravel-pt-br-localization": "^2.0",
         "mockery/mockery": "^1.4.2",
         "nunomaduro/collision": "^7.0",
         "phpunit/phpunit": "^10.0"

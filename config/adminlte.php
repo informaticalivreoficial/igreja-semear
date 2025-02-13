@@ -247,7 +247,7 @@ return [
             'icon' => 'fas fa-fw fa-users',
             'submenu' => [
                 [
-                    'text' => 'Clientes',
+                    'text' => 'Membros',
                     'url'  => 'admin/usuarios',
                 ],
                 [
