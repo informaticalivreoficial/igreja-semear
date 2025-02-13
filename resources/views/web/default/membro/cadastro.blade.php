@@ -5,21 +5,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="author" content="{{env('DESENVOLVEDOR')}}"/>
+    <meta name="copyright" content="{{$configuracoes->init_date}} - {{$configuracoes->app_name}}">
+    <meta name="designer" content="{{env('ADMIN_NOME')}}">
+    <meta name="publisher" content="{{env('ADMIN_NOME')}}">
+    <meta name="url" content="{{$configuracoes->domain}}" />
+    <meta name="keywords" content="{{$configuracoes->metatags}}">
+    <meta name="distribution" content="web">
+    <meta name="rating" content="general">
+    <meta name="date" content="Dec 26">
 
     {!! $head ?? '' !!}
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    <link rel="shortcut icon" href="{{$configuracoes->getfaveicon()}}"/>
+    <link rel="apple-touch-icon" href="{{$configuracoes->getfaveicon()}}"/>
+    <link rel="apple-touch-icon" sizes="72x72" href="{{$configuracoes->getfaveicon()}}"/>
+    <link rel="apple-touch-icon" sizes="114x114" href="{{$configuracoes->getfaveicon()}}"/>
+
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
+
 </head>
 
 <body>
 
     <div class="container">
-        <br>
-        <img src="" alt="">
-        <hr>
-
+        
+        <img class="mx-auto d-block mt-3 mb-3" src="{{$configuracoes->getLogo()}}" alt="{{$configuracoes->app_name}}">
+        
         <div class="row justify-content-center">
             <div class="col-md-12">
                 <div class="card">

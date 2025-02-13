@@ -22,7 +22,7 @@ class Seo
 
         $this->optimizer = new Optimizer();
         $this->optimizer->openGraph(
-            'Hotel Villa di Rimini' ?? 'Informática Livre',
+            'Comunidade Cristã Semear' ?? 'Informática Livre',
             'pt_BR',
             'article'
         )->publisher(

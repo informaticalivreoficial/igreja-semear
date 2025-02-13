@@ -24,7 +24,7 @@
             <header class="section-single-header">
                 <div class="container">
                     <a href="{{route('web.home')}}">
-                        <img src="{{$configuracoes->getLogomarca()}}" alt="{{$configuracoes->nomedosite}}" width="139" height="22"/>
+                        <img src="{{$configuracoes->getLogo()}}" alt="{{$configuracoes->app_name}}" width="139" height="22"/>
                     </a>
                 </div>
             </header>

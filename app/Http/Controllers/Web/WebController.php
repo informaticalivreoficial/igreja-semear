@@ -148,8 +148,8 @@ class WebController extends Controller
 
     public function createMember()
     {
-        $head = $this->seo->render('Cadastro de Membro(a) - ' . $this->configService->getConfig()->app_name,
-            'Nossa equipe está pronta para melhor atender as demandas de nossos clientes!',
+        $head = $this->seo->render('Cadastro de Membros - ' . $this->configService->getConfig()->app_name,
+            'Comunidade Cristã Semear, cadastro de Membros',
             route('web.create.member'),
             $this->configService->getMetaImg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
         );

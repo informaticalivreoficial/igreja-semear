@@ -14,7 +14,7 @@
 
     {{-- Title --}}
     <title>
-        Gerenciador - {{$configuracoes->nomedosite}}
+        Gerenciador - {{$configuracoes->app_name}}
         {{--@yield('title_prefix', config('adminlte.title_prefix', ''))
         @yield('title', config('adminlte.title', 'AdminLTE 3'))
         @yield('title_postfix', config('adminlte.title_postfix', ''))--}}
@@ -97,7 +97,7 @@
                     <div class="col-sm-12 mt-2 form_hide">
                         <div class="form-group">
                             <input type="hidden" name="username" value="{{ auth()->user()->name ?? '' }}"/>
-                            <input type="hidden" name="sitename" value="{{ $configuracoes->nomedosite ?? ''}}"/>
+                            <input type="hidden" name="sitename" value="{{ $configuracoes->app_name ?? ''}}"/>
                             <input type="hidden" name="email" value="{{ auth()->user()->email ?? '' }}"/>
                             <textarea class="form-control noclear" rows="5" name="mensagem"></textarea>                                          
                         </div>
