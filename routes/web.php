@@ -32,6 +32,7 @@ Route::group(['namespace' => 'Web', 'as' => 'web.'], function () {
     Route::get('/avaliacaoSend', [SendEmailController::class, 'avaliacaoSend'])->name('avaliacaoSend');
     Route::get('/atendimento', [WebController::class, 'atendimento'])->name('atendimento');
     Route::get('/cadastro-novo-membro', [WebController::class, 'createMember'])->name('create.member');
+    Route::get('/cadastro-novo-membro-send', [WebController::class, 'createMemberSend'])->name('create.member.send');
     Route::get('/sendEmail', [SendEmailController::class, 'sendEmail'])->name('sendEmail');
     Route::get('/sendNewsletter', [SendEmailController::class, 'sendNewsletter'])->name('sendNewsletter');
     Route::get('/acomodacaoSend', [SendEmailController::class, 'acomodacaoSend'])->name('acomodacaoSend');

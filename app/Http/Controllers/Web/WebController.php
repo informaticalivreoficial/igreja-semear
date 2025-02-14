@@ -158,4 +158,9 @@ class WebController extends Controller
             'head' => $head            
         ]);
     }
+
+    public function createMemberSend(Request $request)
+    {
+        dd($request->all());
+    }
 }

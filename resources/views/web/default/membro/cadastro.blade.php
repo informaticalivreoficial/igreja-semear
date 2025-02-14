@@ -25,6 +25,7 @@
 
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
+    <link id="bsdp-css" href="https://unpkg.com/bootstrap-datepicker@1.9.0/dist/css/bootstrap-datepicker3.min.css" rel="stylesheet">
 
 </head>
 
@@ -41,15 +42,19 @@
                         <h5 class="card-title mt-2 text-center">Cadastro de Membros</h5>
                     </header>
                     <article class="card-body">
-                        <form>
+                        <form method="post" action="" class="j_formsubmit" autocomplete="off">
+                            @csrf
                             <div class="form-row">
                                 <div class="col-12 col-lg-5 col-md-8 col-sm-8 form-group">
+                                    <!-- HONEYPOT -->
+                                    <input type="hidden" class="noclear" name="bairro" value="" />
+                                    <input type="text" class="noclear" style="display: none;" name="cidade" value="" />
                                     <label class="font-weight-bold">Nome </label>
                                     <input type="text" name="name" class="form-control" placeholder="Nome Completo">
                                 </div> 
                                 <div class="col-12 col-lg-3 col-md-4 col-sm-4 form-group">
                                     <label class="font-weight-bold">Data de Nasc.</label>
-                                    <input type="text" class="form-control" name="birthday">
+                                    <input type="text" class="form-control" id="birthday" name="birthday">
                                 </div> 
                                 <div class="col-12 col-lg-4 col-md-6 col-sm-6 form-group">
                                     <label class="d-block font-weight-bold">Sexo</label>
@@ -87,23 +92,23 @@
                             <div class="form-row">
                                 <div class="col-lg-2 col-md-3 col-sm-4 col-12 form-group">
                                     <label class="font-weight-bold">Cep</label>
-                                    <input type="text" class="form-control" name="postcode">
+                                    <input type="text" class="form-control" name="postcode" id="cep">
                                 </div> 
                                 <div class="col-lg-4 col-md-5 col-sm-8 col-12 form-group">
                                     <label class="font-weight-bold">Rua</label>
-                                    <input type="text" class="form-control" name="street">
+                                    <input type="text" class="form-control" name="street" id="rua">
                                 </div>                             
                                 <div class="col-lg-3 col-md-4 col-sm-8 col-12 form-group">
                                     <label class="font-weight-bold">Bairro</label>
-                                    <input type="text" class="form-control" name="neighborhood">
+                                    <input type="text" class="form-control" name="neighborhood" id="bairro">
                                 </div> 
                                 <div class="col-lg-3 col-md-2 col-sm-4 col-12 form-group">
                                     <label class="font-weight-bold">UF</label>
-                                    <input type="text" class="form-control" name="state">
+                                    <input type="text" class="form-control" name="state" id="uf">
                                 </div>                            
                                 <div class="col-lg-5 col-md-5 col-sm-6 col-12 form-group">
                                     <label class="font-weight-bold">Cidade</label>
-                                    <input type="text" class="form-control" name="city">
+                                    <input type="text" class="form-control" name="city" id="cidade">
                                 </div>                             
                                                              
                                 <div class="col-lg-3 col-md-2 col-sm-2 col-12 form-group">
@@ -122,19 +127,19 @@
                                 <div class="col-12 col-lg-4 col-md-6 col-sm-6 form-group">
                                     <label class="d-block font-weight-bold">É batizado(a)</label>
                                     <label class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="baptism" value="1" {{(old('baptism') == '1' ? 'checked' : '') }}>
+                                        <input class="form-check-input" type="radio" name="baptism" value="true" {{(old('baptism') == 'true' ? 'checked' : '') }}>
                                         <span class="form-check-label"> Sim </span>
                                     </label>
                                     <label class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="baptism" value="0" {{(old('baptism') == '0' ? 'checked' : '') }}>
+                                        <input class="form-check-input" type="radio" name="baptism" value="false" {{(old('baptism') == 'false' ? 'checked' : '') }}>
                                         <span class="form-check-label"> Não</span>
                                     </label>
                                 </div>
-                                <div class="col-12 col-lg-4 col-md-6 col-sm-6 form-group">
+                                <div class="col-12 col-lg-4 col-md-6 col-sm-6 form-group baptism-on">
                                     <label class="font-weight-bold">Data do batismo</label>
-                                    <input type="text" class="form-control" name="baptism_date">
+                                    <input type="text" class="form-control" name="baptism_date" id="baptism">
                                 </div>
-                                <div class="col-12 col-lg-4 col-md-6 col-sm-6 form-group">
+                                <div class="col-12 col-lg-4 col-md-6 col-sm-6 form-group" id="baptism-option">
                                     <label class="d-block font-weight-bold">Deseja se Batizar?</label>
                                     <label class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" name="baptism-option" value="1" {{(old('baptism-option') == '1' ? 'checked' : '') }}>
@@ -146,33 +151,37 @@
                                     </label>
                                 </div>
 
+                                
+                                
+                            </div>
+
+                            <div class="form-row">
                                 <div class="col-12 col-lg-6 col-md-6 col-sm-12 form-group">
                                     <label class="font-weight-bold">Frequenta a Semear a quanto Tempo?</label>
                                     <input type="text" class="form-control" name="period_frequenci">
                                 </div>
-                                
                             </div>
 
                             <div class="form-row">
                                 <div class="col-12 col-lg-6 col-md-8 col-sm-12 form-group">
                                     <label class="d-block font-weight-bold">Participa dos grupos de WhatsApp da igreja?</label>
                                     <label class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="whatsapp_group" value="1" {{(old('whatsapp_group') == '1' ? 'checked' : '') }}>
+                                        <input class="form-check-input" type="radio" name="whatsapp_group" value="true" {{(old('whatsapp_group') == 'true' ? 'checked' : '') }}>
                                         <span class="form-check-label"> Sim </span>
                                     </label>
                                     <label class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="whatsapp_group" value="0" {{(old('whatsapp_group') == '0' ? 'checked' : '') }}>
+                                        <input class="form-check-input" type="radio" name="whatsapp_group" value="false" {{(old('whatsapp_group') == 'false' ? 'checked' : '') }}>
                                         <span class="form-check-label"> Não</span>
                                     </label>
                                 </div>
-                                <div class="col-12 col-lg-6 col-md-4 col-sm-12 form-group">
+                                <div class="col-12 col-lg-6 col-md-4 col-sm-12 form-group" id="whatsapp-option">
                                     <label class="d-block font-weight-bold">Gostaria de participar?</label>
                                     <label class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="whatsapp_group" value="1" {{(old('whatsapp_group') == '1' ? 'checked' : '') }}>
+                                        <input class="form-check-input" type="radio" name="whatsapp_group_accept" value="true" {{(old('whatsapp_group_accept') == 'true' ? 'checked' : '') }}>
                                         <span class="form-check-label"> Sim </span>
                                     </label>
                                     <label class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="whatsapp_group" value="0" {{(old('whatsapp_group') == '0' ? 'checked' : '') }}>
+                                        <input class="form-check-input" type="radio" name="whatsapp_group_accept" value="false" {{(old('whatsapp_group_accept') == 'false' ? 'checked' : '') }}>
                                         <span class="form-check-label"> Não</span>
                                     </label>
                                 </div>
@@ -182,15 +191,15 @@
                                 <div class="col-12 col-lg-6 col-md-8 col-sm-12 form-group">
                                     <label class="d-block font-weight-bold">Participa de algum ministério da igreja?</label>
                                     <label class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="ministerio_group" value="1" {{(old('ministerio_group') == '1' ? 'checked' : '') }}>
+                                        <input class="form-check-input" type="radio" name="ministerio_group" value="true" {{(old('ministerio_group') == 'true' ? 'checked' : '') }}>
                                         <span class="form-check-label"> Sim </span>
                                     </label>
                                     <label class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="ministerio_group" value="0" {{(old('ministerio_group') == '0' ? 'checked' : '') }}>
+                                        <input class="form-check-input" type="radio" name="ministerio_group" value="false" {{(old('ministerio_group') == 'false' ? 'checked' : '') }}>
                                         <span class="form-check-label"> Não</span>
                                     </label>
                                 </div>
-                                <div class="col-12 col-lg-6 col-md-4 col-sm-12 form-group">
+                                <div class="col-12 col-lg-6 col-md-4 col-sm-12 form-group" id="ministerio-option">
                                     <label class="font-weight-bold">Qual?</label>
                                     <input type="text" class="form-control" name="ministerio_name">
                                 </div>
@@ -200,15 +209,15 @@
                                 <div class="col-12 col-lg-6 col-md-8 col-sm-12 form-group">
                                     <label class="d-block font-weight-bold">Gostaria de participar de algum ministério?</label>
                                     <label class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="ministerio_accept" value="1" {{(old('ministerio_accept') == '1' ? 'checked' : '') }}>
+                                        <input class="form-check-input" type="radio" name="ministerio_accept" value="true" {{(old('ministerio_accept') == 'true' ? 'checked' : '') }}>
                                         <span class="form-check-label"> Sim </span>
                                     </label>
                                     <label class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="ministerio_accept" value="0" {{(old('ministerio_accept') == '0' ? 'checked' : '') }}>
+                                        <input class="form-check-input" type="radio" name="ministerio_accept" value="false" {{(old('ministerio_accept') == 'false' ? 'checked' : '') }}>
                                         <span class="form-check-label"> Não</span>
                                     </label>
                                 </div>
-                                <div class="col-12 col-lg-6 col-md-4 col-sm-12 form-group">
+                                <div class="col-12 col-lg-6 col-md-4 col-sm-12 form-group" id="ministerio-accept-option">
                                     <label class="font-weight-bold">Qual?</label>
                                     <input type="text" class="form-control" name="ministerio_accept_name">
                                 </div>
@@ -218,22 +227,22 @@
                                 <div class="col-12 col-lg-12 col-md-12 col-sm-12 form-group">
                                     <label class="d-block font-weight-bold">Gostaria de agendar um horário na igreja para nos conhecer melhor?</label>
                                     <label class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="hour_accept" value="1" {{(old('hour_accept') == '1' ? 'checked' : '') }}>
+                                        <input class="form-check-input" type="radio" name="hour_accept" value="true" {{(old('hour_accept') == 'true' ? 'checked' : '') }}>
                                         <span class="form-check-label"> Sim </span>
                                     </label>
                                     <label class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="hour_accept" value="0" {{(old('hour_accept') == '0' ? 'checked' : '') }}>
+                                        <input class="form-check-input" type="radio" name="hour_accept" value="false" {{(old('hour_accept') == 'false' ? 'checked' : '') }}>
                                         <span class="form-check-label"> Não</span>
                                     </label>
                                 </div>
                                 <div class="col-12 col-lg-12 col-md-12 col-sm-12 form-group">
                                     <label class="d-block font-weight-bold">Podemos entrar em contato para agendar?</label>
                                     <label class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="hour_accept_agend" value="1" {{(old('hour_accept_agend') == '1' ? 'checked' : '') }}>
+                                        <input class="form-check-input" type="radio" name="hour_accept_agend" value="true" {{(old('hour_accept_agend') == 'true' ? 'checked' : '') }}>
                                         <span class="form-check-label"> Sim </span>
                                     </label>
                                     <label class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="hour_accept_agend" value="0" {{(old('hour_accept_agend') == '0' ? 'checked' : '') }}>
+                                        <input class="form-check-input" type="radio" name="hour_accept_agend" value="false" {{(old('hour_accept_agend') == 'false' ? 'checked' : '') }}>
                                         <span class="form-check-label"> Não</span>
                                     </label>
                                 </div>
@@ -241,10 +250,10 @@
 
                            
                             <div class="form-group">
-                                <button type="submit" class="btn btn-primary btn-block"> Cadastrar Agora </button>
+                                <button id="js-contact-btn" type="submit" class="btn btn-success btn-block noclear"> Cadastrar Agora </button>
                             </div>
                             <small class="text-muted">Ao clicar no botão de cadastrar, você confirma e aceita
-                                os Termos de uso e Política de Privacidade.</small>
+                                os Termos de uso e <a target="_blank" href="{{route('web.politica')}}">Política de Privacidade</a>.</small>
                         </form>
                     </article> 
                     
@@ -256,19 +265,172 @@
     </div>
 
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-PWLNNT4LW4"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>   
+    <script src="https://unpkg.com/bootstrap-datepicker@1.9.0/dist/js/bootstrap-datepicker.min.js"></script> 
+    <script src="https://unpkg.com/bootstrap-datepicker@1.9.0/dist/locales/bootstrap-datepicker.pt-BR.min.js" charset="UTF-8"></script>
 
-        function gtag() {
-            dataLayer.push(arguments);
+<script>
+    $(function () {
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        $('#birthday').datepicker({
+            format: "dd/mm/yyyy",
+            language: "pt-BR"
+        });
+
+        $('#baptism').datepicker({
+            format: "dd/mm/yyyy",
+            language: "pt-BR"
+        });
+
+        $(".baptism-on").attr("style", "display:none");
+        $("#baptism-option").attr("style", "display:none");
+
+        $('input[name="baptism"]').on('change', function() {
+            if ($(this).val() === 'true') {
+                $(".baptism-on").attr("style", "display:block");
+                $("#baptism-option").attr("style", "display:none");
+            } else {
+                $(".baptism-on").attr("style", "display:none");
+                $("#baptism-option").attr("style", "display:block");
+            }
+        });
+
+        $("#whatsapp-option").attr("style", "display:none");
+
+        $('input[name="whatsapp_group"]').on('change', function() {
+            if ($(this).val() === 'true') {
+                $("#whatsapp-option").attr("style", "display:none");
+            } else {
+                $("#whatsapp-option").attr("style", "display:block");
+            }
+        });
+
+        $("#ministerio-option").attr("style", "display:none");
+
+        $('input[name="ministerio_group"]').on('change', function() {
+            if ($(this).val() === 'true') {
+                $("#ministerio-option").attr("style", "display:block");
+            } else {
+                $("#ministerio-option").attr("style", "display:none");
+            }
+        });
+
+        $("#ministerio-accept-option").attr("style", "display:none");
+
+        $('input[name="ministerio_accept"]').on('change', function() {
+            if ($(this).val() === 'true') {
+                $("#ministerio-accept-option").attr("style", "display:block");
+            } else {
+                $("#ministerio-accept-option").attr("style", "display:none");
+            }
+        });
+
+        // Seletor, Evento/efeitos, CallBack, Ação
+        $('.j_formsubmit').submit(function (){
+            var form = $(this);
+            var dataString = $(form).serialize();
+
+            $.ajax({
+                url: "{{ route('web.create.member.send') }}",
+                data: dataString,
+                type: 'GET',
+                dataType: 'JSON',
+                beforeSend: function(){
+                    form.find("#js-contact-btn").attr("disabled", true);
+                    form.find('#js-contact-btn').text("Carregando...");                
+                    form.find('.alert').fadeOut(500, function(){
+                        $(this).remove();
+                    });
+                },
+                success: function(resposta){
+                    $('html, body').animate({scrollTop:$('#js-contact-result').offset().top-100}, 'slow');
+                    if(resposta.error){
+                        form.find('#js-contact-result').html('<div class="alert alert-danger error-msg">'+ resposta.error +'</div>');
+                        form.find('.error-msg').fadeIn();                    
+                    }else{
+                        form.find('#js-contact-result').html('<div class="alert alert-success error-msg">'+ resposta.sucess +'</div>');
+                        form.find('.error-msg').fadeIn();                    
+                        form.find('input[class!="noclear"]').val('');
+                        form.find('textarea[class!="noclear"]').val('');
+                        form.find('.form_hide').fadeOut(500);
+                    }
+                },
+                complete: function(resposta){
+                    form.find("#js-contact-btn").attr("disabled", false);
+                    form.find('#js-contact-btn').text("Cadastrar Agora");                                
+                }
+            });
+
+            return false;
+        });
+
+    });
+
+    $(document).ready(function() {
+
+        function limpa_formulário_cep() {
+            $("#rua").val("");
+            $("#bairro").val("");
+            $("#cidade").val("");
+            $("#uf").val("");
         }
-        gtag('js', new Date());
 
-        gtag('config', 'G-PWLNNT4LW4');
-    </script>
+        $("#cep").blur(function() {
+
+            var cep = $(this).val().replace(/\D/g, '');
+
+            if (cep != "") {
+                
+                var validacep = /^[0-9]{8}$/;
+
+                if(validacep.test(cep)) {
+                    
+                    $("#rua").val("Carregando...");
+                    $("#bairro").val("Carregando...");
+                    $("#cidade").val("Carregando...");
+                    $("#uf").val("Carregando...");
+                    
+                    $.getJSON("https://viacep.com.br/ws/"+ cep +"/json/?callback=?", function(dados) {
+
+                        if (!("erro" in dados)) {
+                            $("#rua").val(dados.logradouro);
+                            $("#bairro").val(dados.bairro);
+                            $("#cidade").val(dados.localidade);
+                            $("#uf").val(dados.uf);
+                        } else {
+                            limpa_formulário_cep();
+                            alert("CEP não encontrado.");
+                        }
+                    });
+                } else {
+                    limpa_formulário_cep();
+                    alert("Formato de CEP inválido.");
+                }
+            } else {
+                limpa_formulário_cep();
+            }
+        });
+    });
+</script> 
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PWLNNT4LW4"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+
+    gtag('config', 'G-PWLNNT4LW4');
+</script>
 </body>
 
 </html>
