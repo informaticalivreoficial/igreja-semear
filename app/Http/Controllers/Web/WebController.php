@@ -161,6 +161,87 @@ class WebController extends Controller
 
     public function createMemberSend(Request $request)
     {
-        dd($request->all());
+        if($request->name == ''){
+            $json = "Por favor preencha o campo <strong>Nome</strong>";
+            return response()->json(['error' => $json]);
+        }
+        if($request->birthday == ''){
+            $json = "Por favor preencha a <strong>Data de Nascimento</strong>";
+            return response()->json(['error' => $json]);
+        }
+
+        $birthday = Carbon::createFromFormat('d/m/Y', $request->birthday)->format('Y-m-d');        
+        if(Carbon::parse($birthday)->gt(Carbon::parse(now())->format('Y-m-d'))){
+            $json = "Você selecionou uma <strong>Data</strong> inválida!";
+            return response()->json(['error' => $json]);
+        }
+        if($request->gender == ''){
+            $json = "Por favor informe o <strong>sexo</strong>";
+            return response()->json(['error' => $json]);
+        }
+        if(!filter_var($request->email, FILTER_VALIDATE_EMAIL)){
+            $json = "O campo <strong>Email</strong> está vazio ou não tem um formato válido!";
+            return response()->json(['error' => $json]);
+        }
+        if($request->whatsapp == ''){
+            $json = "Por favor preencha o campo <strong>Telefone</strong>";
+            return response()->json(['error' => $json]);
+        }
+        if($request->baptism_date && $request->baptism_date != null){
+            $baptism_date = Carbon::createFromFormat('d/m/Y', $request->baptism_date)->format('Y-m-d');        
+            if(Carbon::parse($baptism_date)->gt(Carbon::parse(now())->format('Y-m-d'))){
+                $json = "Você selecionou uma <strong>Data</strong> inválida!";
+                return response()->json(['error' => $json]);
+            }
+        }        
+        if(!empty($request->bairro) || !empty($request->cidade)){
+            $json = "<strong>ERRO</strong> Você está praticando SPAM!";  
+            return response()->json(['error' => $json]);
+        }
+
+        $data = [
+            'name' => $request->name,
+            'birthday' => $request->birthday,
+            'civil_status' => $request->civil_status,
+            'gender' => $request->gender,
+            'password' => bcrypt($request->email),
+            'code' => $request->email,
+            'status' => 1,
+            'client' => true,
+            'email' => $request->email,
+            'whatsapp' => $request->whatsapp,
+            'postcode' => $request->postcode,
+            'street' => $request->street,
+            'number' => $request->number,
+            'complement' => $request->complement,
+            'neighborhood' => $request->neighborhood,
+            'state' => $request->state, 
+            'city' => $request->city,
+            'baptism' => $request->baptism,
+            'baptism_date' => $request->baptism_date ? $request->baptism_date : null,
+        ];
+
+        $data_email = [
+            'period_frequenci' => $request->period_frequenci,
+            'whatsapp_group' => $request->whatsapp_group == 'true' ? 'Sim' : 'Não',
+            'whatsapp_group_accept' => $request->whatsapp_group_accept == 'true' ? 'Sim' : 'Não',
+            'ministerio_group' => $request->ministerio_group == 'true' ? 'Sim' : 'Não',
+            'ministerio_name' => $request->ministerio_group == 'true' ? $request->ministerio_name : null,
+            'ministerio_accept' => $request->ministerio_accept == 'true' ? 'Sim' : 'Não',
+            'ministerio_accept_name' => $request->ministerio_accept == 'true' ? $request->ministerio_accept_name : null,
+            'hour_accept' => $request->hour_accept == 'true' ? 'Sim' : 'Não',
+            'hour_accept_agend' => $request->hour_accept_agend == 'true' ? 'Sim' : 'Não',
+        ];
+
+        $this->storeMember($data, $data_email);        
     }
+
+    public function storeMember($member, $member_email)
+    {   
+        $member = User::create($member);
+        $member->save();
+        dd($member, $member_email);
+        //return redirect()->route('web.membro.cadastro')->with('success', 'Cadastro realizado com sucesso!');
+    }
+    
 }

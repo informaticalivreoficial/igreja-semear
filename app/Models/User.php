@@ -151,6 +151,21 @@ class User extends Authenticatable
         $this->attributes['superadmin'] = ($value === true || $value === 'on' ? 1 : 0);
     }
 
+    public function setBaptismAttribute($value)
+    {
+        $this->attributes['baptism'] = ($value === true || $value === 'true' ? 1 : 0);
+    }
+
+    public function setBirthdayAttribute($value)
+    {
+        $this->attributes['birthday'] = (!empty($value) ? $this->convertStringToDate($value) : null);
+    }
+
+    public function setBaptismDateAttribute($value)
+    {
+        $this->attributes['baptism_date'] = (!empty($value) ? $this->convertStringToDate($value) : null);
+    }
+
     private function convertStringToDouble(?string $param)
     {
         if (empty($param)) {

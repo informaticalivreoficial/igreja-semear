@@ -4,8 +4,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\{
     AdminController,
-    ApartamentoController,
-    AvaliacaoController,
     UserController,
     EmailController,
     PostController,
@@ -13,13 +11,14 @@ use App\Http\Controllers\Admin\{
     ConfigController,
     NewsletterController,
     ParceiroController,
-    ReservaController,
     SitemapController,
     SlideController
 };
-use App\Http\Controllers\Web\RssFeedController;
-use App\Http\Controllers\Web\SendEmailController;
-use App\Http\Controllers\Web\WebController;
+use App\Http\Controllers\Web\{
+    RssFeedController,
+    SendEmailController,
+    WebController
+};
 
 Route::group(['namespace' => 'Web', 'as' => 'web.'], function () {
 
@@ -159,40 +158,7 @@ Route::prefix('admin')->middleware('auth')->group( function(){
     Route::get('usuarios/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
     Route::get('usuarios/create', [UserController::class, 'create'])->name('users.create');
     Route::post('usuarios/store', [UserController::class, 'store'])->name('users.store');
-    Route::get('usuarios', [UserController::class, 'index'])->name('users.index');
-
-    /** Avaliações */
-    Route::get('avaliacoes/set-status', [AvaliacaoController::class, 'avaliacoesSetStatus'])->name('avaliacoes.avaliacoesSetStatus');
-    Route::match(['post', 'get'], 'avaliacoes/fetchCity', [AvaliacaoController::class, 'fetchCity'])->name('avaliacoes.fetchCity');
-    Route::get('avaliacoes/delete', [AvaliacaoController::class, 'delete'])->name('avaliacoes.delete');
-    Route::delete('avaliacoes/deleteon', [AvaliacaoController::class, 'deleteon'])->name('avaliacoes.deleteon');
-    Route::put('avaliacoes/{id}', [AvaliacaoController::class, 'update'])->name('avaliacoes.update');
-    Route::get('avaliacoes/{id}/edit', [AvaliacaoController::class, 'edit'])->name('avaliacoes.edit');
-    Route::get('avaliacoes/create', [AvaliacaoController::class, 'create'])->name('avaliacoes.create');
-    Route::post('avaliacoes/store', [AvaliacaoController::class, 'store'])->name('avaliacoes.store');
-    Route::get('avaliacoes', [AvaliacaoController::class, 'index'])->name('avaliacoes.index');
-
-    /** Reservas */
-    Route::get('reservas/delete', [ReservaController::class, 'delete'])->name('reservas.delete');
-    Route::delete('reservas/deleteon', [ReservaController::class, 'deleteon'])->name('reservas.deleteon');
-    Route::put('reservas/{id}', [ReservaController::class, 'update'])->name('reservas.update');
-    Route::get('reservas/{id}/edit', [ReservaController::class, 'edit'])->name('reservas.edit');
-    Route::get('reservas/create', [ReservaController::class, 'create'])->name('reservas.create');
-    Route::get('reservas-pendentes', [ReservaController::class, 'pendentes'])->name('reservas.pendentes');
-    Route::get('reservas-finalizadas', [ReservaController::class, 'finalizadas'])->name('reservas.finalizadas');
-
-    /** Apartamentos */
-    Route::get('apartamentos/marcadagua', [ApartamentoController::class, 'imageWatermark'])->name('apartamentos.marcadagua');
-    Route::get('apartamentos/delete', [ApartamentoController::class, 'delete'])->name('apartamentos.delete');
-    Route::delete('apartamentos/deleteon', [ApartamentoController::class, 'deleteon'])->name('apartamentos.deleteon');
-    Route::post('apartamentos/image-set-cover', [ApartamentoController::class, 'imageSetCover'])->name('apartamentos.imageSetCover');
-    Route::get('apartamentos/set-status', [ApartamentoController::class, 'apartamentoSetStatus'])->name('apartamentos.SetStatus');
-    Route::delete('apartamentos/image-remove', [ApartamentoController::class, 'imageRemove'])->name('apartamentos.imageRemove');
-    Route::put('apartamentos/{id}', [ApartamentoController::class, 'update'])->name('apartamentos.update');
-    Route::get('apartamentos/{id}/edit', [ApartamentoController::class, 'edit'])->name('apartamentos.edit');
-    Route::get('apartamentos/create', [ApartamentoController::class, 'create'])->name('apartamentos.create');
-    Route::post('apartamentos/store', [ApartamentoController::class, 'store'])->name('apartamentos.store');
-    Route::get('apartamentos', [ApartamentoController::class, 'index'])->name('apartamentos.index');
+    Route::get('usuarios', [UserController::class, 'index'])->name('users.index');    
 
     //******************** Sitemap *********************************************/
     Route::get('gerarxml', [SitemapController::class, 'gerarxml'])->name('gerarxml');

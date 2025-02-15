@@ -26,6 +26,7 @@
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
     <link id="bsdp-css" href="https://unpkg.com/bootstrap-datepicker@1.9.0/dist/css/bootstrap-datepicker3.min.css" rel="stylesheet">
+    <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
 
 </head>
 
@@ -50,11 +51,11 @@
                                     <input type="hidden" class="noclear" name="bairro" value="" />
                                     <input type="text" class="noclear" style="display: none;" name="cidade" value="" />
                                     <label class="font-weight-bold">Nome </label>
-                                    <input type="text" name="name" class="form-control" placeholder="Nome Completo">
+                                    <input type="text" name="name" class="form-control" placeholder="Nome Completo" value="{{ old('name') }}">
                                 </div> 
                                 <div class="col-12 col-lg-3 col-md-4 col-sm-4 form-group">
                                     <label class="font-weight-bold">Data de Nasc.</label>
-                                    <input type="text" class="form-control" id="birthday" name="birthday">
+                                    <input type="text" class="form-control" id="birthday" name="birthday" value="{{ old('birthday') }}">
                                 </div> 
                                 <div class="col-12 col-lg-4 col-md-6 col-sm-6 form-group">
                                     <label class="d-block font-weight-bold">Sexo</label>
@@ -70,20 +71,20 @@
                                 <div class="col-12 col-lg-4 col-md-6 col-sm-6 form-group">
                                     <label class="font-weight-bold">Estado Civil</label>
                                     <select name="civil_status" id="inputState" class="form-control">
-                                        <option value="casado" {{ (old('estado_civil') == 'casado' ? 'selected' : '') }}>Casado</option>
-                                        <option value="separado" {{ (old('estado_civil') == 'separado' ? 'selected' : '') }}>Separado</option>
                                         <option value="solteiro" {{ (old('estado_civil') == 'solteiro' ? 'selected' : '') }}>Solteiro</option>
+                                        <option value="casado" {{ (old('estado_civil') == 'casado' ? 'selected' : '') }}>Casado</option>
+                                        <option value="separado" {{ (old('estado_civil') == 'separado' ? 'selected' : '') }}>Separado</option>                                        
                                         <option value="divorciado" {{ (old('estado_civil') == 'divorciado' ? 'selected' : '') }}>Divorciado</option>
                                         <option value="viuvo" {{ (old('estado_civil') == 'viuvo' ? 'selected' : '') }}>Viúvo(a)</option>
                                     </select>
                                 </div> 
                                 <div class="col-12 col-lg-4 col-md-6 col-sm-6 form-group">
                                     <label class="font-weight-bold">Email</label>
-                                    <input type="email" class="form-control" placeholder="Digite aqui seu melhor email">
+                                    <input type="email" class="form-control" placeholder="Digite aqui seu melhor email" name="email" value="{{ old('email') }}">
                                 </div> 
                                 <div class="col-12 col-lg-4 col-md-6 col-sm-6 form-group">
                                     <label class="font-weight-bold">Celular/WhatsApp</label>
-                                    <input type="text" class="form-control" placeholder="Celular/WhatsApp">
+                                    <input type="text" class="form-control" placeholder="Celular/WhatsApp" name="whatsapp" value="{{ old('whatsapp') }}">
                                 </div> 
                             </div> 
                             
@@ -264,10 +265,11 @@
 
     </div>
 
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>   
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>       
     <script src="https://unpkg.com/bootstrap-datepicker@1.9.0/dist/js/bootstrap-datepicker.min.js"></script> 
     <script src="https://unpkg.com/bootstrap-datepicker@1.9.0/dist/locales/bootstrap-datepicker.pt-BR.min.js" charset="UTF-8"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
 <script>
     $(function () {
@@ -280,12 +282,14 @@
 
         $('#birthday').datepicker({
             format: "dd/mm/yyyy",
-            language: "pt-BR"
+            language: "pt-BR",
+            autoclose: true
         });
 
         $('#baptism').datepicker({
             format: "dd/mm/yyyy",
-            language: "pt-BR"
+            language: "pt-BR",
+            autoclose: true
         });
 
         $(".baptism-on").attr("style", "display:none");
@@ -349,10 +353,8 @@
                     });
                 },
                 success: function(resposta){
-                    $('html, body').animate({scrollTop:$('#js-contact-result').offset().top-100}, 'slow');
                     if(resposta.error){
-                        form.find('#js-contact-result').html('<div class="alert alert-danger error-msg">'+ resposta.error +'</div>');
-                        form.find('.error-msg').fadeIn();                    
+                        toastr.error(resposta.error, 'Erro')                   
                     }else{
                         form.find('#js-contact-result').html('<div class="alert alert-success error-msg">'+ resposta.sucess +'</div>');
                         form.find('.error-msg').fadeIn();                    
@@ -405,12 +407,12 @@
                             $("#uf").val(dados.uf);
                         } else {
                             limpa_formulário_cep();
-                            alert("CEP não encontrado.");
+                            toastr.error('CEP não encontrado.', 'Erro')
                         }
                     });
                 } else {
                     limpa_formulário_cep();
-                    alert("Formato de CEP inválido.");
+                    toastr.error('Formato de CEP inválido.', 'Erro')
                 }
             } else {
                 limpa_formulário_cep();
