@@ -84,7 +84,7 @@
                                 </div> 
                                 <div class="col-12 col-lg-4 col-md-6 col-sm-6 form-group">
                                     <label class="font-weight-bold">Celular/WhatsApp</label>
-                                    <input type="text" class="form-control" placeholder="Celular/WhatsApp" name="whatsapp" value="{{ old('whatsapp') }}">
+                                    <input type="text" class="form-control celularmask" placeholder="Celular/WhatsApp" name="whatsapp" value="{{ old('whatsapp') }}">
                                 </div> 
                             </div> 
                             
@@ -126,7 +126,7 @@
 
                             <div class="form-row">
                                 <div class="col-12 col-lg-4 col-md-6 col-sm-6 form-group">
-                                    <label class="d-block font-weight-bold">É batizado(a)</label>
+                                    <label class="d-block font-weight-bold">É batizado(a)?</label>
                                     <label class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" name="baptism" value="true" {{(old('baptism') == 'true' ? 'checked' : '') }}>
                                         <span class="form-check-label"> Sim </span>
@@ -143,11 +143,11 @@
                                 <div class="col-12 col-lg-4 col-md-6 col-sm-6 form-group" id="baptism-option">
                                     <label class="d-block font-weight-bold">Deseja se Batizar?</label>
                                     <label class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="baptism-option" value="1" {{(old('baptism-option') == '1' ? 'checked' : '') }}>
+                                        <input class="form-check-input" type="radio" name="baptism_option" value="true" {{(old('baptism_option') == 'true' ? 'checked' : '') }}>
                                         <span class="form-check-label"> Sim </span>
                                     </label>
                                     <label class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="baptism-option" value="0" {{(old('baptism-option') == '0' ? 'checked' : '') }}>
+                                        <input class="form-check-input" type="radio" name="baptism_option" value="false" {{(old('baptism_option') == 'false' ? 'checked' : '') }}>
                                         <span class="form-check-label"> Não</span>
                                     </label>
                                 </div>
@@ -206,7 +206,7 @@
                                 </div>
                             </div>
 
-                            <div class="form-row">
+                            <div class="form-row" id="ministerio-accept">
                                 <div class="col-12 col-lg-6 col-md-8 col-sm-12 form-group">
                                     <label class="d-block font-weight-bold">Gostaria de participar de algum ministério?</label>
                                     <label class="form-check form-check-inline">
@@ -270,8 +270,8 @@
     <script src="https://unpkg.com/bootstrap-datepicker@1.9.0/dist/js/bootstrap-datepicker.min.js"></script> 
     <script src="https://unpkg.com/bootstrap-datepicker@1.9.0/dist/locales/bootstrap-datepicker.pt-BR.min.js" charset="UTF-8"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-
-<script>
+    <script src="{{url(asset('backend/assets/js/jquery.mask.js'))}}"></script>
+<script> 
     $(function () {
 
         $.ajaxSetup({
@@ -279,6 +279,9 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
+
+        var $celularmask = $(".celularmask");
+        $celularmask.mask('(99) 99999-9999', {reverse: false});
 
         $('#birthday').datepicker({
             format: "dd/mm/yyyy",
@@ -332,6 +335,16 @@
                 $("#ministerio-accept-option").attr("style", "display:block");
             } else {
                 $("#ministerio-accept-option").attr("style", "display:none");
+            }
+        });
+
+        $("#ministerio-accept").attr("style", "display:none");
+
+        $('input[name="ministerio_group"]').on('change', function() {
+            if ($(this).val() === 'false') {
+                $("#ministerio-accept").attr("style", "display:block");
+            } else {
+                $("#ministerio-accept").attr("style", "display:none");
             }
         });
 
