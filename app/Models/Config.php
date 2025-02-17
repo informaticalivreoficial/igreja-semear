@@ -79,8 +79,8 @@ class Config extends Model
          if(empty($this->logo) || !Storage::disk()->exists($this->logo)) {
              return url(asset('backend/assets/images/image.jpg'));
          } 
-         return Storage::url(Cropper::thumb($this->logo, env('LOGOMARCA_WIDTH'), env('LOGOMARCA_HEIGHT')));
-         //return Storage::url($this->logo);
+         //return Storage::url(Cropper::thumb($this->logo, env('LOGOMARCA_WIDTH'), env('LOGOMARCA_HEIGHT')));
+         return Storage::url($this->logo);
      }
      
      public function getlogoadmin()
