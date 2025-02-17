@@ -32,7 +32,7 @@ class CreateMember extends Mailable
     {
         return new Envelope(
             subject: '✅ Cadastro de novo membro', // Assunto
-            from: new Address($this->data['email'], $this->data['name']), // Remetente
+            from: new Address(env('MAIL_FROM_ADDRESS'), 'Comunidade Cristã Semear'), // Remetente
             to: [new Address(env('MAIL_FROM_ADDRESS'), 'Comunidade Cristã Semear')], // Destinatário
             //cc: [new Address('copia@example.com', 'Cópia')], // Cópia (opcional)
             //bcc: [new Address('oculto@example.com', 'Cópia Oculta')], // Cópia oculta (opcional)
