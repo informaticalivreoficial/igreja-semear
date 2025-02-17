@@ -366,11 +366,7 @@
                 success: function(resposta){
                     if(resposta.error){
                         toastr.error(resposta.error, 'Erro')          
-                    }else{   
-                        // toastr.success(resposta.cadastro, 'Sucesso')                     
-                        // setTimeout(function() {
-                        //     toastr.success(resposta.email_success, 'Sucesso');
-                        // }, 2000);      
+                    }else{
                         setTimeout(function() {
                             form.find('input[class!="noclear"]').val('');
                             $('.form_hide').fadeOut(500);

@@ -162,43 +162,43 @@ class WebController extends Controller
 
     public function createMemberSend(Request $request)
     {
-        // if($request->name == ''){
-        //     $json = "Por favor preencha o campo <strong>Nome</strong>";
-        //     return response()->json(['error' => $json]);
-        // }
-        // if($request->birthday == ''){
-        //     $json = "Por favor preencha a <strong>Data de Nascimento</strong>";
-        //     return response()->json(['error' => $json]);
-        // }
+        if($request->name == ''){
+            $json = "Por favor preencha o campo <strong>Nome</strong>";
+            return response()->json(['error' => $json]);
+        }
+        if($request->birthday == ''){
+            $json = "Por favor preencha a <strong>Data de Nascimento</strong>";
+            return response()->json(['error' => $json]);
+        }
 
-        // $birthday = Carbon::createFromFormat('d/m/Y', $request->birthday)->format('Y-m-d');        
-        // if(Carbon::parse($birthday)->gt(Carbon::parse(now())->format('Y-m-d'))){
-        //     $json = "Você selecionou uma <strong>Data</strong> inválida!";
-        //     return response()->json(['error' => $json]);
-        // }
-        // if($request->gender == ''){
-        //     $json = "Por favor informe o <strong>sexo</strong>";
-        //     return response()->json(['error' => $json]);
-        // }
-        // if(!filter_var($request->email, FILTER_VALIDATE_EMAIL)){
-        //     $json = "O campo <strong>Email</strong> está vazio ou não tem um formato válido!";
-        //     return response()->json(['error' => $json]);
-        // }
-        // if($request->whatsapp == ''){
-        //     $json = "Por favor preencha o campo <strong>Telefone</strong>";
-        //     return response()->json(['error' => $json]);
-        // }
-        // if($request->baptism_date && $request->baptism_date != null){
-        //     $baptism_date = Carbon::createFromFormat('d/m/Y', $request->baptism_date)->format('Y-m-d');        
-        //     if(Carbon::parse($baptism_date)->gt(Carbon::parse(now())->format('Y-m-d'))){
-        //         $json = "Você selecionou uma <strong>Data</strong> inválida!";
-        //         return response()->json(['error' => $json]);
-        //     }
-        // }        
-        // if(!empty($request->bairro) || !empty($request->cidade)){
-        //     $json = "<strong>ERRO</strong> Você está praticando SPAM!";  
-        //     return response()->json(['error' => $json]);
-        // }
+        $birthday = Carbon::createFromFormat('d/m/Y', $request->birthday)->format('Y-m-d');        
+        if(Carbon::parse($birthday)->gt(Carbon::parse(now())->format('Y-m-d'))){
+            $json = "Você selecionou uma <strong>Data</strong> inválida!";
+            return response()->json(['error' => $json]);
+        }
+        if($request->gender == ''){
+            $json = "Por favor informe o <strong>sexo</strong>";
+            return response()->json(['error' => $json]);
+        }
+        if(!filter_var($request->email, FILTER_VALIDATE_EMAIL)){
+            $json = "O campo <strong>Email</strong> está vazio ou não tem um formato válido!";
+            return response()->json(['error' => $json]);
+        }
+        if($request->whatsapp == ''){
+            $json = "Por favor preencha o campo <strong>Telefone</strong>";
+            return response()->json(['error' => $json]);
+        }
+        if($request->baptism_date && $request->baptism_date != null){
+            $baptism_date = Carbon::createFromFormat('d/m/Y', $request->baptism_date)->format('Y-m-d');        
+            if(Carbon::parse($baptism_date)->gt(Carbon::parse(now())->format('Y-m-d'))){
+                $json = "Você selecionou uma <strong>Data</strong> inválida!";
+                return response()->json(['error' => $json]);
+            }
+        }        
+        if(!empty($request->bairro) || !empty($request->cidade)){
+            $json = "<strong>ERRO</strong> Você está praticando SPAM!";  
+            return response()->json(['error' => $json]);
+        }
 
         $data = [
             'name' => $request->name,
@@ -246,8 +246,8 @@ class WebController extends Controller
 
     public function storeMember($data, $member_email)
     {   
-        //$member = User::create($data);
-        //$member->save();
+        $member = User::create($data);
+        $member->save();
         Mail::send( new CreateMember($data, $member_email));
     }
     
