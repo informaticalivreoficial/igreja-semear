@@ -244,7 +244,7 @@ $config1 = [
                                 <div class="row mb-2">
                                     <div class="col-12">   
                                         <label class="labelforms text-muted"><b>Política de Privacidade</b></label>
-                                        <x-adminlte-text-editor name="politicas_de_privacidade" v placeholder="Política de Privacidade..." :config="$config1">{{ old('privacy_policy') ?? $config->privacy_policy }}</x-adminlte-text-editor>                                                                                     
+                                        <x-adminlte-text-editor name="privacy_policy" v placeholder="Política de Privacidade..." :config="$config1">{{ old('privacy_policy') ?? $config->privacy_policy }}</x-adminlte-text-editor>                                                                                     
                                     </div>                                    
                                 </div>
                             </div> 
