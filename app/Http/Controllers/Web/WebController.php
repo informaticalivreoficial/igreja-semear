@@ -235,16 +235,20 @@ class WebController extends Controller
             'hour_accept_agend' => $request->hour_accept_agend,
         ];
 
-        $this->storeMember($data, $data_email);        
+        $this->storeMember($data, $data_email);
+        $cadastro = [
+           'cadastro' => 'Cadastro realizado com sucesso!',
+            'email_success' => 'Email de confirmação enviado com sucesso!',
+            'name' => $data['name']
+        ];   
+        return response()->json($cadastro);     
     }
 
     public function storeMember($data, $member_email)
     {   
-        $member = User::create($data);
-        $member->save();
-        
+        //$member = User::create($data);
+        //$member->save();
         Mail::send( new CreateMember($data, $member_email));
-        //return redirect()->route('web.membro.cadastro')->with('success', 'Cadastro realizado com sucesso!');
     }
     
 }

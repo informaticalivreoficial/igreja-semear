@@ -39,10 +39,10 @@
         <div class="row justify-content-center">
             <div class="col-md-12">
                 <div class="card">
-                    <header class="card-header">
+                    <header class="card-header form_hide">
                         <h5 class="card-title mt-2 text-center">Cadastro de Membros</h5>
                     </header>
-                    <article class="card-body">
+                    <article class="card-body form_hide">
                         <form method="post" action="" class="j_formsubmit" autocomplete="off">
                             @csrf
                             <div class="form-row">
@@ -271,6 +271,7 @@
     <script src="https://unpkg.com/bootstrap-datepicker@1.9.0/dist/locales/bootstrap-datepicker.pt-BR.min.js" charset="UTF-8"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="{{url(asset('backend/assets/js/jquery.mask.js'))}}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script> 
     $(function () {
 
@@ -360,20 +361,30 @@
                 dataType: 'JSON',
                 beforeSend: function(){
                     form.find("#js-contact-btn").attr("disabled", true);
-                    form.find('#js-contact-btn').text("Carregando...");                
-                    form.find('.alert').fadeOut(500, function(){
-                        $(this).remove();
-                    });
+                    form.find('#js-contact-btn').text("Carregando...");
                 },
                 success: function(resposta){
                     if(resposta.error){
-                        toastr.error(resposta.error, 'Erro')                   
-                    }else{
-                        form.find('#js-contact-result').html('<div class="alert alert-success error-msg">'+ resposta.sucess +'</div>');
-                        form.find('.error-msg').fadeIn();                    
-                        form.find('input[class!="noclear"]').val('');
-                        form.find('textarea[class!="noclear"]').val('');
-                        form.find('.form_hide').fadeOut(500);
+                        toastr.error(resposta.error, 'Erro')          
+                    }else{   
+                        // toastr.success(resposta.cadastro, 'Sucesso')                     
+                        // setTimeout(function() {
+                        //     toastr.success(resposta.email_success, 'Sucesso');
+                        // }, 2000);      
+                        setTimeout(function() {
+                            form.find('input[class!="noclear"]').val('');
+                            $('.form_hide').fadeOut(500);
+                        }, 2000); 
+                        Swal.fire({
+                            title: 'Obrigado ' + resposta.name,
+                            text: resposta.cadastro,
+                            icon: 'success',
+                            confirmButtonText: 'ok'
+                        }).then((result) => {
+                            if(result.isConfirmed){
+                                window.location.href = "{{ route('web.home') }}";
+                            }
+                        });
                     }
                 },
                 complete: function(resposta){
@@ -386,6 +397,8 @@
         });
 
     });
+
+    
 
     $(document).ready(function() {
 
