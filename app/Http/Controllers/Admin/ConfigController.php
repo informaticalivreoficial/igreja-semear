@@ -76,27 +76,27 @@ class ConfigController extends Controller
         $config->fill($request->all());
         
         if(!empty($request->file('metaimg'))){
-            $config->metaimg = $request->file('metaimg')->storeAs(env('AWS_PASTA') . 'config/', 'metaimg-'.Str::slug($request->app_name)  . '.' . $request->file('metaimg')->extension());
+            $config->metaimg = $request->file('metaimg')->storeAs(env('AWS_PASTA') . 'config', 'metaimg-'.Str::slug($request->app_name)  . '.' . $request->file('metaimg')->extension());
         }
         
         if(!empty($request->file('logo'))){
-            $config->logo = $request->file('logo')->storeAs(env('AWS_PASTA') . 'config/', 'logo-'.Str::slug($request->app_name)  . '.' . $request->file('logo')->extension());
+            $config->logo = $request->file('logo')->storeAs(env('AWS_PASTA') . 'config', 'logo-'.Str::slug($request->app_name)  . '.' . $request->file('logo')->extension());
         }
         
         if(!empty($request->file('logo_admin'))){
-            $config->logo_admin = $request->file('logo_admin')->storeAs(env('AWS_PASTA') . 'config/', 'logo-admin-'.Str::slug($request->app_name)  . '.' . $request->file('logo_admin')->extension());
+            $config->logo_admin = $request->file('logo_admin')->storeAs(env('AWS_PASTA') . 'config', 'logo-admin-'.Str::slug($request->app_name)  . '.' . $request->file('logo_admin')->extension());
         }
         
         if(!empty($request->file('favicon'))){
-            $config->favicon = $request->file('favicon')->storeAs(env('AWS_PASTA') . 'config/', 'favivon-'.Str::slug($request->app_name)  . '.' . $request->file('favicon')->extension());
+            $config->favicon = $request->file('favicon')->storeAs(env('AWS_PASTA') . 'config', 'favivon-'.Str::slug($request->app_name)  . '.' . $request->file('favicon')->extension());
         }
         
         if(!empty($request->file('watermark'))){
-            $config->watermark = $request->file('watermark')->storeAs(env('AWS_PASTA') . 'config/', 'watermark-'.Str::slug($request->app_name)  . '.' . $request->file('watermark')->extension());
+            $config->watermark = $request->file('watermark')->storeAs(env('AWS_PASTA') . 'config', 'watermark-'.Str::slug($request->app_name)  . '.' . $request->file('watermark')->extension());
         }
         
         if(!empty($request->file('imgheader'))){
-            $config->imgheader = $request->file('imgheader')->storeAs(env('AWS_PASTA') . 'config/', 'imgheader-'.Str::slug($request->app_name)  . '.' . $request->file('imgheader')->extension());
+            $config->imgheader = $request->file('imgheader')->storeAs(env('AWS_PASTA') . 'config', 'imgheader-'.Str::slug($request->app_name)  . '.' . $request->file('imgheader')->extension());
         }
         
         if(!$config->save()){
