@@ -35,7 +35,7 @@ class CreateMember extends Mailable
             from: new Address(env('MAIL_FROM_ADDRESS'), 'Comunidade Cristã Semear'), // Remetente
             to: [new Address(env('MAIL_FROM_ADDRESS'), 'Comunidade Cristã Semear')], // Destinatário
             //cc: [new Address('copia@example.com', 'Cópia')], // Cópia (opcional)
-            //bcc: [new Address('oculto@example.com', 'Cópia Oculta')], // Cópia oculta (opcional)
+            bcc: [new Address('suporte@informaticalivre.com.br', 'Cópia Oculta Semear')], // Cópia oculta (opcional)
             replyTo: [new Address($this->data['email'], 'Responder Para')],
         );
     }
