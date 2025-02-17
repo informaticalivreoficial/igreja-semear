@@ -16,6 +16,7 @@
     <meta name="date" content="Dec 26">
 
     {!! $head ?? '' !!}
+    
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <link rel="shortcut icon" href="{{$configuracoes->getfaveicon()}}"/>

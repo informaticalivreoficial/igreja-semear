@@ -26,10 +26,9 @@ class ConfigService
     public function getMetaImg()
     {
         $config = $this->configRepository->getConfigById($this->idConfig);
-        $image = $config->metaimg;        
-        if(empty($config->metaimg) || !File::exists('../public/storage/' . $image)) {
+        if(empty($config->metaimg) || !Storage::disk()->exists($config->metaimg)) {
             return url(asset('backend/assets/images/image.jpg'));
         } 
-        return Storage::url(Cropper::thumb($config->metaimg, env('METAIMG_WIDTH'), env('METAIMG_HEIGHT')));
+        return Storage::url($config->metaimg);
     }
 }
