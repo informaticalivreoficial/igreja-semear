@@ -34,8 +34,8 @@ class WebController extends Controller
 
     public function home()
     {  
-        $head = $this->seo->render($this->configService->getConfig()->nomedosite ?? 'Informática Livre',
-            $this->configService->getConfig()->descricao ?? 'Informática Livre desenvolvimento de sistemas web desde 2005',
+        $head = $this->seo->render($this->configService->getConfig()->app_name ?? 'Informática Livre',
+            $this->configService->getConfig()->information ?? 'Informática Livre desenvolvimento de sistemas web desde 2005',
             route('web.home'),
             $this->configService->getMetaImg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
         ); 
@@ -48,8 +48,8 @@ class WebController extends Controller
     public function quemsomos()
     {
         $paginaQuemSomos = Post::where('tipo', 'pagina')->postson()->where('id', 5)->first();
-        $head = $this->seo->render('Quem Somos - ' . $this->configService->getConfig()->nomedosite,
-            $this->configService->getConfig()->descricao ?? 'Informática Livre desenvolvimento de sistemas web desde 2005',
+        $head = $this->seo->render('Quem Somos - ' . $this->configService->getConfig()->app_name,
+            $this->configService->getConfig()->information ?? 'Informática Livre desenvolvimento de sistemas web desde 2005',
             route('web.quemsomos'),
             $this->configService->getMetaImg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
         );
@@ -61,8 +61,8 @@ class WebController extends Controller
 
     public function politica()
     {
-        $head = $this->seo->render('Política de Privacidade - ' . $this->configService->getConfig()->nomedosite ?? 'Informática Livre',
-            'Política de Privacidade - ' . $this->configService->getConfig()->nomedosite,
+        $head = $this->seo->render('Política de Privacidade - ' . $this->configService->getConfig()->app_name ?? 'Informática Livre',
+            'Política de Privacidade - ' . $this->configService->getConfig()->app_name,
             route('web.politica'),
             $this->configService->getMetaImg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
         );
@@ -95,7 +95,7 @@ class WebController extends Controller
         })->postson()->limit(10)->get();
         
         $head = $this->seo->render('Pesquisa por ' . $request->search ?? 'Informática Livre',
-            'Pesquisa - ' . $this->configService->getConfig()->nomedosite,
+            'Pesquisa - ' . $this->configService->getConfig()->app_name,
             route('web.blog.artigos'),
             $this->configService->getMetaImg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
         );
@@ -129,7 +129,7 @@ class WebController extends Controller
     
     public function atendimento()
     {
-        $head = $this->seo->render('Atendimento - ' . $this->configService->getConfig()->nomedosite,
+        $head = $this->seo->render('Atendimento - ' . $this->configService->getConfig()->app_name,
             'Nossa equipe está pronta para melhor atender as demandas de nossos clientes!',
             route('web.atendimento'),
             $this->configService->getMetaImg() ?? 'https://informaticalivre.com/media/metaimg.jpg'

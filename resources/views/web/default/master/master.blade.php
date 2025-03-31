@@ -5,10 +5,10 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>       
         <meta name="author" content="{{env('DESENVOLVEDOR')}}"/>
-        <meta name="copyright" content="{{$configuracoes->ano_de_inicio}} - {{$configuracoes->nomedosite}}">
+        <meta name="copyright" content="{{$configuracoes->init_date}} - {{$configuracoes->app_name}}">
         <meta name="designer" content="Renato Montanari">
         <meta name="publisher" content="Renato Montanari">
-        <meta name="url" content="{{$configuracoes->dominio}}" />
+        <meta name="url" content="{{$configuracoes->domain}}" />
         <meta name="keywords" content="{{$configuracoes->metatags}}">
         <meta name="distribution" content="web">
         <meta name="rating" content="general">
