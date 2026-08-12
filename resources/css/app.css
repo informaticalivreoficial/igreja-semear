@@ -1,0 +1,100 @@
+@import 'flatpickr/dist/flatpickr.min.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  input[type='text'],
+  input[type='email'],
+  input[type='tel'],
+  input[type='number'],
+  input[type='password'],
+  textarea,
+  select {
+    @apply border border-gray-300 rounded-lg text-sm w-full bg-white;
+  }
+}
+
+.flatpickr-calendar * {
+    box-sizing: border-box;
+}
+
+.flatpickr-calendar {
+    font-size: 14px;
+}
+
+.flatpickr-day {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flatpickr-weekday {
+    text-align: center;
+}
+
+.flatpickr-day.selected {
+    @apply bg-green-600 border-green-600 text-white;
+}
+
+.flatpickr-day.inRange {
+    @apply bg-green-100;
+}
+
+@layer components {
+  .input-form {
+    @apply w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring focus:border-blue-400;
+  }
+
+  /* Adicione isso: */
+  .input-pagbank {
+      @apply w-full rounded-xl border text-sm px-3 py-2.5
+            bg-white transition outline-none
+            focus:ring-4;
+  }
+
+  .input-pagbank-default {
+      @apply border-[#e8e4d8]
+            focus:border-[#16a3b7]
+            focus:ring-cyan-100;
+  }
+
+  .input-pagbank-error {
+      @apply border-red-500 bg-red-50 ring-2 ring-red-100
+            focus:border-red-500
+            focus:ring-red-100;
+  }
+
+  .btn-primary {
+    @apply bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition;
+  }
+
+  .btn-danger {
+    @apply bg-red-600 text-white px-3 py-2 rounded hover:bg-red-700 transition;
+  }  
+
+  
+}
+
+.notifications-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+
+.notifications-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.notifications-scroll::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 999px;
+}
+
+.notifications-scroll::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Firefox */
+.notifications-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+}

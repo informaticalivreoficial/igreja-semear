@@ -1,32 +1,28 @@
-/**
- * First we will load all of this project's JavaScript dependencies which
- * includes Vue and other libraries. It is a great starting point when
- * building robust, powerful web applications using Vue and Laravel.
- */
+import './bootstrap';
 
-require('./bootstrap');
+import flatpickr from "flatpickr"
+import { Portuguese } from "flatpickr/dist/l10n/pt.js"
 
-window.Vue = require('vue').default;
+window.flatpickr = flatpickr
+window.FlatpickrPortuguese = Portuguese
 
-/**
- * The following block of code may be used to automatically register your
- * Vue components. It will recursively scan this directory for the Vue
- * components and automatically register them with their "basename".
- *
- * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
- */
+import Swal from 'sweetalert2'
+window.Swal = Swal
 
-// const files = require.context('./', true, /\.vue$/i)
-// files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
+import IMask from 'imask';
+window.IMask = IMask;
 
-Vue.component('example-component', require('./components/ExampleComponent.vue').default);
+import { Calendar } from '@fullcalendar/core'
+import dayGridPlugin from '@fullcalendar/daygrid'
+import interactionPlugin from '@fullcalendar/interaction'
+import ptBrLocale from '@fullcalendar/core/locales/pt-br'
 
-/**
- * Next, we will create a fresh Vue application instance and attach it to
- * the page. Then, you may begin adding components to this application
- * or customize the JavaScript scaffolding to fit your unique needs.
- */
+window.Calendar = Calendar
+window.dayGridPlugin = dayGridPlugin
+window.interactionPlugin = interactionPlugin
+window.ptBrLocale = ptBrLocale
 
-const app = new Vue({
-    el: '#app',
-});
+import Toastify from "toastify-js";
+import "toastify-js/src/toastify.css";
+
+window.Toastify = Toastify;

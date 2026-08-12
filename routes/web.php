@@ -1,24 +1,35 @@
 <?php
 
-use Illuminate\Support\Facades\Auth;
+use App\Livewire\Auth\Login;
+use App\Livewire\Auth\Register;
+use App\Livewire\Dashboard\Dashboard;
+use App\Livewire\Dashboard\{
+    NotificationsList,
+    Settings,
+};
+use App\Livewire\Dashboard\Users\{
+    Time,
+    Users,
+    ViewUser,
+    Form,
+};
+
+use App\Livewire\Dashboard\Permissions\Index as PermissionIndex;
+use App\Livewire\Dashboard\Roles\Index as RoleIndex;
+
+use App\Livewire\Dashboard\Menu\Index;
+
+use App\Livewire\Dashboard\Posts\CatPosts;
+use App\Livewire\Dashboard\Posts\PostForm;
+use App\Livewire\Dashboard\Posts\Posts;
+
+use App\Livewire\Dashboard\Sitemap\SitemapGenerator;
+use App\Livewire\Dashboard\Slides\SlideForm;
+use App\Livewire\Dashboard\Slides\Slides;
+
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\{
-    AdminController,
-    UserController,
-    EmailController,
-    PostController,
-    CatPostController,
-    ConfigController,
-    NewsletterController,
-    ParceiroController,
-    SitemapController,
-    SlideController
-};
-use App\Http\Controllers\Web\{
-    RssFeedController,
-    SendEmailController,
-    WebController
-};
+require __DIR__.'/auth.php';
+
 
 Route::group(['namespace' => 'Web', 'as' => 'web.'], function () {
 
@@ -63,108 +74,61 @@ Route::group(['namespace' => 'Web', 'as' => 'web.'], function () {
 
 });
 
-Route::prefix('admin')->middleware('auth')->group( function(){
+Route::group(['middleware' => ['auth', 'verified'], 'prefix' => 'admin'], function () {
 
-    //******************************* Newsletter *********************************************/
-    Route::match(['post', 'get'], 'listas/padrao', [NewsletterController::class, 'padraoMark'])->name('listas.padrao');
-    Route::get('listas/set-status', [NewsletterController::class, 'listaSetStatus'])->name('listas.listaSetStatus');
-    Route::get('listas/delete', [NewsletterController::class, 'listaDelete'])->name('listas.delete');
-    Route::delete('listas/deleteon', [NewsletterController::class, 'listaDeleteon'])->name('listas.deleteon');
-    Route::put('listas/{id}', [NewsletterController::class, 'listasUpdate'])->name('listas.update');
-    Route::get('listas/{id}/editar', [NewsletterController::class, 'listasEdit'])->name('listas.edit');
-    Route::get('listas/cadastrar', [NewsletterController::class, 'listasCreate'])->name('listas.create');
-    Route::post('listas/store', [NewsletterController::class, 'listasStore'])->name('listas.store');
-    Route::get('listas', [NewsletterController::class, 'listas'])->name('listas');
+    Route::get('/', Dashboard::class)->name('admin');
+    Route::get('configuracoes', Settings::class)->name('settings');
 
-    Route::put('listas/email/{id}', [NewsletterController::class, 'newsletterUpdate'])->name('listas.newsletter.update');
-    Route::get('listas/email/{id}/edit', [NewsletterController::class, 'newsletterEdit'])->name('listas.newsletter.edit');
-    Route::get('listas/email/delete', [NewsletterController::class, 'emailDelete'])->name('listas.newsletter.delete');
-    Route::delete('listas/email/deleteon', [NewsletterController::class, 'emailDeleteon'])->name('listas.newsletter.deleteon');
-    Route::get('listas/email/cadastrar', [NewsletterController::class, 'newsletterCreate'])->name('lista.newsletter.create');
-    Route::post('listas/email/store', [NewsletterController::class, 'newsletterStore'])->name('listas.newsletter.store');
-    Route::get('listas/emails/categoria/{categoria}', [NewsletterController::class, 'newsletters'])->name('lista.newsletters');
+    //******************************* Sitemap *********************************************/
+    Route::get('sitemap-generator', SitemapGenerator::class)->name('sitemap.generator');
+    //Route::get('/relatorios/imoveis', PropertiesReport::class)->name('reports.properties');
 
-    //******************* Slides ************************************************/
-    Route::get('slides/set-status', [SlideController::class, 'slideSetStatus'])->name('slides.slideSetStatus');
-    Route::get('slides/delete', [SlideController::class, 'delete'])->name('slides.delete');
-    Route::delete('slides/deleteon', [SlideController::class, 'deleteon'])->name('slides.deleteon');
-    Route::put('slides/{slide}', [SlideController::class, 'update'])->name('slides.update');
-    Route::get('slides/{slide}/edit', [SlideController::class, 'edit'])->name('slides.edit');
-    Route::get('slides/create', [SlideController::class, 'create'])->name('slides.create');
-    Route::post('slides/store', [SlideController::class, 'store'])->name('slides.store');
-    Route::get('slides', [SlideController::class, 'index'])->name('slides.index');
+    Route::get('notificacoes', NotificationsList::class)->name('notifications.index'); 
 
-    //******************** Parceiros *********************************************/
-    Route::match(['post', 'get'], 'parceiros/fetchCity', [ParceiroController::class, 'fetchCity'])->name('parceiros.fetchCity');
-    Route::get('parceiros/set-status', [ParceiroController::class, 'parceiroSetStatus'])->name('parceiros.parceiroSetStatus');
-    Route::post('parceiros/image-set-cover', [ParceiroController::class, 'imageSetCover'])->name('parceiros.imageSetCover');
-    Route::delete('parceiros/image-remove', [ParceiroController::class, 'imageRemove'])->name('parceiros.imageRemove');
-    Route::delete('parceiros/deleteon', [ParceiroController::class, 'deleteon'])->name('parceiros.deleteon');
-    Route::get('parceiros/delete', [ParceiroController::class, 'delete'])->name('parceiros.delete');
-    Route::put('parceiros/{id}', [ParceiroController::class, 'update'])->name('parceiros.update');
-    Route::get('parceiros/{id}/edit', [ParceiroController::class, 'edit'])->name('parceiros.edit');
-    Route::get('parceiros/create', [ParceiroController::class, 'create'])->name('parceiros.create');
-    Route::post('parceiros/store', [ParceiroController::class, 'store'])->name('parceiros.store');
-    Route::get('parceiros', [ParceiroController::class, 'index'])->name('parceiros.index');
+    
+    // Route::put('listas/email/{id}', [NewsletterController::class, 'newsletterUpdate'])->name('listas.newsletter.update');
+    // Route::get('listas/email/set-status', [NewsletterController::class, 'emailSetStatus'])->name('emails.emailSetStatus');
+    // Route::get('listas/email/delete', [NewsletterController::class, 'emailDelete'])->name('emails.delete');
+    // Route::delete('listas/email/deleteon', [NewsletterController::class, 'emailDeleteon'])->name('emails.deleteon');
+    // Route::get('listas/email/{id}/edit', [NewsletterController::class, 'newsletterEdit'])->name('listas.newsletter.edit');
+    // Route::get('listas/email/cadastrar', [NewsletterController::class, 'newsletterCreate'])->name('lista.newsletter.create');
+    // Route::post('listas/email/store', [NewsletterController::class, 'newsletterStore'])->name('listas.newsletter.store');
+    // Route::get('listas/emails/categoria/{categoria}', [NewsletterController::class, 'newsletters'])->name('lista.newsletters');
 
-    //******************** Sitemap *********************************************/
-    Route::get('gerarxml', [SitemapController::class, 'gerarxml'])->name('admin.gerarxml');
+    //******************* Templates ************************************************/
+    // Route::get('templates/set-status', [TemplateController::class, 'templateSetStatus'])->name('templates.templateSetStatus');
+    // Route::get('templates/delete', [TemplateController::class, 'delete'])->name('templates.delete');
+    // Route::delete('templates/deleteon', [TemplateController::class, 'deleteon'])->name('templates.deleteon');
+    // Route::put('templates/{id}', [TemplateController::class, 'update'])->name('templates.update');
+    // Route::get('templates/{id}/edit', [TemplateController::class, 'edit'])->name('templates.edit');
+    // Route::get('templates/create', [TemplateController::class, 'create'])->name('templates.create');
+    // Route::post('templates/store', [TemplateController::class, 'store'])->name('templates.store');
+    // Route::get('templates', [TemplateController::class, 'index'])->name('templates.index');
 
-    //******************** Configurações ***************************************/
-    Route::match(['post', 'get'], 'configuracoes/fetchCity', [ConfigController::class, 'fetchCity'])->name('configuracoes.fetchCity');
-    Route::put('configuracoes/{config}', [ConfigController::class, 'update'])->name('configuracoes.update');
-    Route::get('configuracoes', [ConfigController::class, 'editar'])->name('configuracoes.editar');
+   
+    
+    //*********************** Slides ********************************************/
+    Route::get('slides/{slide}/editar', SlideForm::class)->name('slides.edit');
+    Route::get('slides/cadastrar', SlideForm::class)->name('slides.create');
+    Route::get('slides', Slides::class)->name('slides.index');
 
-    //********************* Categorias para Posts *******************************/
-    Route::get('categorias/delete', [CatPostController::class, 'delete'])->name('categorias.delete');
-    Route::delete('categorias/deleteon', [CatPostController::class, 'deleteon'])->name('categorias.deleteon');
-    Route::put('categorias/posts/{id}', [CatPostController::class, 'update'])->name('categorias.update');
-    Route::get('categorias/{id}/edit', [CatPostController::class, 'edit'])->name('categorias.edit');
-    Route::match(['post', 'get'],'posts/categorias/create/{catpai}', [CatPostController::class, 'create'])->name('categorias.create');
-    Route::post('posts/categorias/store', [CatPostController::class, 'store'])->name('categorias.store');
-    Route::get('posts/categorias', [CatPostController::class, 'index'])->name('categorias.index');
+    Route::get('menus', Index::class)->name('menus.index');
 
-    //********************** Blog ************************************************/
-    Route::get('posts/set-status', [PostController::class, 'postSetStatus'])->name('posts.postSetStatus');
-    Route::get('posts/set-menu', [PostController::class, 'postSetMenu'])->name('posts.postSetMenu');
-    Route::get('posts/delete', [PostController::class, 'delete'])->name('posts.delete');
-    Route::delete('posts/deleteon', [PostController::class, 'deleteon'])->name('posts.deleteon');
-    Route::post('posts/image-set-cover', [PostController::class, 'imageSetCover'])->name('posts.imageSetCover');
-    Route::delete('posts/image-remove', [PostController::class, 'imageRemove'])->name('posts.imageRemove');
-    Route::put('posts/{id}', [PostController::class, 'update'])->name('posts.update');
-    Route::get('posts/{id}/edit', [PostController::class, 'edit'])->name('posts.edit');
-    Route::get('posts/create', [PostController::class, 'create'])->name('posts.create');
-    Route::post('posts/store', [PostController::class, 'store'])->name('posts.store');
-    Route::post('posts/categoriaList', [PostController::class, 'categoriaList'])->name('posts.categoriaList');
-    Route::get('posts/artigos', [PostController::class, 'index'])->name('posts.artigos');
-    Route::get('posts/noticias', [PostController::class, 'index'])->name('posts.noticias');
-    Route::get('posts/paginas', [PostController::class, 'index'])->name('posts.paginas');
+    //*********************** Posts *********************************************/
+    Route::get('posts/{post}/editar', PostForm::class)->name('posts.edit');
+    Route::get('posts/cadastrar', PostForm::class)->name('posts.create');
+    Route::get('posts', Posts::class)->name('posts.index');
 
-    //*********************** Email **********************************************/
-    Route::get('email/suporte', [EmailController::class, 'suporte'])->name('email.suporte');
-    Route::match(['post', 'get'], 'email/enviar-email', [EmailController::class, 'send'])->name('email.send');
-    Route::post('email/sendEmail', [EmailController::class, 'sendEmail'])->name('email.sendEmail');
-    Route::match(['post', 'get'], 'email/success', [EmailController::class, 'success'])->name('email.success');
+    //*********************** Categorias de Posts ********************************/
+    Route::get('posts/categorias', CatPosts::class)->name('posts.categories.index');
 
     //*********************** Usuários *******************************************/
-    Route::match(['get', 'post'], 'usuarios/pesquisa', [UserController::class, 'search'])->name('users.search');
-    Route::match(['post', 'get'], 'usuarios/fetchCity', [UserController::class, 'fetchCity'])->name('users.fetchCity');
-    Route::delete('usuarios/deleteon', [UserController::class, 'deleteon'])->name('users.deleteon');
-    Route::get('usuarios/set-status', [UserController::class, 'userSetStatus'])->name('users.userSetStatus');
-    Route::get('usuarios/delete', [UserController::class, 'delete'])->name('users.delete');
-    Route::get('usuarios/time', [UserController::class, 'team'])->name('users.team');
-    Route::get('usuarios/view/{id}', [UserController::class, 'show'])->name('users.view');
-    Route::put('usuarios/{id}', [UserController::class, 'update'])->name('users.update');
-    Route::get('usuarios/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
-    Route::get('usuarios/create', [UserController::class, 'create'])->name('users.create');
-    Route::post('usuarios/store', [UserController::class, 'store'])->name('users.store');
-    Route::get('usuarios', [UserController::class, 'index'])->name('users.index');    
+    Route::get('/cargos', RoleIndex::class)->name('admin.roles');
+    Route::get('/permissoes', PermissionIndex::class)->name('admin.permissions');
 
-    //******************** Sitemap *********************************************/
-    Route::get('gerarxml', [SitemapController::class, 'gerarxml'])->name('gerarxml');
-
-    Route::get('/', [AdminController::class, 'home'])->name('home');
+    Route::get('usuarios/clientes', Users::class)->name('users.index');
+    Route::get('usuarios/time', Time::class)->name('users.time');
+    Route::get('usuarios/cadastrar', Form::class)->name('users.create');
+    Route::get('usuarios/{user}/editar', Form::class)->name('users.edit');
+    Route::get('usuarios/{user}/visualizar', ViewUser::class)->name('users.view');     
 });
-
-
-Auth::routes();
