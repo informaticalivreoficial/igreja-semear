@@ -3,8 +3,8 @@
 namespace App\Livewire\Dashboard\Posts;
 
 use App\Models\CatPost;
-use Livewire\Component;
 use Livewire\Attributes\On;
+use Livewire\Component;
 use Livewire\WithPagination;
 
 class CatPosts extends Component
@@ -25,7 +25,7 @@ class CatPosts extends Component
 
     protected $listeners = ['category-saved' => '$refresh'];
 
-    #{Url}
+    // {Url}
     public function updatingSearch(): void
     {
         $this->resetPage();
@@ -41,7 +41,7 @@ class CatPosts extends Component
         }
 
         $this->resetPage();
-    }    
+    }
 
     public function toggleStatus($id)
     {
@@ -63,31 +63,32 @@ class CatPosts extends Component
     }
 
     public function setDeleteId($id)
-    {        
+    {
         $category = CatPost::findOrFail($id);
 
-        if($category->children()->count() > 0){
+        if ($category->children()->count() > 0) {
             $this->dispatch('swal', [
                 'title' => 'Erro!',
-                'icon'  => 'error',
-                'text'  => 'Não é possível excluir uma categoria que possui subcategorias.',
+                'icon' => 'error',
+                'text' => 'Não é possível excluir uma categoria que possui subcategorias.',
             ]);
+
             return;
         }
 
-        if($category->countposts() > 0){
+        if ($category->countposts() > 0) {
             $text = 'Essa categoria possui posts cadastrados e todos serão removidos. Deseja excluir mesmo assim?';
         }
 
         $this->dispatch('swal:confirm', [
-            'title' => 'Excluir ' . ($category->children()->count() > 0 ? 'SubCategoria' : 'Categoria'),
+            'title' => 'Excluir '.($category->children()->count() > 0 ? 'SubCategoria' : 'Categoria'),
             'text' => (isset($text) ? $text : 'Essa ação não pode ser desfeita.'),
             'icon' => 'warning',
             'confirmButtonText' => 'Sim, excluir',
             'cancelButtonText' => 'Cancelar',
             'confirmEvent' => 'deleteCategory',
             'confirmParams' => [$id],
-        ]);       
+        ]);
     }
 
     #[On('deleteCategory')]
@@ -99,8 +100,8 @@ class CatPosts extends Component
 
         $this->dispatch('swal', [
             'title' => 'Excluído!',
-            'text'  => ($category->children()->count() > 0 ? 'SubCategoria' : 'Categoria') . ' excluída com sucesso.',
-            'icon'  => 'success',
+            'text' => ($category->children()->count() > 0 ? 'SubCategoria' : 'Categoria').' excluída com sucesso.',
+            'icon' => 'success',
             'timer' => 2000,
             'showConfirmButton' => false,
         ]);
@@ -109,7 +110,7 @@ class CatPosts extends Component
     public function render()
     {
         $title = 'Categorias de Posts';
-        $searchableFields = ['title','content','slug'];
+        $searchableFields = ['title', 'content', 'slug'];
         $categories = CatPost::query()
             ->whereNull('id_pai')
             ->when($this->search, function ($query) use ($searchableFields) {
@@ -121,7 +122,8 @@ class CatPosts extends Component
             })
             ->orderBy($this->sortField, $this->sortDirection)
             ->paginate($this->perPage);
-        return view('livewire.dashboard.posts.cat-posts',[
+
+        return view('livewire.dashboard.posts.cat-posts', [
             'title' => $title,
             'categories' => $categories,
         ]);

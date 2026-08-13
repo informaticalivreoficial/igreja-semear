@@ -7,8 +7,8 @@ use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
-use Livewire\Component;
 use Livewire\Attributes\Layout;
+use Livewire\Component;
 
 class ResetPassword extends Component
 {
@@ -106,7 +106,7 @@ class ResetPassword extends Component
     }
 
     #[Layout('components.layouts.guest', [
-        'title' => 'Redefinir Senha'
+        'title' => 'Redefinir Senha',
     ])]
     public function render()
     {

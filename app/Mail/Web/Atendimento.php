@@ -3,10 +3,8 @@
 namespace App\Mail\Web;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Mail\Markdown;
 
 class Atendimento extends Mailable
 {
@@ -33,13 +31,13 @@ class Atendimento extends Mailable
     {
         return $this->replyTo($this->data['reply_email'], $this->data['reply_name'])
             ->to($this->data['siteemail'], $this->data['sitename'])
-            ->cc(['suporte@informaticalivre.com.br','villadirimi@terra.com.br'])
+            ->cc(['suporte@informaticalivre.com.br', 'villadirimi@terra.com.br'])
             ->from($this->data['siteemail'], $this->data['sitename'])
-            ->subject('#Atendimento: ' . $this->data['reply_name'])
+            ->subject('#Atendimento: '.$this->data['reply_name'])
             ->markdown('emails.atendimento', [
                 'nome' => $this->data['reply_name'],
                 'email' => $this->data['reply_email'],
-                'mensagem' => $this->data['mensagem']
-        ]);
+                'mensagem' => $this->data['mensagem'],
+            ]);
     }
 }

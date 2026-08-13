@@ -9,7 +9,7 @@ class DatePicker extends Component
     public $dataSelecionada;
 
     protected $rules = [
-        'dataSelecionada' => 'required|date_format:d/m/Y|before:today', 
+        'dataSelecionada' => 'required|date_format:d/m/Y|before:today',
     ];
 
     public function updatedDataSelecionada($value)
@@ -17,7 +17,7 @@ class DatePicker extends Component
         $this->validateOnly('dataSelecionada');
         $this->dispatch('atualizar-data', $value);
     }
-    
+
     public function render()
     {
         return view('livewire.date-picker');

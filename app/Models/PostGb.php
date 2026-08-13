@@ -10,18 +10,28 @@ class PostGb extends Model
 {
     use HasFactory;
 
-    protected $table = 'post_gb'; 
+    protected $table = 'post_gb';
 
     protected $fillable = [
+        'order_img',
         'post',
         'path',
-        'cover'
+        'cover',
     ];
 
     /**
-     * Accerssors and Mutators
+     * The attributes that should be cast.
+     *
+     * @var array
      */
+    protected $casts = [
+        'order_img' => 'integer',
+        'cover' => 'boolean',
+    ];
 
+    /**
+     * Accessors
+     */
     public function getUrlCroppedAttribute()
     {
         return Storage::url($this->path);

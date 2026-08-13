@@ -1,12 +1,13 @@
 <?php
 
-
 /**
  * <b>Limita os Palavras:</b> Limita a quantidade de palavras a serem exibidas em uma string!
- * @param STRING $String = Uma string qualquer
- * @return INT = $Limite = String limitada pelo $Limite
+ *
+ * @param  string  $String  = Uma string qualquer
+ * @return int = $Limite = String limitada pelo $Limite
  */
-function Words($String, $Limite, $Pointer = null) {
+function Words($String, $Limite, $Pointer = null)
+{
     $content = strip_tags(trim($String));
     $Format = (int) $Limite;
 
@@ -14,12 +15,11 @@ function Words($String, $Limite, $Pointer = null) {
     $NumWords = count($ArrWords);
     $NewWords = implode(' ', array_slice($ArrWords, 0, $Format));
 
-    $Pointer = (empty($Pointer) ? '...' : ' ' . $Pointer );
-    $Result = ( $Format < $NumWords ? $NewWords . $Pointer : $content );
+    $Pointer = (empty($Pointer) ? '...' : ' '.$Pointer);
+    $Result = ($Format < $NumWords ? $NewWords.$Pointer : $content);
+
     return $Result;
 }
-
-
 
 // pega o nome da cidade a partir de um ID relacionado
 // function getCidade($id, $tabela)
@@ -63,16 +63,16 @@ function Words($String, $Limite, $Pointer = null) {
 //         return $matches['1'];
 //     }else{
 //         return false;
-//     } 
+//     }
 //  }
 /*****************************
     FUNÇÃO PARA VALIDAR CPF
 *****************************/
 // function validaCPF($cpf) {
- 
+
 //     // Extrai somente os números
 //     $cpf = preg_replace( '/[^0-9]/is', '', $cpf );
-     
+
 //     // Verifica se foi informado todos os digitos corretamente
 //     if (strlen($cpf) != 11) {
 //         return false;
@@ -104,4 +104,3 @@ function Words($String, $Limite, $Pointer = null) {
 //     $valor = str_replace("/", "", $valor);
 //     return $valor;
 // }
-

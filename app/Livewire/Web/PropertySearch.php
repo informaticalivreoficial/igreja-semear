@@ -8,8 +8,11 @@ use Livewire\Component;
 class PropertySearch extends Component
 {
     public $check_in;
+
     public $check_out;
+
     public $guests = 1;
+
     public $perPage = 12;
 
     public $properties; // resultados da busca
@@ -60,11 +63,11 @@ class PropertySearch extends Component
             $query->whereDoesntHave('reservations', function ($q) {
                 $q->where(function ($q2) {
                     $q2->whereBetween('check_in', [$this->check_in, $this->check_out])
-                       ->orWhereBetween('check_out', [$this->check_in, $this->check_out])
-                       ->orWhere(function ($q3) {
-                           $q3->where('check_in', '<=', $this->check_in)
-                              ->where('check_out', '>=', $this->check_out);
-                       });
+                        ->orWhereBetween('check_out', [$this->check_in, $this->check_out])
+                        ->orWhere(function ($q3) {
+                            $q3->where('check_in', '<=', $this->check_in)
+                                ->where('check_out', '>=', $this->check_out);
+                        });
                 });
             });
 
@@ -80,8 +83,8 @@ class PropertySearch extends Component
 
         // Carrega avaliações aprovadas
         $this->properties = $query
-            ->withCount(['reviews as reviews_count' => fn($q) => $q->approved()])
-            ->withAvg(['reviews as reviews_avg_rating' => fn($q) => $q->approved()], 'rating')
+            ->withCount(['reviews as reviews_count' => fn ($q) => $q->approved()])
+            ->withAvg(['reviews as reviews_avg_rating' => fn ($q) => $q->approved()], 'rating')
             ->latest()
             ->take($this->perPage)
             ->get();

@@ -2,18 +2,22 @@
 
 namespace App\Livewire;
 
-use Livewire\Component;
 use Illuminate\Support\Facades\Http;
+use Livewire\Component;
 
 class Viacep extends Component
 {
     public $cep;             // CEP digitado
-    public $endereco;        // Endereço resultante da consulta
-    public $bairro;          // Bairro resultante da consulta
-    public $cidade;          // Cidade resultante da consulta
-    public $estado;          // Estado resultante da consulta
-    public $erro;            // Mensagem de erro
 
+    public $endereco;        // Endereço resultante da consulta
+
+    public $bairro;          // Bairro resultante da consulta
+
+    public $cidade;          // Cidade resultante da consulta
+
+    public $estado;          // Estado resultante da consulta
+
+    public $erro;            // Mensagem de erro
 
     // Método para consultar o CEP
     public function updatedCep($value)

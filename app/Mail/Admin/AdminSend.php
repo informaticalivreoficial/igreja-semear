@@ -3,7 +3,6 @@
 namespace App\Mail\Admin;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
@@ -34,19 +33,20 @@ class AdminSend extends Mailable
         $this->to($this->data['destinatario_email'], $this->data['reply_name']);
         $this->from($this->data['reply_email'], $this->data['reply_name']);
         $this->subject($this->data['assunto']);
-        if(!empty($this->data['copiapara'])){
+        if (! empty($this->data['copiapara'])) {
             $this->cc($this->data['copiapara']);
-        }        
-        if(!empty($this->data['anexo'])){
-            foreach($this->data['anexo'] as $anexo){
-                $this->attach($anexo->getRealPath(), array(
-                    'as'   => $anexo->getClientOriginalName(), 
-                    'mime' => $anexo->getMimeType()));
-            }            
-        }        
+        }
+        if (! empty($this->data['anexo'])) {
+            foreach ($this->data['anexo'] as $anexo) {
+                $this->attach($anexo->getRealPath(), [
+                    'as' => $anexo->getClientOriginalName(),
+                    'mime' => $anexo->getMimeType()]);
+            }
+        }
         $this->markdown('emails.send-admin', [
-            'mensagem' => $this->data['mensagem']
+            'mensagem' => $this->data['mensagem'],
         ]);
+
         return $this;
         //    dd($this);
         // $copiaEmail = (!empty($this->data['copiapara']) ? ''.->cc($this->data['copiapara']).'' : '');
@@ -55,10 +55,10 @@ class AdminSend extends Mailable
         // return $this->replyTo($this->data['reply_email'], $this->data['reply_name'])
         //     ->to($this->data['destinatario_email'], $this->data['reply_name'])
         //     ->from($this->data['reply_email'], $this->data['reply_name'])
-        //     $copiaEmail            
+        //     $copiaEmail
         //     ->subject($this->data['assunto'])
         //     // ->attach($this->data['anexo']->getRealPath(), array(
-        //     //     'as'   => 'file-.' . $this->data['anexo']->getClientOriginalExtension(), 
+        //     //     'as'   => 'file-.' . $this->data['anexo']->getClientOriginalExtension(),
         //     //     'mime' => $this->data['anexo']->getMimeType())
         //     // )
         //     ->markdown('emails.sendadmin', [

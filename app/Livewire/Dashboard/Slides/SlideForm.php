@@ -4,6 +4,7 @@ namespace App\Livewire\Dashboard\Slides;
 
 use App\Models\Slide;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -13,44 +14,63 @@ class SlideForm extends Component
 
     public ?Slide $slide = null;
 
-    public $title;
-    public $link;
-    public $target;
-    public $view_title;
+    public $titulo;
+
+    public $subtitulo;
+
+    public $botaolabel;
+
+    public $imagem;
+
     public $content;
-    public $expired_at;
-    public $status;
-    public $image;
-    public ?string $logoPath = null;
+
+    public $link;
+
+    public $target = false;
+
+    public $exibir_titulo = true;
+
+    public $categoria;
+
+    public $expira;
+
+    public $status = false;
+
+    public ?string $imagemPath = null;
 
     protected function rules(): array
     {
         return [
-            'title' => 'required|string|max:255',
-            'image' => $this->slide ? 'nullable|image|max:2048' : 'required|image|max:2048',
+            'titulo' => 'required|string|max:255',
+            'imagem' => $this->slide ? 'nullable|image|max:2048' : 'nullable|image|max:2048',
+            'expira' => 'nullable|date_format:d/m/Y',
         ];
     }
 
     public function render()
     {
-        return view('livewire.dashboard.slides.slide-form',[
-            'titlee' => $this->slide ? 'Editar Banner' : 'Cadastrar Banner',
+        return view('livewire.dashboard.slides.slide-form', [
+            'titlee' => $this->slide?->exists ? 'Editar Banner' : 'Cadastrar Banner',
         ]);
     }
 
-    public function mount(?Slide $slide = null)
+    public function mount(Slide $slide)
     {
-        $this->slide = $slide;        
-
-        if ($this->slide) {
-            $this->logoPath = $slide->image;
-            $this->title = $slide->title;
-            $this->link = $slide->link;
+        if ($slide->exists) {
+            $this->slide = $slide;
+            $this->imagemPath = $slide->imagem;
+            $this->titulo = $slide->titulo;
+            $this->subtitulo = $slide->subtitulo;
+            $this->botaolabel = $slide->botaolabel;
             $this->content = $slide->content;
-            $this->target = $slide->target;       // pega do banco
-            $this->view_title = $slide->view_title; // pega do banco
-            $this->expired_at = $slide->expired_at;
-            $this->status = $slide->status;
+            $this->link = $slide->link;
+            $this->target = (bool) $slide->target;
+            $this->exibir_titulo = (bool) $slide->exibir_titulo;
+            $this->categoria = $slide->categoria;
+            $this->expira = $slide->expira?->format('d/m/Y');
+            $this->status = (bool) $slide->status;
+        } else {
+            $this->slide = new Slide;
         }
     }
 
@@ -58,25 +78,34 @@ class SlideForm extends Component
     {
         $this->validate();
 
-        if ($this->image) {
-            if ($this->slide && $this->logoPath) {
-                Storage::disk('public')->delete($this->logoPath);
+        if ($this->imagem) {
+            if ($this->slide?->exists && $this->imagemPath) {
+                Storage::disk('public')->delete($this->imagemPath);
             }
-            $this->logoPath = $this->image->store('slides', 'public');
-        }        
+            $this->imagemPath = $this->imagem->store('slides', 'public');
+        }
+
+        $slug = Str::slug($this->titulo);
+        if (Slide::where('slug', $slug)->where('id', '!=', $this->slide->id ?? 0)->exists()) {
+            $slug = $slug.'-'.Str::random(4);
+        }
 
         $data = [
-            'title' => $this->title,
-            'link' => $this->link,
-            'target' => $this->target,
-            'view_title' => $this->view_title,
+            'titulo' => $this->titulo,
+            'subtitulo' => $this->subtitulo,
+            'botaolabel' => $this->botaolabel,
+            'imagem' => $this->imagemPath,
             'content' => $this->content,
-            'expired_at' => $this->expired_at,
-            'status' => $this->status,
-            'image' => $this->logoPath
+            'link' => $this->link,
+            'target' => (bool) $this->target,
+            'exibir_titulo' => (bool) $this->exibir_titulo,
+            'categoria' => $this->categoria,
+            'expira' => $this->expira,
+            'status' => (bool) $this->status,
+            'slug' => $slug,
         ];
 
-        if ($this->slide) {
+        if ($this->slide->exists) {
             $this->slide->update($data);
             $text = 'Slide Atualizado com sucesso!';
         } else {
@@ -92,7 +121,6 @@ class SlideForm extends Component
             'showConfirmButton' => false,
         ]);
 
-        return redirect()->route('slides.edit', $this->slide);
+        return redirect()->route('admin.slides.edit', $this->slide->id);
     }
-    
 }

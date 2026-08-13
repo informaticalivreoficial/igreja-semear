@@ -2,10 +2,9 @@
 
 namespace App\Livewire\Auth;
 
-use Livewire\Component;
-use Livewire\Attributes\Layout;
 use App\Traits\WithToastr;
-
+use Livewire\Attributes\Layout;
+use Livewire\Component;
 
 class VerifyEmail extends Component
 {
@@ -18,7 +17,7 @@ class VerifyEmail extends Component
         $this->toastSuccess('Novo link enviado!');
     }
 
-    #[Layout('web.client.create', ['title' => 'Verifique seu email'])]    
+    #[Layout('web.client.create', ['title' => 'Verifique seu email'])]
     public function render()
     {
         return view('livewire.auth.verify-email');

@@ -16,6 +16,7 @@ class ConfigRepository
     public function getConfigById(int $id)
     {
         $config = $this->model->where('id', $id)->first();
+
         return $config;
     }
 }

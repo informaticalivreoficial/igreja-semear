@@ -2,14 +2,16 @@
 
 namespace App\Livewire\Web;
 
-use Livewire\Component;
 use Livewire\Attributes\On;
+use Livewire\Component;
 
 class ImageGallery extends Component
 {
     public $images = [];
+
     public bool $open = false;
-    public int $current = 0;    
+
+    public int $current = 0;
 
     #[On('open-gallery')]
     public function openGallery(int $index = 0): void
@@ -36,6 +38,7 @@ class ImageGallery extends Component
             ? $this->current + 1
             : 0;
     }
+
     public function render()
     {
         return view('livewire.web.image-gallery');

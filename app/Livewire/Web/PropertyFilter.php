@@ -8,7 +8,8 @@ use Livewire\Component;
 class PropertyFilter extends Component
 {
     public $activeNeighborhood = null;
-    public $perPage = 12; 
+
+    public $perPage = 12;
 
     public function setNeighborhood($neighborhood = null)
     {
@@ -28,10 +29,10 @@ class PropertyFilter extends Component
             ->when($this->activeNeighborhood, function ($query) {
                 $query->where('neighborhood', $this->activeNeighborhood);
             })
-            ->withCount(['reviews as reviews_count' => function($query) {
+            ->withCount(['reviews as reviews_count' => function ($query) {
                 $query->where('approved', true);
             }])
-            ->withAvg(['reviews as reviews_avg_rating' => function($query) {
+            ->withAvg(['reviews as reviews_avg_rating' => function ($query) {
                 $query->where('approved', true);
             }], 'rating')
             ->available()
@@ -66,5 +67,5 @@ class PropertyFilter extends Component
     public function render()
     {
         return view('livewire.web.property-filter');
-    }   
+    }
 }

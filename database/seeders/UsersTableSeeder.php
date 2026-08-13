@@ -5,29 +5,31 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class UsersTableSeeder extends Seeder
 {
+    use WithoutModelEvents;
+
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        DB::table('users')->insert([
+        $admin = User::firstOrCreate(
+            ['email' => env('ADMIN_EMAIL', 'admin@semear.com.br')],
             [
-                'name' => env('ADMIN_NOME'),
-                'email' => env('ADMIN_EMAIL'),
+                'name' => env('ADMIN_NOME', 'Administrador'),
                 'email_verified_at' => now(),
-                'password' => bcrypt(env('ADMIN_PASS')),
-                'code' => env('ADMIN_PASS'),
-                'remember_token' => \Illuminate\Support\Str::random(10),                
-                'created_at' => now(),//Data e hora Atual                
-                'superadmin' => true,
-                'status' => 1
-            ]            
-        ]);
+                'password' => bcrypt(env('ADMIN_PASS', 'password')),
+                'status' => true,
+            ]
+        );
+        $admin->syncRoles(['super admin']);
 
-        //User::factory()->count(20)->create();
+        User::factory()->count(20)->create()->each->assignRole('member');
+
+        User::factory()->count(3)->create()->each->assignRole('editor');
+
+        User::factory()->count(2)->create()->each->assignRole('admin');
     }
 }

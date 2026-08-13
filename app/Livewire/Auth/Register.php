@@ -12,9 +12,11 @@ use Livewire\Component;
 #[Layout('components.layouts.guest')]
 class Register extends Component
 {
-    public $name = "";
-    public $email = "";
-    public $password = "";
+    public $name = '';
+
+    public $email = '';
+
+    public $password = '';
 
     public function register()
     {
@@ -36,7 +38,6 @@ class Register extends Component
 
         return $this->redirect('/', navigate: true);
     }
-
 
     #[Title('Register')]
     public function render()

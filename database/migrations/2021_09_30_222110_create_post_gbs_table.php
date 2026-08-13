@@ -15,6 +15,7 @@ class CreatePostGbsTable extends Migration
     {
         Schema::create('post_gb', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('order_img')->default(0);
             $table->unsignedInteger('post');
             $table->string('path');
             $table->boolean('cover')->nullable();

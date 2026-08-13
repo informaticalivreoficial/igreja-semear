@@ -3,10 +3,8 @@
 namespace App\Mail\Web;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Mail\Markdown;
 
 class FormClientAlert extends Mailable
 {
@@ -34,18 +32,18 @@ class FormClientAlert extends Mailable
             ->from($this->data['siteemail'], $this->data['sitename'])
             ->subject('✅ Formulário de Cliente Enviado')
             ->markdown('emails.form-client-alert', [
-                //Cliente
+                // Cliente
                 'nome' => $this->data['reply_name'],
                 'email' => $this->data['reply_email'],
                 'telefone' => $this->data['telefone'],
                 'cpf' => $this->data['cpf'],
-                //Empresa
+                // Empresa
                 'empresa' => $this->data['empresa'] ?? null,
                 'email_empresa' => $this->data['email_empresa'] ?? null,
                 'telefone_empresa' => $this->data['telefone_empresa'] ?? null,
                 'celular' => $this->data['celular'] ?? null,
                 'whatsapp' => $this->data['whatsapp'] ?? null,
-                'notasadicionais' => $this->data['notasadicionais'] ?? null
-        ]);
+                'notasadicionais' => $this->data['notasadicionais'] ?? null,
+            ]);
     }
 }

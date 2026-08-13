@@ -7,8 +7,8 @@
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{route('admin')}}">Painel de Controle</a></li>
-                        <li class="breadcrumb-item"><a href="{{route('users.index')}}">Usuários</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Painel de Controle</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('admin.users.index') }}">Membros</a></li>
                         <li class="breadcrumb-item active">Perfil</li>
                     </ol>
                 </div>
@@ -39,7 +39,9 @@
         
                   <h3 class="profile-username text-center">{{$user->name}}</h3>
         
-                  <p class="text-muted text-center">{{--$user->getFuncao()--}}</p>
+                  <p class="text-muted text-center">
+                      {{ $user->getRoleNames()->implode(', ') ?: '—' }}
+                  </p>
         
                   <ul class="list-group list-group-unbordered mb-3">
                     <li class="list-group-item">

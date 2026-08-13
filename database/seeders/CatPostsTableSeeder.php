@@ -2,63 +2,80 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Support\Facades\DB;
+use App\Models\CatPost;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class CatPostsTableSeeder extends Seeder
 {
+    use WithoutModelEvents;
+
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
-    public function run()
+    public function run(): void
     {
-        DB::table('cat_post')->insert([
+        $ensino = CatPost::updateOrCreate(
+            ['slug' => 'ensino'],
             [
-                'id' => 1,
+                'title' => 'Ensino',
+                'type' => 'artigo',
+                'content' => 'Estudos e ensinamentos bíblicos.',
+                'tags' => 'ensino,estudo bíblico,escola bíblica',
+                'views' => 0,
+                'status' => 1,
                 'id_pai' => null,
-                'titulo' => 'Tecnologia',
-                'content' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
-                'slug' => 'tecnologia', 
-                'tags' => 'tecnologia,artigos sobre tecnologia,notícias sobre tecnologia',
-                'status' => '1',
-                'tipo' => 'artigo',
-                'created_at' => now()//Data e hora Atual
-            ],
-            [
-                'id' => 2,
-                'id_pai' => null,
-                'titulo' => 'Meio Ambiente',
-                'content' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
-                'slug' => 'meio-ambiente', 
-                'tags' => 'meio ambiente,artigos sobre meio ambiente,notícias sobre meio ambiente',
-                'status' => '1',
-                'tipo' => 'artigo',
-                'created_at' => now()//Data e hora Atual
-            ],
-            [
-                'id' => 3,
-                'id_pai' => 1,
-                'titulo' => 'Dicas de informática',
-                'content' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
-                'slug' => 'dicas-de-informatica', 
-                'tags' => 'Dicas de informática,artigos sobre Dicas de informática,notícias sobre Dicas de informática',
-                'status' => '1',
-                'tipo' => 'artigo',
-                'created_at' => now()//Data e hora Atual
-            ],
-            [
-                'id' => 4,
-                'id_pai' => 2,
-                'titulo' => 'Curiosidades',
-                'content' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
-                'slug' => 'curiosidades', 
-                'tags' => 'Curiosidades,artigos sobre Curiosidades do Meio Ambiente,notícias sobre Curiosidades do Meio Ambiente',
-                'status' => '1',
-                'tipo' => 'artigo',
-                'created_at' => now()//Data e hora Atual
             ]
-        ]);
+        );
+
+        $noticias = CatPost::updateOrCreate(
+            ['slug' => 'noticias'],
+            [
+                'title' => 'Notícias',
+                'type' => 'noticia',
+                'content' => 'Notícias e avisos da igreja.',
+                'tags' => 'notícias,avisos,igreja',
+                'views' => 0,
+                'status' => 1,
+                'id_pai' => null,
+            ]
+        );
+
+        CatPost::updateOrCreate(
+            ['slug' => 'devocional'],
+            [
+                'title' => 'Devocional',
+                'type' => 'artigo',
+                'content' => 'Devocionais diários.',
+                'tags' => 'devocional,meditação',
+                'views' => 0,
+                'status' => 1,
+                'id_pai' => $ensino->id,
+            ]
+        );
+
+        CatPost::updateOrCreate(
+            ['slug' => 'eventos'],
+            [
+                'title' => 'Eventos',
+                'type' => 'noticia',
+                'content' => 'Cobertura dos eventos da igreja.',
+                'tags' => 'eventos,cultos,campanhas',
+                'views' => 0,
+                'status' => 1,
+                'id_pai' => $noticias->id,
+            ]
+        );
+
+        CatPost::factory()->count(3)->create();
+
+        $parentes = CatPost::whereNull('id_pai')->pluck('id')->toArray();
+
+        CatPost::factory()
+            ->count(4)
+            ->sequence(fn () => [
+                'id_pai' => fake()->randomElement($parentes),
+            ])
+            ->create();
     }
 }

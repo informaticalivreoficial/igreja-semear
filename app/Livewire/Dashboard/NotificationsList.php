@@ -2,9 +2,9 @@
 
 namespace App\Livewire\Dashboard;
 
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Illuminate\Support\Facades\Auth;
 
 class NotificationsList extends Component
 {
@@ -25,7 +25,7 @@ class NotificationsList extends Component
 
             $this->dispatch('toast', [
                 'type' => 'success',
-                'message' => 'Notificação marcada como lida'
+                'message' => 'Notificação marcada como lida',
             ]);
         }
     }
@@ -38,7 +38,7 @@ class NotificationsList extends Component
 
         $this->dispatch('toast', [
             'type' => 'success',
-            'message' => 'Todas marcadas como lidas'
+            'message' => 'Todas marcadas como lidas',
         ]);
     }
 
@@ -56,7 +56,7 @@ class NotificationsList extends Component
             ->paginate(20);
 
         return view('livewire.dashboard.notifications-list', [
-            'notifications' => $notifications
+            'notifications' => $notifications,
         ]);
-    }    
+    }
 }

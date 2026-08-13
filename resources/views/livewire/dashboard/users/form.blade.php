@@ -4,13 +4,13 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1><i class="fas fa-user mr-2"></i> {{ $userId ? 'Editar' : 'Cadastrar' }}</h1>
+                    <h1><i class="fas fa-user mr-2"></i> {{ $title }}</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Painel de Controle</a></li>
-                        <li class="breadcrumb-item">Usuários</li>                        
-                        <li class="breadcrumb-item active">{{ $userId ? 'Editar' : 'Cadastrar' }}</li>
+                        <li class="breadcrumb-item"><a href="{{ route('admin.users.index') }}">Usuários</a></li>
+                        <li class="breadcrumb-item active">{{ $user?->exists ? 'Editar' : 'Cadastrar' }}</li>
                     </ol>
                 </div>
             </div>
@@ -18,8 +18,8 @@
     </div>
 
     <form wire:submit.prevent="save" autocomplete="off">
-        <div class="card card-primary card-outline">            
-            <div class="card-body"> 
+        <div class="card card-primary card-outline">
+            <div class="card-body">
                 <div class="row">
                     <div class="col-12 col-md-6 col-lg-3">
                         <div class="form-group">
@@ -28,23 +28,15 @@
                                 <span class="error">{{ $message }}</span>
                             @enderror
                             @php
-                                if (!empty($avatar) && Storage::exists($avatar)) {
-                                    $cover = Storage::url($avatar);
+                                if (!empty($user?->avatar) && Storage::exists($user->avatar)) {
+                                    $cover = Storage::url($user->avatar);
                                 } else {
                                     $cover = asset('theme/images/image.jpg');
                                 }
                             @endphp
-                            @if ($fotoUrl)
-                                <label for="foto" class="photo-wrapper">
-                                    <img class="photo-preview" src="{{ $fotoUrl }}"
-                                        alt="{{ $name }}">
-                                </label>
-                            @else
-                                <label for="foto" class="photo-wrapper">
-                                    <img class="photo-preview" src="{{ $cover }}"
-                                        alt="{{ $name }}">
-                                </label>
-                            @endif
+                            <label for="foto" class="photo-wrapper">
+                                <img class="photo-preview" src="{{ $fotoUrl ?? $cover }}" alt="{{ $name }}">
+                            </label>
                         </div>
                     </div>
                     <div class="col-12 col-md-6 col-lg-9">
@@ -60,17 +52,17 @@
                             </div>
                             <div class="col-12 col-md-6 col-lg-4 mb-2">
                                 <div class="form-group" x-data="{ value: @entangle('birthday').defer }" x-init="initFlatpickr()" x-ref="datepicker">
-                                    <label class="labelforms"><b>*Data de Nascimento</b></label>
+                                    <label class="labelforms"><b>Data de Nascimento</b></label>
                                     <input type="text" class="form-control @error('birthday') is-invalid @enderror" wire:model="birthday" id="datepicker" />
                                     @error('birthday')
                                         <span class="error erro-feedback">{{ $message }}</span>
-                                    @enderror                                                                                                                                      
+                                    @enderror
                                 </div>
                             </div>
-                            
+
                             <div class="col-12 col-md-6 col-lg-4 mb-2">
                                 <div class="form-group">
-                                    <label class="labelforms"><b>Genero</b></label>
+                                    <label class="labelforms"><b>Gênero</b></label>
                                     <select class="form-control @error('gender') is-invalid @enderror" wire:model="gender">
                                         <option value="">Selecione</option>
                                         <option value="masculino">Masculino</option>
@@ -84,13 +76,13 @@
                             <div class="col-12 col-md-6 col-lg-4 mb-2">
                                 <div class="form-group">
                                     <label class="labelforms"><b>Estado Civil</b></label>
-                                    <select class="form-control @error('civil_status') is-invalid @enderror" wire:model="civil_status">                                        
+                                    <select class="form-control @error('civil_status') is-invalid @enderror" wire:model="civil_status">
                                         <option value="">Selecione</option>
                                         <option value="casado">Casado</option>
                                         <option value="separado">Separado</option>
                                         <option value="solteiro">Solteiro</option>
                                         <option value="divorciado">Divorciado</option>
-                                        <option value="viuvo">Viúvo(a)</option>                                       
+                                        <option value="viuvo">Viúvo(a)</option>
                                     </select>
                                     @error('civil_status')
                                         <span class="error erro-feedback">{{ $message }}</span>
@@ -99,12 +91,12 @@
                             </div>
                             <div class="col-12 col-md-6 col-lg-4 mb-2">
                                 <div class="form-group">
-                                    <label class="labelforms"><b>*CPF</b></label>
+                                    <label class="labelforms"><b>CPF</b></label>
                                     <input type="text" class="form-control @error('cpf') is-invalid @enderror" placeholder="000.000.000-00" id="cpf" wire:model="cpf" x-mask="999.999.999-99" />
                                     @error('cpf')
                                         <span class="error erro-feedback">{{ $message }}</span>
                                     @enderror
-                                </div>                                        
+                                </div>
                             </div>
                             <div class="col-12 col-md-6 col-lg-4 mb-2">
                                 <div class="form-group">
@@ -131,22 +123,58 @@
                         </div>
                     </div>
                 </div>
-                        
+
                 <div class="card text-muted">
                     <div class="card-header">
-                        <h4>
-                            <strong>Contato</strong>
-                        </h4>
-                    </div>                                
+                        <h4><strong>Vida Cristã</strong></h4>
+                    </div>
                     <div class="card-body">
-                        <div class="row mb-2">
-                            <div class="col-12 col-md-6 col-lg-4">
+                        <div class="row">
+                            <div class="col-12 col-md-6 col-lg-3">
                                 <div class="form-group">
-                                    <label class="labelforms"><b>Telefone fixo:</b></label>
-                                    <input type="text" class="form-control" placeholder="(00) 0000-0000"
-                                        x-mask="(99) 9999-9999" wire:model="phone" id="phone">
+                                    <label class="labelforms"><b>Batizado</b></label>
+                                    <div class="pt-2">
+                                        <x-forms.switch-toggle
+                                            wire:model="baptism"
+                                            :checked="$baptism"
+                                            size="md"
+                                            color="green"
+                                        />
+                                    </div>
                                 </div>
                             </div>
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <div class="form-group" x-data="{ value: @entangle('baptism_date').defer }" x-init="initFlatpickr()" x-ref="datepickerBaptism">
+                                    <label class="labelforms"><b>Data do Batismo</b></label>
+                                    <input type="text" class="form-control @error('baptism_date') is-invalid @enderror" wire:model="baptism_date" id="datepickerBaptism" />
+                                    @error('baptism_date')
+                                        <span class="error erro-feedback">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-3">
+                                <div class="form-group">
+                                    <label class="labelforms"><b>Status</b></label>
+                                    <div class="pt-2">
+                                        <x-forms.switch-toggle
+                                            wire:model="status"
+                                            :checked="$status"
+                                            size="md"
+                                            color="green"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card text-muted">
+                    <div class="card-header">
+                        <h4><strong>Contato</strong></h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-2">
                             <div class="col-12 col-md-6 col-lg-4">
                                 <div class="form-group">
                                     <label class="labelforms"><b>*Celular:</b></label>
@@ -183,85 +211,74 @@
                                         id="additional_email">
                                 </div>
                             </div>
-                            <div class="col-12 col-md-6 col-lg-4">
-                                <div class="form-group">
-                                    <label class="labelforms"><b>Telegram:</b></label>
-                                    <input type="text" class="form-control" placeholder="Telegram"
-                                        wire:model="telegram" id="telegram">
-                                </div>
-                            </div>
                         </div>
-                    </div>                                
+                    </div>
                 </div>
 
                 <div class="card text-muted">
                     <div class="card-header">
-                        <h4>
-                            <strong>Endereço</strong>
-                        </h4>
-                    </div>                                
+                        <h4><strong>Endereço</strong></h4>
+                    </div>
                     <div class="card-body">
                         <div class="row mb-2">
-                            <div class="col-12 col-md-6 col-lg-2"> 
+                            <div class="col-12 col-md-6 col-lg-2">
                                 <div class="form-group">
-                                    <label class="labelforms"><b>*CEP:</b></label>
-                                    <input type="text" x-mask="99.999-999" class="form-control @error('zipcode') is-invalid @enderror" id="zipcode" wire:model.lazy="zipcode">
-                                    @error('zipcode')
+                                    <label class="labelforms"><b>CEP:</b></label>
+                                    <input type="text" x-mask="99.999-999" class="form-control @error('postcode') is-invalid @enderror" id="postcode" wire:model.lazy="postcode">
+                                    @error('postcode')
                                         <span class="error erro-feedback">{{ $message }}</span>
-                                    @enderror                                                    
+                                    @enderror
                                 </div>
                             </div>
-                            
-                            <div class="col-12 col-md-4 col-lg-3"> 
+
+                            <div class="col-12 col-md-4 col-lg-3">
                                 <div class="form-group">
-                                    <label class="labelforms"><b>*Estado:</b></label>
+                                    <label class="labelforms"><b>Estado:</b></label>
                                     <input type="text" class="form-control" id="state" wire:model="state" readonly>
                                 </div>
                             </div>
-                            <div class="col-12 col-md-4 col-lg-4"> 
+                            <div class="col-12 col-md-4 col-lg-4">
                                 <div class="form-group">
-                                    <label class="labelforms"><b>*Cidade:</b></label>
+                                    <label class="labelforms"><b>Cidade:</b></label>
                                     <input type="text" class="form-control" id="city" wire:model="city" readonly>
                                 </div>
                             </div>
-                            <div class="col-12 col-md-6 col-lg-3"> 
+                            <div class="col-12 col-md-6 col-lg-3">
                                 <div class="form-group">
-                                    <label class="labelforms"><b>*Rua:</b></label>
+                                    <label class="labelforms"><b>Rua:</b></label>
                                     <input type="text" class="form-control" id="street" wire:model="street" readonly>
                                 </div>
-                            </div>                                            
+                            </div>
                         </div>
                         <div class="row mb-2">
-                            <div class="col-12 col-md-4 col-lg-3"> 
+                            <div class="col-12 col-md-4 col-lg-3">
                                 <div class="form-group">
-                                    <label class="labelforms"><b>*Bairro:</b></label>
+                                    <label class="labelforms"><b>Bairro:</b></label>
                                     <input type="text" class="form-control" id="neighborhood" wire:model="neighborhood" readonly>
                                 </div>
                             </div>
-                            <div class="col-12 col-md-6 col-lg-2"> 
+                            <div class="col-12 col-md-6 col-lg-2">
                                 <div class="form-group">
                                     <label class="labelforms"><b>Número:</b></label>
                                     <input type="text" class="form-control" placeholder="Número do Endereço" id="number" wire:model="number">
                                 </div>
                             </div>
-                            <div class="col-12 col-md-6 col-lg-3"> 
+                            <div class="col-12 col-md-6 col-lg-3">
                                 <div class="form-group">
                                     <label class="labelforms"><b>Complemento:</b></label>
                                     <input type="text" class="form-control" id="complement" wire:model="complement">
                                 </div>
-                            </div>   
+                            </div>
                         </div>
-                    </div>                                
+                    </div>
                 </div>
 
                 <div class="card text-muted">
                     <div class="card-header">
-                        <h4>
-                            <strong>Redes Sociais</strong>
-                        </h4>
-                    </div>                                
+                        <h4><strong>Redes Sociais</strong></h4>
+                    </div>
                     <div class="card-body">
-                        <div class="row">                                                       
+                        <div class="row">
                             <div class="col-12 col-md-6 col-lg-4">
                                 <div class="form-group">
                                     <label class="labelforms text-muted"><b>Facebook:</b></label>
@@ -292,7 +309,7 @@
                                     class="form-control"
                                     rows="4"
                                     wire:model.defer="information"
-                                    placeholder="Observações, informações internas, anotações do RH..."
+                                    placeholder="Observações, informações internas, anotações..."
                                 ></textarea>
 
                                 @error('information')
@@ -303,80 +320,75 @@
                     </div>
                 </div>
 
-                @if (!auth()->user()->isAdmin())
-                    <div class="card text-muted">
-                        <div class="card-header">
-                            <h4>
-                                <strong>Permissões & Acesso</strong>
-                            </h4>
-                        </div>                                
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-12 mt-3">
-                                    <div class="form-check d-inline mx-2">
-                                        <input id="manager" class="form-check-input" type="radio"
-                                            wire:model.live="roleSelected" value="manager">
-                                        <label for="manager">Gerente</label>
+                <div class="card text-muted">
+                    <div class="card-header">
+                        <h4><strong>Permissões & Acesso</strong></h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <div class="form-group">
+                                    <label class="labelforms"><b>*Cargo</b></label>
+                                    <select class="form-control @error('role') is-invalid @enderror" wire:model="role">
+                                        @foreach ($roles as $roleOption)
+                                            <option value="{{ $roleOption->name }}">{{ ucfirst($roleOption->name) }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('role')
+                                        <span class="error erro-feedback">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-8">
+                                <div class="form-group">
+                                    <label class="labelforms"><b>Ministérios</b></label>
+                                    <div class="border rounded p-3" style="max-height: 180px; overflow-y: auto;">
+                                        @foreach ($ministryOptions as $ministry)
+                                            <div class="form-check" wire:key="ministry-{{ $ministry->id }}">
+                                                <input class="form-check-input" type="checkbox"
+                                                    id="ministry-{{ $ministry->id }}" value="{{ $ministry->id }}" wire:model="ministries">
+                                                <label class="form-check-label" for="ministry-{{ $ministry->id }}">{{ $ministry->name }}</label>
+                                            </div>
+                                        @endforeach
                                     </div>
-                                    @if (auth()->user()->isSuperAdmin() || auth()->user()->isAdmin())
-                                        <div class="form-check d-inline mx-2">
-                                            <input id="admin" class="form-check-input" type="radio"
-                                                wire:model.live="roleSelected" value="admin">
-                                            <label for="admin">Administrador</label>
-                                        </div>
-                                    @endif
-                                    @if (auth()->user()->isSuperAdmin()) 
-                                        <div class="form-check d-inline mx-2">
-                                            <input id="superadmin" class="form-check-input" type="radio"
-                                                wire:model.live="roleSelected" value="super-admin">
-                                            <label for="superadmin">Super Administrador</label>
-                                        </div>
-                                    @endif
-                                    @error('roleSelected')
-                                        <div class="text-danger text-sm mt-1">
-                                            {{ $message }}
-                                        </div>
-                                    @enderror                                    
-                                </div>  
-                                @if (!$userId && $roleSelected !== 'company')
-                                    <!-- Campo: Senha -->
-                                    <div class="col-12 col-md-6 col-lg-4 mt-3">
-                                        <label class="labelforms text-muted"><b>Senha:</b></label>
-                                        <div class="input-group input-group-md">                                    
-                                            <input type="password" id="code" class="form-control @error('code') is-invalid @enderror" wire:model.defer="code">
-                                            <span class="input-group-append">
-                                                <button type="button" onclick="togglePassword('code')" class="btn btn-default btn-flat">
-                                                    <i class="fa fa-eye"></i>
-                                                </button>
-                                            </span>
-                                        </div>
-                                        @error('code') <span class="text-danger text-sm">{{ $message }}</span> @enderror
-                                    </div>
-
-                                    <!-- Campo: Confirmar Senha -->
-                                    <div class="col-12 col-md-6 col-lg-4 mt-3">
-                                        <label class="labelforms text-muted"><b>Confirmar Senha:</b></label>
-                                        <div class="input-group input-group-md">                                    
-                                            <input type="password" id="code_confirmation" class="form-control @error('code_confirmation') is-invalid @enderror" wire:model.defer="code_confirmation">
-                                            <span class="input-group-append">
-                                                <button type="button" onclick="togglePassword('code_confirmation')" class="btn btn-default btn-flat">
-                                                    <i class="fa fa-eye"></i>
-                                                </button>
-                                            </span>
-                                        </div>
-                                        @error('code_confirmation') <span class="text-danger text-sm">{{ $message }}</span> @enderror
-                                    </div>
-                                @endif     
-                                
-                                
+                                </div>
                             </div>
                         </div>
+
+                        @if (!$user?->exists)
+                            <div class="row">
+                                <div class="col-12 col-md-6 col-lg-4">
+                                    <label class="labelforms text-muted"><b>Senha:</b></label>
+                                    <div class="input-group input-group-md">
+                                        <input type="password" id="password" class="form-control @error('password') is-invalid @enderror" wire:model.defer="password">
+                                        <span class="input-group-append">
+                                            <button type="button" onclick="togglePassword('password')" class="btn btn-default btn-flat">
+                                                <i class="fa fa-eye"></i>
+                                            </button>
+                                        </span>
+                                    </div>
+                                    @error('password') <span class="text-danger text-sm">{{ $message }}</span> @enderror
+                                </div>
+                                <div class="col-12 col-md-6 col-lg-4">
+                                    <label class="labelforms text-muted"><b>Confirmar Senha:</b></label>
+                                    <div class="input-group input-group-md">
+                                        <input type="password" id="password_confirmation" class="form-control @error('password_confirmation') is-invalid @enderror" wire:model.defer="password_confirmation">
+                                        <span class="input-group-append">
+                                            <button type="button" onclick="togglePassword('password_confirmation')" class="btn btn-default btn-flat">
+                                                <i class="fa fa-eye"></i>
+                                            </button>
+                                        </span>
+                                    </div>
+                                    @error('password_confirmation') <span class="text-danger text-sm">{{ $message }}</span> @enderror
+                                </div>
+                            </div>
+                        @endif
                     </div>
-                @endif
+                </div>
 
                 <div class="row text-right">
                     <div class="col-12 pb-4 mt-3">
-                        <button type="submit" class="btn btn-lg btn-success p-3"><i class="nav-icon fas fa-check mr-2"></i>{{ $userId ? 'Atualizar Agora' : 'Cadastrar Agora' }}</button>
+                        <button type="submit" class="btn btn-lg btn-success p-3"><i class="nav-icon fas fa-check mr-2"></i>{{ $user?->exists ? 'Atualizar Agora' : 'Cadastrar Agora' }}</button>
                     </div>
                 </div>
             </div>
@@ -386,61 +398,42 @@
 
 @push('scripts')
     <script>
-        document.addEventListener('livewire:init', () => {
-
-            Livewire.on('scroll-to-first-error', () => {
-
-                setTimeout(() => {
-
-                    const error = document.querySelector('.erro-feedback');
-
-                    if (!error) return;
-
-                    const y = error.getBoundingClientRect().top + window.pageYOffset - 120;
-
-                    window.scrollTo({
-                        top: y,
-                        behavior: 'smooth'
-                    });
-
-                }, 100);
-
-            });
-
-        });
-
         function initFlatpickr() {
-            let input = document.getElementById('datepicker');
-            if (!input) return;
+            let inputs = document.querySelectorAll('[id^="datepicker"]');
+            if (!inputs.length) return;
 
-            flatpickr(input, {
-                dateFormat: "d/m/Y",
-                allowInput: true,
-                maxDate: "today",
-                defaultDate: input.value || null,
-                onChange: function(selectedDates, dateStr) {
-                    input.dispatchEvent(new Event('input')); // Força atualização no Alpine.js
-                },
-                locale: {
-                    firstDayOfWeek: 1,
-                    weekdays: {
-                        shorthand: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
-                        longhand: ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'],
+            inputs.forEach(input => {
+                if (input._flatpickr) return;
+
+                flatpickr(input, {
+                    dateFormat: "d/m/Y",
+                    allowInput: true,
+                    maxDate: "today",
+                    defaultDate: input.value || null,
+                    onChange: function(selectedDates, dateStr) {
+                        input.dispatchEvent(new Event('input'));
                     },
-                    months: {
-                        shorthand: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
-                        longhand: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
-                    },
-                    today: "Hoje",
-                    clear: "Limpar",
-                    weekAbbreviation: "Sem",
-                    scrollTitle: "Role para aumentar",
-                    toggleTitle: "Clique para alternar",
-                }
+                    locale: {
+                        firstDayOfWeek: 1,
+                        weekdays: {
+                            shorthand: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
+                            longhand: ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'],
+                        },
+                        months: {
+                            shorthand: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+                            longhand: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+                        },
+                        today: "Hoje",
+                        clear: "Limpar",
+                        weekAbbreviation: "Sem",
+                        scrollTitle: "Role para aumentar",
+                        toggleTitle: "Clique para alternar",
+                    }
+                });
             });
         }
 
-        document.addEventListener("livewire:load", () => {
+        document.addEventListener("livewire:init", () => {
             initFlatpickr();
         });
 
@@ -452,5 +445,5 @@
             let input = document.getElementById(id);
             input.type = input.type === 'password' ? 'text' : 'password';
         }
-</script>
+    </script>
 @endpush

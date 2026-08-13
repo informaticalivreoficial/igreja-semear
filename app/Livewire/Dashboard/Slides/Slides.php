@@ -4,9 +4,9 @@ namespace App\Livewire\Dashboard\Slides;
 
 use App\Models\Slide;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Livewire\Attributes\On;
 
 class Slides extends Component
 {
@@ -14,13 +14,18 @@ class Slides extends Component
 
     // Quantidade de itens por página
     public int $perPage = 25;
+
     protected $paginationTheme = 'bootstrap';
+
     public string $search = '';
+
     protected $updatesQueryString = ['search'];
+
     public string $sortField = 'created_at';
+
     public string $sortDirection = 'desc';
 
-    #{Url}
+    // {Url}
     public function updatingSearch(): void
     {
         $this->resetPage();
@@ -41,7 +46,7 @@ class Slides extends Component
     public function render()
     {
         $title = 'Banners - Slides';
-        $searchableFields = ['title'];
+        $searchableFields = ['titulo'];
         $slides = Slide::query()
             ->when($this->search, function ($query) use ($searchableFields) {
                 $query->where(function ($q) use ($searchableFields) {
@@ -52,16 +57,17 @@ class Slides extends Component
             })
             ->orderBy($this->sortField, $this->sortDirection)
             ->paginate($this->perPage);
-        return view('livewire.dashboard.slides.slides',[
+
+        return view('livewire.dashboard.slides.slides', [
             'title' => $title,
-            'slides' => $slides
+            'slides' => $slides,
         ]);
     }
 
     public function toggleStatus($id)
-    {              
+    {
         $slide = Slide::findOrFail($id);
-        $slide->status = !$slide->status;        
+        $slide->status = ! $slide->status;
         $slide->save();
     }
 
@@ -75,7 +81,7 @@ class Slides extends Component
             'cancelButtonText' => 'Cancelar',
             'confirmEvent' => 'deleteBanner',
             'confirmParams' => [$id],
-        ]);       
+        ]);
     }
 
     #[On('deleteBanner')]
@@ -83,19 +89,19 @@ class Slides extends Component
     {
         $slide = Slide::findOrFail($id);
 
-        $logoPath = $slide->image;
-        if ($logoPath && Storage::disk('public')->exists($logoPath)) {
-            Storage::disk('public')->delete($logoPath);
+        $imagemPath = $slide->imagem;
+        if ($imagemPath && Storage::disk('public')->exists($imagemPath)) {
+            Storage::disk('public')->delete($imagemPath);
         }
 
         $slide->delete();
 
         $this->dispatch('swal', [
             'title' => 'Excluído!',
-            'text'  => 'Banner Slide excluído com sucesso!',
-            'icon'  => 'success',
+            'text' => 'Banner Slide excluído com sucesso!',
+            'icon' => 'success',
             'timer' => 2000,
             'showConfirmButton' => false,
-        ]);                
-    }  
+        ]);
+    }
 }

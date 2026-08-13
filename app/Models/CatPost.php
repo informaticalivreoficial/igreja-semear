@@ -13,13 +13,24 @@ class CatPost extends Model
     protected $table = 'cat_post';
 
     protected $fillable = [
-        'titulo',
+        'title',
+        'type',
         'content',
         'slug',
         'tags',
-        'tipo',
+        'views',
         'status',
-        'id_pai'
+        'id_pai',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'views' => 'integer',
+        'status' => 'boolean',
     ];
 
     /**
@@ -43,37 +54,20 @@ class CatPost extends Model
         return $this->hasMany(CatPost::class, 'id_pai', 'id');
     }
 
-    /**
-     * Accerssors and Mutators
-     */
-    public function getStatusAttribute($value)
-    {
-        if(empty($value)){
-            return null;
-        }
-
-        return ($value == '1' ? 'Sim' : 'Não');
-    }
-
-    public function setStatusAttribute($value)
-    {
-        $this->attributes['status'] = ($value == '1' ? 1 : 0);
-    }
-
     public function countposts()
     {
-        return $this->hasMany(Post::class, 'categoria', 'id')->count();
+        return $this->hasMany(Post::class, 'category', 'id')->count();
     }
 
     public function setSlug()
     {
-        if(!empty($this->titulo)){
-            $categoria = CatPost::where('titulo', $this->titulo)->first(); 
-            if(!empty($categoria) && $categoria->id != $this->id){
-                $this->attributes['slug'] = Str::slug($this->titulo) . '-' . $this->id;
-            }else{
-                $this->attributes['slug'] = Str::slug($this->titulo);
-            }            
+        if (! empty($this->title)) {
+            $categoria = CatPost::where('title', $this->title)->first();
+            if (! empty($categoria) && $categoria->id != $this->id) {
+                $this->attributes['slug'] = Str::slug($this->title).'-'.$this->id;
+            } else {
+                $this->attributes['slug'] = Str::slug($this->title);
+            }
             $this->save();
         }
     }

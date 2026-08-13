@@ -3,81 +3,74 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\Web\Atendimento;
-use App\Mail\Web\AtendimentoRetorno;
 use App\Mail\Web\CreateMember;
-use Illuminate\Support\Facades\Storage;
-
-use App\Models\{
-    Post,
-    CatPost,
-    Newsletter,
-    Parceiro,
-    Slide,
-    User
-};
+use App\Models\Post;
+use App\Models\User;
 use App\Services\ConfigService;
 use App\Support\Seo;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class WebController extends Controller
 {
-    protected $seo, $configService;
+    protected $seo;
+
+    protected $configService;
 
     public function __construct(ConfigService $configService)
     {
         $this->configService = $configService;
-        $this->seo = new Seo();        
+        $this->seo = new Seo;
     }
 
     public function home()
-    {  
+    {
         $head = $this->seo->render($this->configService->getConfig()->app_name ?? 'Informática Livre',
             $this->configService->getConfig()->information ?? 'Informática Livre desenvolvimento de sistemas web desde 2005',
             route('web.home'),
             $this->configService->getMetaImg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
-        ); 
+        );
 
-		return view('web.'.$this->configService->getConfig()->template.'.home',[
-            'head' => $head
-		]);
+        return view('web.'.$this->configService->getConfig()->template.'.home', [
+            'head' => $head,
+        ]);
     }
 
     public function quemsomos()
     {
         $paginaQuemSomos = Post::where('tipo', 'pagina')->postson()->where('id', 5)->first();
-        $head = $this->seo->render('Quem Somos - ' . $this->configService->getConfig()->app_name,
+        $head = $this->seo->render('Quem Somos - '.$this->configService->getConfig()->app_name,
             $this->configService->getConfig()->information ?? 'Informática Livre desenvolvimento de sistemas web desde 2005',
             route('web.quemsomos'),
             $this->configService->getMetaImg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
         );
-        return view('web.'.$this->configService->getConfig()->template.'.quem-somos',[
+
+        return view('web.'.$this->configService->getConfig()->template.'.quem-somos', [
             'head' => $head,
-            'paginaQuemSomos' => $paginaQuemSomos
+            'paginaQuemSomos' => $paginaQuemSomos,
         ]);
     }
 
     public function politica()
     {
-        $head = $this->seo->render('Política de Privacidade - ' . $this->configService->getConfig()->app_name ?? 'Informática Livre',
-            'Política de Privacidade - ' . $this->configService->getConfig()->app_name,
+        $head = $this->seo->render('Política de Privacidade - '.$this->configService->getConfig()->app_name ?? 'Informática Livre',
+            'Política de Privacidade - '.$this->configService->getConfig()->app_name,
             route('web.politica'),
             $this->configService->getMetaImg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
         );
 
-        return view('web.'.$this->configService->getConfig()->template.'.politica',[
-            'head' => $head
+        return view('web.'.$this->configService->getConfig()->template.'.politica', [
+            'head' => $head,
         ]);
-    }    
+    }
 
     public function pesquisa(Request $request)
     {
         $search = $request->only('search');
 
-        $paginas = Post::where(function($query) use ($request){
-            if($request->search){
+        $paginas = Post::where(function ($query) use ($request) {
+            if ($request->search) {
                 $query->orWhere('titulo', 'LIKE', "%{$request->search}%")
                     ->where('tipo', 'pagina')->postson();
                 $query->orWhere('content', 'LIKE', "%{$request->search}%")
@@ -85,32 +78,32 @@ class WebController extends Controller
             }
         })->postson()->limit(10)->get();
 
-        $artigos = Post::where(function($query) use ($request){
-            if($request->search){
+        $artigos = Post::where(function ($query) use ($request) {
+            if ($request->search) {
                 $query->orWhere('titulo', 'LIKE', "%{$request->search}%")
                     ->where('tipo', 'artigo')->postson();
                 $query->orWhere('content', 'LIKE', "%{$request->search}%")
                     ->where('tipo', 'artigo')->postson();
             }
         })->postson()->limit(10)->get();
-        
-        $head = $this->seo->render('Pesquisa por ' . $request->search ?? 'Informática Livre',
-            'Pesquisa - ' . $this->configService->getConfig()->app_name,
+
+        $head = $this->seo->render('Pesquisa por '.$request->search ?? 'Informática Livre',
+            'Pesquisa - '.$this->configService->getConfig()->app_name,
             route('web.blog.artigos'),
             $this->configService->getMetaImg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
         );
-        
-        return view('web.'.$this->configService->getConfig()->template.'.pesquisa',[
+
+        return view('web.'.$this->configService->getConfig()->template.'.pesquisa', [
             'head' => $head,
             'paginas' => $paginas,
-            'artigos' => $artigos
+            'artigos' => $artigos,
         ]);
     }
 
     public function pagina($slug)
     {
         $clientesCount = User::where('client', 1)->count();
-        $post = Post::where('slug', $slug)->where('tipo', 'pagina')->postson()->first();        
+        $post = Post::where('slug', $slug)->where('tipo', 'pagina')->postson()->first();
         $post->views = $post->views + 1;
         $post->save();
 
@@ -123,20 +116,20 @@ class WebController extends Controller
         return view('web.'.$this->configService->getConfig()->template.'.pagina', [
             'head' => $head,
             'post' => $post,
-            'clientesCount' => $clientesCount
+            'clientesCount' => $clientesCount,
         ]);
-    }    
-    
+    }
+
     public function atendimento()
     {
-        $head = $this->seo->render('Atendimento - ' . $this->configService->getConfig()->app_name,
+        $head = $this->seo->render('Atendimento - '.$this->configService->getConfig()->app_name,
             'Nossa equipe está pronta para melhor atender as demandas de nossos clientes!',
             route('web.atendimento'),
             $this->configService->getMetaImg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
-        );        
+        );
 
         return view('web.'.$this->configService->getConfig()->template.'.atendimento', [
-            'head' => $head            
+            'head' => $head,
         ]);
     }
 
@@ -144,59 +137,68 @@ class WebController extends Controller
     {
         $url = $this->configService->getConfig()->sitemap;
         $data = file_get_contents($url);
+
         return response($data, 200, ['Content-Type' => 'application/xml']);
     }
 
     public function createMember()
     {
-        $head = $this->seo->render('Cadastro de Membros - ' . $this->configService->getConfig()->app_name,
+        $head = $this->seo->render('Cadastro de Membros - '.$this->configService->getConfig()->app_name,
             'Comunidade Cristã Semear, cadastro de Membros',
             route('web.create.member'),
             $this->configService->getMetaImg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
         );
 
         return view('web.'.$this->configService->getConfig()->template.'.membro.cadastro', [
-            'head' => $head            
+            'head' => $head,
         ]);
     }
 
     public function createMemberSend(Request $request)
     {
-        if($request->name == ''){
-            $json = "Por favor preencha o campo <strong>Nome</strong>";
+        if ($request->name == '') {
+            $json = 'Por favor preencha o campo <strong>Nome</strong>';
+
             return response()->json(['error' => $json]);
         }
-        if($request->birthday == ''){
-            $json = "Por favor preencha a <strong>Data de Nascimento</strong>";
+        if ($request->birthday == '') {
+            $json = 'Por favor preencha a <strong>Data de Nascimento</strong>';
+
             return response()->json(['error' => $json]);
         }
 
-        $birthday = Carbon::createFromFormat('d/m/Y', $request->birthday)->format('Y-m-d');        
-        if(Carbon::parse($birthday)->gt(Carbon::parse(now())->format('Y-m-d'))){
-            $json = "Você selecionou uma <strong>Data</strong> inválida!";
+        $birthday = Carbon::createFromFormat('d/m/Y', $request->birthday)->format('Y-m-d');
+        if (Carbon::parse($birthday)->gt(Carbon::parse(now())->format('Y-m-d'))) {
+            $json = 'Você selecionou uma <strong>Data</strong> inválida!';
+
             return response()->json(['error' => $json]);
         }
-        if($request->gender == ''){
-            $json = "Por favor informe o <strong>sexo</strong>";
+        if ($request->gender == '') {
+            $json = 'Por favor informe o <strong>sexo</strong>';
+
             return response()->json(['error' => $json]);
         }
-        if(!filter_var($request->email, FILTER_VALIDATE_EMAIL)){
-            $json = "O campo <strong>Email</strong> está vazio ou não tem um formato válido!";
+        if (! filter_var($request->email, FILTER_VALIDATE_EMAIL)) {
+            $json = 'O campo <strong>Email</strong> está vazio ou não tem um formato válido!';
+
             return response()->json(['error' => $json]);
         }
-        if($request->whatsapp == ''){
-            $json = "Por favor preencha o campo <strong>Telefone</strong>";
+        if ($request->whatsapp == '') {
+            $json = 'Por favor preencha o campo <strong>Telefone</strong>';
+
             return response()->json(['error' => $json]);
         }
-        if($request->baptism_date && $request->baptism_date != null){
-            $baptism_date = Carbon::createFromFormat('d/m/Y', $request->baptism_date)->format('Y-m-d');        
-            if(Carbon::parse($baptism_date)->gt(Carbon::parse(now())->format('Y-m-d'))){
-                $json = "Você selecionou uma <strong>Data</strong> inválida!";
+        if ($request->baptism_date && $request->baptism_date != null) {
+            $baptism_date = Carbon::createFromFormat('d/m/Y', $request->baptism_date)->format('Y-m-d');
+            if (Carbon::parse($baptism_date)->gt(Carbon::parse(now())->format('Y-m-d'))) {
+                $json = 'Você selecionou uma <strong>Data</strong> inválida!';
+
                 return response()->json(['error' => $json]);
             }
-        }        
-        if(!empty($request->bairro) || !empty($request->cidade)){
-            $json = "<strong>ERRO</strong> Você está praticando SPAM!";  
+        }
+        if (! empty($request->bairro) || ! empty($request->cidade)) {
+            $json = '<strong>ERRO</strong> Você está praticando SPAM!';
+
             return response()->json(['error' => $json]);
         }
 
@@ -216,7 +218,7 @@ class WebController extends Controller
             'number' => $request->number,
             'complement' => $request->complement,
             'neighborhood' => $request->neighborhood,
-            'state' => $request->state, 
+            'state' => $request->state,
             'city' => $request->city,
             'baptism' => $request->baptism,
             'baptism_date' => $request->baptism_date ? $request->baptism_date : null,
@@ -237,18 +239,18 @@ class WebController extends Controller
 
         $this->storeMember($data, $data_email);
         $cadastro = [
-           'cadastro' => 'Cadastro realizado com sucesso!',
+            'cadastro' => 'Cadastro realizado com sucesso!',
             'email_success' => 'Email de confirmação enviado com sucesso!',
-            'name' => $data['name']
-        ];   
-        return response()->json($cadastro);     
+            'name' => $data['name'],
+        ];
+
+        return response()->json($cadastro);
     }
 
     public function storeMember($data, $member_email)
-    {   
+    {
         $member = User::create($data);
         $member->save();
-        Mail::send( new CreateMember($data, $member_email));
+        Mail::send(new CreateMember($data, $member_email));
     }
-    
 }

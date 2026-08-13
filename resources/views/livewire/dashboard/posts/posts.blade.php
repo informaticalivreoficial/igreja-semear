@@ -101,7 +101,7 @@
                                 </td>
                                 <td class="px-4 py-2">{{ $post->title }}</td>
                                 <td class="px-4 py-2 text-center">
-                                    {{ $post->category()->first() ? $post->category()->first()->title : 'N/D' }}
+                                    {{ $post->categoriaObject()->first()?->title ?? 'N/D' }}
                                 </td>
                                 <td class="px-4 py-2 text-center">{{ $post->views }}</td>
                                 <td class="px-4 py-2 text-center">{{ $post->countimages() ? $post->countimages() : 0 }}</td>
@@ -116,9 +116,9 @@
                                             color="green"
                                         />      
                                         <a target="_blank" href="{{ route('web.' . (
-                                                                    $post->type == 'artigo' ? 'blog.show' : (
-                                                                    $post->type == 'noticia' ? 'blog.show' : 'blog.page')), $post->slug) }}" 
-                                            class="btn btn-xs btn-info" 
+                                                                    $post->type == 'artigo' ? 'blog.artigo' : (
+                                                                    $post->type == 'noticia' ? 'noticia' : 'pagina')), $post->slug) }}"
+                                            class="btn btn-xs btn-info"
                                             title="Visualizar">
                                             <i class="fas fa-search"></i>
                                         </a>

@@ -4,10 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use App\Support\Cropper;
 
 class Slide extends Model
 {
@@ -17,6 +15,8 @@ class Slide extends Model
 
     protected $fillable = [
         'titulo',
+        'subtitulo',
+        'botaolabel',
         'imagem',
         'content',
         'link',
@@ -25,13 +25,24 @@ class Slide extends Model
         'expira',
         'status',
         'exibir_titulo',
-        'categoria'
+        'categoria',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'target' => 'boolean',
+        'status' => 'boolean',
+        'exibir_titulo' => 'boolean',
+        'expira' => 'date',
     ];
 
     /**
      * Scopes
      */
-
     public function scopeAvailable($query)
     {
         return $query->where('status', 1);
@@ -43,68 +54,40 @@ class Slide extends Model
     }
 
     /**
-     * Accerssors and Mutators
+     * Accessors and Mutators
      */
-
     public function getimagem()
     {
-        //$image = $this->imagem;        
-        if(empty($this->imagem) || !Storage::disk()->exists($this->imagem)) {
+        if (empty($this->imagem) || ! Storage::disk('public')->exists($this->imagem)) {
             return url(asset('backend/assets/images/image.jpg'));
-        } 
-        //return Storage::url(Cropper::thumb($this->imagem, 1200, 420));
-        return Storage::url($this->imagem);
+        }
+
+        return Storage::disk('public')->url($this->imagem);
     }
 
     public function getUrlImagemAttribute()
     {
-        if (!empty($this->imagem)) {
-            //return Storage::url(Cropper::thumb($this->imagem, 600, 210));
-            return Storage::url($this->imagem);
+        if (! empty($this->imagem)) {
+            return Storage::disk('public')->url($this->imagem);
         }
+
         return '';
-    }    
+    }
 
     public function setExpiraAttribute($value)
     {
-        $this->attributes['expira'] = (!empty($value) ? $this->convertStringToDate($value) : null);
-    }
-
-    public function setTargetAttribute($value)
-    {
-        $this->attributes['target'] = ($value == '1' ? 1 : 0);
-    }
-
-    public function setStatusAttribute($value)
-    {
-        $this->attributes['status'] = ($value == '1' ? 1 : 0);
-    }
-    
-    public function getExpiraAttribute($value)
-    {
-        if (empty($value)) {
-            return null;
-        }
-        return date('d/m/Y', strtotime($value));
-    }
-
-    public function getCreatedAtAttribute($value)
-    {
-        if (empty($value)) {
-            return null;
-        }
-        return date('d/m/Y', strtotime($value));
+        $this->attributes['expira'] = (! empty($value) ? $this->convertStringToDate($value) : null);
     }
 
     public function setSlug()
     {
-        if(!empty($this->titulo)){
-            $post = Slide::where('titulo', $this->titulo)->first(); 
-            if(!empty($post) && $post->id != $this->id){
-                $this->attributes['slug'] = Str::slug($this->titulo) . '-' . $this->id;
-            }else{
+        if (! empty($this->titulo)) {
+            $post = Slide::where('titulo', $this->titulo)->first();
+            if (! empty($post) && $post->id != $this->id) {
+                $this->attributes['slug'] = Str::slug($this->titulo).'-'.$this->id;
+            } else {
                 $this->attributes['slug'] = Str::slug($this->titulo);
-            }            
+            }
             $this->save();
         }
     }
@@ -114,7 +97,8 @@ class Slide extends Model
         if (empty($param)) {
             return null;
         }
-        list($day, $month, $year) = explode('/', $param);
-        return (new \DateTime($year . '-' . $month . '-' . $day))->format('Y-m-d');
+        [$day, $month, $year] = explode('/', $param);
+
+        return (new \DateTime($year.'-'.$month.'-'.$day))->format('Y-m-d');
     }
 }

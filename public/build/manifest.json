@@ -1,0 +1,49 @@
+{
+  "_toastify-BViQIBrc.js": {
+    "file": "assets/toastify-BViQIBrc.js",
+    "name": "toastify",
+    "css": [
+      "assets/toastify-FSCL7V4_.css"
+    ]
+  },
+  "_toastify-FSCL7V4_.css": {
+    "file": "assets/toastify-FSCL7V4_.css",
+    "src": "_toastify-FSCL7V4_.css"
+  },
+  "node_modules/alpinejs/dist/module.esm.js": {
+    "file": "assets/module.esm-fA1MZWD3.js",
+    "name": "module.esm",
+    "src": "node_modules/alpinejs/dist/module.esm.js",
+    "isDynamicEntry": true
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-BzgUodjJ.css",
+    "src": "resources/css/app.css",
+    "isEntry": true,
+    "name": "app",
+    "names": [
+      "app.css"
+    ]
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-D51MsgtX.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true,
+    "imports": [
+      "_toastify-BViQIBrc.js"
+    ]
+  },
+  "resources/js/front.js": {
+    "file": "assets/front-BLKjduan.js",
+    "name": "front",
+    "src": "resources/js/front.js",
+    "isEntry": true,
+    "imports": [
+      "_toastify-BViQIBrc.js"
+    ],
+    "dynamicImports": [
+      "node_modules/alpinejs/dist/module.esm.js"
+    ]
+  }
+}

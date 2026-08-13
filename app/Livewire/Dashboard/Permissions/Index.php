@@ -8,7 +8,9 @@ use Spatie\Permission\Models\Permission;
 class Index extends Component
 {
     public $name;
+
     public $permission_id;
+
     public $isEditing = false;
 
     protected $rules = [
@@ -18,6 +20,7 @@ class Index extends Component
     public function render()
     {
         $title = 'Permissões';
+
         return view('livewire.dashboard.permissions.index', [
             'permissions' => Permission::all(),
         ])->with('title', $title);
@@ -44,7 +47,7 @@ class Index extends Component
     public function update()
     {
         $this->validate([
-            'name' => 'required|min:3|unique:permissions,name,' . $this->permission_id,
+            'name' => 'required|min:3|unique:permissions,name,'.$this->permission_id,
         ]);
 
         $permission = Permission::findOrFail($this->permission_id);

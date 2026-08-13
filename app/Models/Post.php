@@ -4,43 +4,60 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\File;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Illuminate\Notifications\Notifiable;
 
 class Post extends Model
 {
     use HasFactory, Notifiable;
 
-    protected $table = 'posts'; 
+    protected $table = 'posts';
 
     protected $fillable = [
         'autor',
-        'tipo',
-        'titulo',
+        'type',
+        'title',
         'content',
         'slug',
         'tags',
         'views',
-        'categoria',
-        'comentarios',
-        'cat_pai',        
+        'readingTime',
+        'metaDescription',
+        'excerpt',
+        'category',
+        'cat_pai',
+        'comments',
         'status',
+        'highlight',
         'menu',
-        'thumb_legenda',
-        'publish_at'
+        'thumb_caption',
+        'publish_at',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'views' => 'integer',
+        'readingTime' => 'integer',
+        'comments' => 'boolean',
+        'status' => 'boolean',
+        'highlight' => 'boolean',
+        'menu' => 'boolean',
+        'publish_at' => 'date',
     ];
 
     /**
      * Scopes
      */
-
     public function scopePostson($query)
     {
         return $query->where('status', 1);
     }
-    
+
     public function scopePostsoff($query)
     {
         return $query->where('status', 0);
@@ -48,23 +65,22 @@ class Post extends Model
 
     /**
      * Relacionamentos
-    */
-
+     */
     public function user()
     {
         return $this->belongsTo(User::class, 'autor', 'id');
     }
-    
+
     public function categoriaObject()
     {
-        return $this->hasOne(CatPost::class, 'id', 'categoria');
+        return $this->hasOne(CatPost::class, 'id', 'category');
     }
-    
+
     public function userObject()
     {
         return $this->hasOne(User::class, 'id', 'autor');
     }
-    
+
     public function images()
     {
         return $this->hasMany(PostGb::class, 'post', 'id')->orderBy('cover', 'ASC');
@@ -78,27 +94,26 @@ class Post extends Model
     /**
      * Accerssors and Mutators
      */
-
     public function getContentWebAttribute()
     {
         return Str::words($this->content, '20', ' ...');
     }
-        
+
     public function cover()
     {
         $images = $this->images();
         $cover = $images->where('cover', 1)->first(['path']);
 
-        if(!$cover) {
+        if (! $cover) {
             $images = $this->images();
             $cover = $images->first(['path']);
         }
 
-        if(empty($cover['path']) || !Storage::disk()->exists($cover['path'])) {
+        if (empty($cover['path']) || ! Storage::disk()->exists($cover['path'])) {
             return url(asset('backend/assets/images/image.jpg'));
         }
 
-        //return Storage::url(Cropper::thumb($cover['path'], 720, 480));
+        // return Storage::url(Cropper::thumb($cover['path'], 720, 480));
         return Storage::url($cover['path']);
     }
 
@@ -107,60 +122,43 @@ class Post extends Model
         $images = $this->images();
         $cover = $images->where('cover', 1)->first(['path']);
 
-        if(!$cover) {
+        if (! $cover) {
             $images = $this->images();
             $cover = $images->first(['path']);
         }
 
-        if(empty($cover['path']) || !Storage::disk()->exists($cover['path'])) {
+        if (empty($cover['path']) || ! Storage::disk()->exists($cover['path'])) {
             return url(asset('backend/assets/images/image.jpg'));
         }
 
         return Storage::url($cover['path']);
     }
-    
-    public function setStatusAttribute($value)
-    {
-        $this->attributes['status'] = ($value == '1' ? 1 : 0);
-    }
 
-    public function setMenuAttribute($value)
-    {
-        $this->attributes['menu'] = ($value == '1' ? 1 : 0);
-    }
-    
     public function setPublishAtAttribute($value)
     {
-        $this->attributes['publish_at'] = (!empty($value) ? $this->convertStringToDate($value) : null);
+        $this->attributes['publish_at'] = (! empty($value) ? $this->convertStringToDate($value) : null);
     }
-    
-    public function getPublishAtAttribute($value)
-    {
-        if (empty($value)) {
-            return null;
-        }
-        return date('d/m/Y', strtotime($value));
-    }
-    
+
     public function setSlug()
     {
-        if(!empty($this->titulo)){
-            $post = Post::where('titulo', $this->titulo)->first(); 
-            if(!empty($post) && $post->id != $this->id){
-                $this->attributes['slug'] = Str::slug($this->titulo) . '-' . $this->id;
-            }else{
-                $this->attributes['slug'] = Str::slug($this->titulo);
-            }            
+        if (! empty($this->title)) {
+            $post = Post::where('title', $this->title)->first();
+            if (! empty($post) && $post->id != $this->id) {
+                $this->attributes['slug'] = Str::slug($this->title).'-'.$this->id;
+            } else {
+                $this->attributes['slug'] = Str::slug($this->title);
+            }
             $this->save();
         }
     }
-    
+
     private function convertStringToDate(?string $param)
     {
         if (empty($param)) {
             return null;
         }
-        list($day, $month, $year) = explode('/', $param);
-        return (new \DateTime($year . '-' . $month . '-' . $day))->format('Y-m-d');
+        [$day, $month, $year] = explode('/', $param);
+
+        return (new \DateTime($year.'-'.$month.'-'.$day))->format('Y-m-d');
     }
 }

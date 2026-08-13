@@ -2,16 +2,17 @@
 
 namespace App\Livewire\Components;
 
-use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
 
 class NotificationsDropdown extends Component
 {
     public $unreadNotificationsCount = 0;
+
     public $notifications = [];
 
     protected $listeners = [
-        'refreshNotifications' => 'loadNotifications'
+        'refreshNotifications' => 'loadNotifications',
     ];
 
     public function mount()
@@ -29,7 +30,7 @@ class NotificationsDropdown extends Component
 
     public function loadNotifications()
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return;
         }
 
@@ -45,7 +46,7 @@ class NotificationsDropdown extends Component
 
     public function markAsRead($notificationId)
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return;
         }
 
@@ -60,7 +61,7 @@ class NotificationsDropdown extends Component
 
             $this->dispatch('toast', [
                 'type' => 'success',
-                'message' => 'Notificação marcada como lida'
+                'message' => 'Notificação marcada como lida',
             ]);
         }
     }
@@ -72,7 +73,7 @@ class NotificationsDropdown extends Component
             ->where('id', $id)
             ->first();
 
-        if (!$notification) {
+        if (! $notification) {
             return;
         }
 
@@ -83,19 +84,19 @@ class NotificationsDropdown extends Component
 
     public function markAllAsRead()
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return;
         }
 
         $this->baseUnreadQuery()->update([
-            'read_at' => now()
+            'read_at' => now(),
         ]);
 
         $this->loadNotifications();
 
         $this->dispatch('toast', [
             'type' => 'success',
-            'message' => 'Todas as notificações foram marcadas como lidas'
+            'message' => 'Todas as notificações foram marcadas como lidas',
         ]);
     }
 

@@ -3,8 +3,8 @@
 namespace App\Livewire\Dashboard\Users;
 
 use App\Models\User;
-use Livewire\Component;
 use Livewire\Attributes\On;
+use Livewire\Component;
 use Livewire\WithPagination;
 
 class Time extends Component
@@ -19,33 +19,46 @@ class Time extends Component
 
     public string $sortDirection = 'asc';
 
+    protected function roleNames(): array
+    {
+        $roles = ['admin', 'editor'];
+
+        if (auth()->user()?->isSuperAdmin()) {
+            $roles[] = 'super admin';
+        }
+
+        return $roles;
+    }
+
     public function render()
     {
-        $title = 'Time de Usuários';
+        $title = 'Equipe';
 
-        $users = User::query()
-            ->where(function ($query) {
-                $query->where('editor', 1)
-                    ->orWhere('admin', 1);
-            })
-            ->when(!auth()->user()->superadmin, function ($query) {
-                // se NÃO for superadmin, remove superadmins da lista
-                $query->where('superadmin', 0);
-            })
+        $roleLabels = [
+            'super admin' => 'Super Administrador',
+            'admin' => 'Administrador',
+            'editor' => 'Editor',
+            'member' => 'Membro',
+        ];
+
+        $users = User::role($this->roleNames())
+            ->with('roles')
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('name', 'LIKE', "%{$this->search}%")
-                    ->orWhere('email', 'LIKE', "%{$this->search}%");
+                        ->orWhere('email', 'LIKE', "%{$this->search}%");
                 });
             })
             ->orderBy($this->sortField, $this->sortDirection)
             ->paginate(15);
+
         return view('livewire.dashboard.users.time', [
-            'users' => $users
-        ])->with('title', $title);
+            'users' => $users,
+            'roleLabels' => $roleLabels,
+            'title' => $title,
+        ]);
     }
 
-    #{Url}
     public function updatingSearch(): void
     {
         $this->resetPage();
@@ -64,9 +77,9 @@ class Time extends Component
     }
 
     public function toggleStatus($id)
-    {              
+    {
         $user = User::findOrFail($id);
-        $user->status = !$user->status;        
+        $user->status = ! $user->status;
         $user->save();
     }
 
@@ -80,8 +93,9 @@ class Time extends Component
             'cancelButtonText' => 'Cancelar',
             'confirmEvent' => 'deleteUser',
             'confirmParams' => [$id],
-        ]);        
+        ]);
     }
+
     #[On('deleteUser')]
     public function deleteUser($id)
     {
@@ -91,8 +105,8 @@ class Time extends Component
 
         $this->dispatch('swal', [
             'title' => 'Excluído!',
-            'text'  => 'Usuário excluído com sucesso.',
-            'icon'  => 'success',
+            'text' => 'Usuário excluído com sucesso.',
+            'icon' => 'success',
             'timer' => 2000,
             'showConfirmButton' => false,
         ]);

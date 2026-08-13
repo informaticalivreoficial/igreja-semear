@@ -2,45 +2,47 @@
 
 namespace App\Livewire\Dashboard;
 
+use App\Models\Event;
+use App\Models\Ministry;
+use App\Models\Offering;
 use App\Models\Post;
-use App\Models\Property;
-use App\Models\PropertyReservation;
+use App\Models\Slide;
+use App\Models\User;
 use Livewire\Component;
 
 class Dashboard extends Component
 {
-    public $topproperties = [];
-    public $topposts = [];
-
     public function render()
     {
-        $propertyCount = Property::count();
-        $propertyYearCount = Property::whereYear('created_at', now()->year)->count();
-
         $postsCount = Post::count();
-        $postsYearCount = Post::whereYear('created_at', now()->year)->count();
+        $postsYearCount = Post::whereYear('publish_at', now()->year)->count();
+        $newsCount = Post::where('type', 'noticia')->count();
+        $articlesCount = Post::where('type', 'artigo')->count();
 
-        $reservationsCount = PropertyReservation::count();
-        $reservationsYearCount = PropertyReservation::whereYear('created_at', now()->year)->count();
+        $slidesCount = Slide::count();
+        $ministriesCount = Ministry::count();
+        $eventsCount = Event::count();
+        $membersCount = User::role('member')->count();
 
-        $this->topproperties = Property::orderBy('views', 'desc')
-            ->take(6)
-            ->get();
-        $this->topposts = Post::orderBy('views', 'desc')
+        $offeringsTotal = Offering::sum('amount');
+        $offeringsYear = Offering::whereYear('offering_date', now()->year)->sum('amount');
+        $dizimosTotal = Offering::where('type', 'dizimo')->sum('amount');
+
+        $topposts = Post::orderBy('views', 'desc')->take(5)->get();
+
+        $upcomingEvents = Event::where('status', 1)
+            ->where('start_at', '>=', now())
+            ->orderBy('start_at')
             ->take(5)
             ->get();
-        
+
         $title = 'Painel de Controle';
-        return view('livewire.dashboard.dashboard',[            
-            'propertyCount' => $propertyCount,
-            'propertyYearCount' => $propertyYearCount,
-            'postsCount' => $postsCount,
-            'postsYearCount' => $postsYearCount,
-            'title' => $title,
-            'topproperties' => $this->topproperties,
-            'topposts' => $this->topposts,
-            'reservationsCount' => $reservationsCount,
-            'reservationsYearCount' => $reservationsYearCount
-        ]);
+
+        return view('livewire.dashboard.dashboard', compact(
+            'postsCount', 'postsYearCount', 'newsCount', 'articlesCount',
+            'slidesCount', 'ministriesCount', 'eventsCount', 'membersCount',
+            'offeringsTotal', 'offeringsYear', 'dizimosTotal',
+            'topposts', 'upcomingEvents', 'title'
+        ));
     }
 }

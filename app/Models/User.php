@@ -3,13 +3,16 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, HasRoles, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -27,17 +30,15 @@ class User extends Authenticatable
         'civil_status',
         'baptism',
         'baptism_date',
-        'avatar',  
-        //Address      
+        'avatar',
+        // Address
         'postcode', 'street', 'number', 'complement', 'neighborhood', 'state', 'city',
-        //Contact
+        // Contact
         'cell_phone', 'whatsapp', 'email', 'additional_email',
-        //Social
-        'facebook', 'instagram', 'linkedin',  
-        //function
-        'admin', 'client', 'editor', 'superadmin',
+        // Social
+        'facebook', 'instagram', 'linkedin',
         'status',
-        'information'
+        'information',
     ];
 
     /**
@@ -57,13 +58,50 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'birthday' => 'date',
+        'baptism' => 'boolean',
+        'baptism_date' => 'date',
+        'status' => 'boolean',
     ];
 
     /**
      * Relacionamentos
      */
-   
-   
+    public function ministries(): BelongsToMany
+    {
+        return $this->belongsToMany(Ministry::class, 'ministry_member')
+            ->withPivot('role')
+            ->withTimestamps();
+    }
+
+    public function offerings(): HasMany
+    {
+        return $this->hasMany(Offering::class);
+    }
+
+    /**
+     * Regras de papel (spatie/permission)
+     */
+    public function isSuperAdmin(): bool
+    {
+        return $this->hasRole('super admin');
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->hasRole(['super admin', 'admin']);
+    }
+
+    public function isEditor(): bool
+    {
+        return $this->hasRole(['super admin', 'admin', 'editor']);
+    }
+
+    public function isMember(): bool
+    {
+        return $this->hasRole('member');
+    }
+
     /**
      * Scopes
      */
@@ -77,102 +115,27 @@ class User extends Authenticatable
         return $query->where('status', 0);
     }
 
-     /**
-     * Accerssors and Mutators
+    /**
+     * Mutators
      */
-
-    //Exibe a função do usuário
-    public function getFuncao() {
-        if($this->admin == 1 && $this->client == 0 && $this->superadmin == 0){
-            return 'Administrador';
-        }elseif($this->admin == 0 && $this->client == 1 && $this->superadmin == 0){
-            return 'Cliente';
-        }elseif($this->admin == 0 && $this->client == 0 && $this->editor == 1 && $this->superadmin == 0){
-            return 'Editor';
-        }elseif($this->admin == 1 && $this->client == 1 && $this->superadmin == 0){
-            return 'Administrador/Cliente'; 
-        }else{
-            return 'Super Administrador'; 
-        }
-    }
-    
     public function setCpfAttribute($value)
     {
-        $this->attributes['cpf'] = (!empty($value) ? $this->clearField($value) : null);
-    }
-    
-    public function getCpfAttribute($value)
-    {
-        if (empty($value)) {
-            return null;
-        }
-
-        return
-            substr($value, 0, 3) . '.' .
-            substr($value, 3, 3) . '.' .
-            substr($value, 6, 3) . '-' .
-            substr($value, 9, 2);
+        $this->attributes['cpf'] = (! empty($value) ? $this->clearField($value) : null);
     }
 
     public function setCellPhoneAttribute($value)
     {
-        $this->attributes['cell_phone'] = (!empty($value) ? $this->clearField($value) : null);
-    }
-    
-    public function getCellPhoneAttribute($value)
-    {
-        if (empty($value)) {
-            return null;
-        }
-        return  
-            substr($value, 0, 0) . '(' .
-            substr($value, 0, 2) . ') ' .
-            substr($value, 2, 5) . '-' .
-            substr($value, 7, 4) ;
-    }
-
-    public function setAdminAttribute($value)
-    {
-        $this->attributes['admin'] = ($value === true || $value === 'on' ? 1 : 0);
-    }
-
-    public function setEditorAttribute($value)
-    {
-        $this->attributes['editor'] = ($value === true || $value === 'on' ? 1 : 0);
-    }
-
-    public function setClientAttribute($value)
-    {
-        $this->attributes['client'] = ($value === true || $value === 'on' ? 1 : 0);
-    }
-    
-    public function setSuperAdminAttribute($value)
-    {
-        $this->attributes['superadmin'] = ($value === true || $value === 'on' ? 1 : 0);
-    }
-
-    public function setBaptismAttribute($value)
-    {
-        $this->attributes['baptism'] = ($value === true || $value === 'true' ? 1 : 0);
+        $this->attributes['cell_phone'] = (! empty($value) ? $this->clearField($value) : null);
     }
 
     public function setBirthdayAttribute($value)
     {
-        $this->attributes['birthday'] = (!empty($value) ? $this->convertStringToDate($value) : null);
+        $this->attributes['birthday'] = (! empty($value) ? $this->convertStringToDate($value) : null);
     }
 
     public function setBaptismDateAttribute($value)
     {
-        $this->attributes['baptism_date'] = (!empty($value) ? $this->convertStringToDate($value) : null);
-    }
-
-    private function convertStringToDouble(?string $param)
-    {
-        if (empty($param)) {
-            return null;
-        }
-
-        return str_replace(',', '.', str_replace('.', '', $param));
+        $this->attributes['baptism_date'] = (! empty($value) ? $this->convertStringToDate($value) : null);
     }
 
     private function convertStringToDate(?string $param)
@@ -180,15 +143,17 @@ class User extends Authenticatable
         if (empty($param)) {
             return null;
         }
-        list($day, $month, $year) = explode('/', $param);
-        return (new \DateTime($year . '-' . $month . '-' . $day))->format('Y-m-d');
+        [$day, $month, $year] = explode('/', $param);
+
+        return (new \DateTime($year.'-'.$month.'-'.$day))->format('Y-m-d');
     }
-    
+
     private function clearField(?string $param)
     {
         if (empty($param)) {
             return null;
         }
+
         return str_replace(['.', '-', '/', '(', ')', ' '], '', $param);
     }
 }

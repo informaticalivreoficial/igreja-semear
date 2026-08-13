@@ -25,12 +25,12 @@ class Configuracoes extends FormRequest
     public function rules()
     {
         return [
-              'logomarca' => 'image',
-              'logomarca_admin' => 'image',
-              'metaimg' => 'image',
-              'favicon' => 'image',
-              'imgheader' => 'image',
-              'marcadagua' => 'image',
+            'logomarca' => 'image',
+            'logomarca_admin' => 'image',
+            'metaimg' => 'image',
+            'favicon' => 'image',
+            'imgheader' => 'image',
+            'marcadagua' => 'image',
         ];
     }
 }

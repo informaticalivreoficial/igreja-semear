@@ -2,16 +2,17 @@
 
 namespace App\Livewire\Dashboard\Posts;
 
-use App\Models\Post;
-use App\Models\User;
-use Livewire\Component;
-use Livewire\WithFileUploads;
-use Illuminate\Support\Collection;
-use Livewire\Attributes\On;
 use App\Enums\PostType;
 use App\Models\CatPost;
+use App\Models\Post;
 use App\Models\PostGb;
+use App\Models\User;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Livewire\Attributes\On;
+use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class PostForm extends Component
 {
@@ -20,29 +21,45 @@ class PostForm extends Component
     public ?Post $post = null;
 
     public $autor;
+
     public Collection $autores;
 
     public string $type = '';
+
     public ?int $category = null;
+
     public array $types = [];
+
     public $categories = [];
 
     public $comments = 0; // padrão "Não"
 
     public array $images = [];
+
     public $savedImages = [];
+
+    public $cover;
 
     public string $currentTab = 'dados';
 
     public $title = '';
+
     public $slug = '';
+
     public $content = '';
+
     public $excerpt = '';
+
     public $metaDescription = '';
+
     public $cat_pai;
+
     public $status = 1;
+
     public ?string $publish_at = null;
+
     public $thumb_caption = '';
+
     public array $tags = [];
 
     protected function rules()
@@ -50,7 +67,7 @@ class PostForm extends Component
         return [
             'autor' => 'required|exists:users,id',
             'type' => 'required|string',
-            //'category' => 'required|exists:cat_post,id',
+            // 'category' => 'required|exists:cat_post,id',
             'category' => [
                 'required',
                 'exists:cat_post,id',
@@ -59,7 +76,7 @@ class PostForm extends Component
                     if ($cat && empty($cat->id_pai)) {
                         $fail('Por favor, selecione uma subcategoria.');
                     }
-                }
+                },
             ],
             'title' => 'required|min:3|string|max:191',
             'content' => 'required|string',
@@ -113,7 +130,8 @@ class PostForm extends Component
     public function render()
     {
         $titlee = $this->post->exists ? 'Editar Post' : 'Cadastrar Post';
-        return view('livewire.dashboard.posts.post-form',[
+
+        return view('livewire.dashboard.posts.post-form', [
             'titlee' => $titlee,
         ]);
     }
@@ -121,12 +139,7 @@ class PostForm extends Component
     public function mount(Post $post)
     {
         // ✅ Carregar autores disponíveis
-        $this->autores = User::where(function ($q) {
-                $q->where('admin', 1)
-                  ->orWhere('editor', 1);
-            })
-            ->where('superadmin', 0) // exclui superadmins
-            ->where('client', 0)     // exclui clients
+        $this->autores = User::role(['editor', 'admin'])
             ->orderBy('name')
             ->get();
 
@@ -142,7 +155,7 @@ class PostForm extends Component
             // Modo edição
             $this->post = $post;
             $this->autor = $post->autor ?? auth()->id();
-            $this->title = $post->title;            
+            $this->title = $post->title;
             $this->content = $post->content;
             $this->excerpt = $post->excerpt;
             $this->metaDescription = $post->metaDescription;
@@ -150,12 +163,11 @@ class PostForm extends Component
             $this->category = $post->category; // ✅ Corrigido
             $this->status = $post->status ?? 1;
             $this->publish_at = $post->publish_at ? $post->publish_at : now()->format('d/m/Y');
-            //$this->publish_at = $post->publish_at?->format('d/m/Y H:i');
+            // $this->publish_at = $post->publish_at?->format('d/m/Y H:i');
             $this->thumb_caption = $post->thumb_caption ?? '';
             $this->comments = $post->comments ?? 0;
             $this->tags = is_string($post->tags) ? explode(',', $post->tags) : ($post->tags ?? []);
 
-            
             // Carregar imagens salvas se houver
             $this->savedImages = $post->images ?? [];
 
@@ -163,8 +175,8 @@ class PostForm extends Component
             $this->loadCategories($this->type);
         } else {
             // Modo criação
-            $this->post = new Post();
-            $this->publish_at = $post->publish_at ? $post->publish_at : now()->format('d/m/Y');
+            $this->post = new Post;
+            $this->publish_at = now()->format('d/m/Y');
         }
     }
 
@@ -172,6 +184,7 @@ class PostForm extends Component
     {
         if (empty($type)) {
             $this->categories = [];
+
             return;
         }
 
@@ -191,17 +204,24 @@ class PostForm extends Component
 
     public function save(string $mode = 'draft')
     {
-       
+
         $validated = $this->validate();
         $validated['status'] = $mode === 'published' ? 1 : 0;
-               
+
         try {
             // Preparar dados
+            $slug = Str::slug($validated['title']);
+            if (Post::where('slug', $slug)->where('id', '!=', $this->post->id ?? 0)->exists()) {
+                $slug = $slug.'-'.Str::random(4);
+            }
+
             $data = [
                 'autor' => $validated['autor'],
                 'type' => $validated['type'],
                 'category' => $validated['category'],
+                'cat_pai' => $this->cat_pai,
                 'title' => $validated['title'],
+                'slug' => $slug,
                 'content' => $validated['content'],
                 'excerpt' => $validated['excerpt'],
                 'metaDescription' => $validated['metaDescription'],
@@ -209,19 +229,19 @@ class PostForm extends Component
                 'publish_at' => $validated['publish_at'],
                 'thumb_caption' => $validated['thumb_caption'],
                 'comments' => $validated['comments'],
-                'tags' => !empty($validated['tags']) ? implode(',', $validated['tags']) : null,
+                'tags' => ! empty($validated['tags']) ? implode(',', $validated['tags']) : null,
             ];
 
             // Salvar ou atualizar
             if ($this->post->exists) {
-                $this->post->update($data);                
+                $this->post->update($data);
                 $message = 'Post atualizado com sucesso!';
             } else {
                 $this->post = Post::create($data);
                 $message = 'Post criado com sucesso!';
             }
 
-            $maxImages = env('MAX_PROPERTY_IMAGES', 20);
+            $maxImages = (int) env('MAX_PROPERTY_IMAGES', 20);
             $existingImages = $this->post->images()->count();
             $allowed = $maxImages - $existingImages;
             if (count($this->images ?? []) > $allowed) {
@@ -230,14 +250,17 @@ class PostForm extends Component
                     'text' => "Você já atingiu o limite máximo de {$maxImages} imagens para este post.",
                     'icon' => 'warning',
                 ]);
+
                 return;
             }
 
             // Salvar imagens
             foreach ($this->images as $index => $image) {
-                if ($index >= $allowed) break; // garante que só serão salvas as permitidas
+                if ($index >= $allowed) {
+                    break;
+                } // garante que só serão salvas as permitidas
 
-                $path = $image->store('posts/' . $this->post->id, 'public');
+                $path = $image->store('posts/'.$this->post->id, 'public');
                 PostGb::create([
                     'post' => $this->post->id,
                     'path' => $path,
@@ -254,10 +277,10 @@ class PostForm extends Component
             ]);
 
             // Redirecionar para listagem ou continuar editando
-            //return redirect()->route('posts.index');
+            // return redirect()->route('posts.index');
 
         } catch (\Exception $e) {
-            
+
             $this->dispatch('swal', [
                 'icon' => 'error',
                 'title' => 'Erro ao salvar',
@@ -266,14 +289,14 @@ class PostForm extends Component
         }
     }
 
-    //Remover imagem temporária
+    // Remover imagem temporária
     public function removeTempImage($index)
     {
         unset($this->images[$index]);
         $this->images = array_values($this->images);
     }
 
-    //Remover imagem do Bd
+    // Remover imagem do Bd
     public function removeSavedImage($id)
     {
         $image = PostGb::find($id);
@@ -339,15 +362,16 @@ class PostForm extends Component
     {
         if (empty($value)) {
             $this->cat_pai = null;
+
             return;
         }
 
         $categoria = CatPost::find($value);
-        
+
         if ($categoria) {
             // ✅ Como só subcategorias são selecionáveis, sempre pega o id_pai
             $this->cat_pai = $categoria->id_pai;
-            
+
             // ✅ Validação extra: se não tem id_pai, algo está errado
             if (empty($this->cat_pai)) {
                 $this->addError('category', 'Por favor, selecione uma subcategoria válida.');

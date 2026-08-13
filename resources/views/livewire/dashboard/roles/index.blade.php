@@ -8,7 +8,7 @@
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{ route('admin') }}">Painel de Controle</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Painel de Controle</a></li>
                         <li class="breadcrumb-item"><a wire:navigate href="{{ route('admin.roles') }}">Cargos</a>
                         </li>
                         <li class="breadcrumb-item active">{{ $isEdit ? 'Editar' : 'Cadastrar' }}</li>

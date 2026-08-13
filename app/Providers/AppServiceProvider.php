@@ -2,13 +2,10 @@
 
 namespace App\Providers;
 
-use App\Models\CatPost;
-use App\Models\NewsletterCat;
-use App\Models\Post;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Pagination\Paginator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -29,12 +26,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //URL::forceScheme('https');
+        // URL::forceScheme('https');
         // Schema::defaultStringLength(191);
         // Blade::aliasComponent('admin.components.message', 'message');
 
         // //Newsletter FORM
-        // $newsletter = NewsletterCat::where('sistema', 1)->where('status', 1)->get();
+        // $newsletter = \App\Models\Config::find(1);
         // View()->share('newsletterForm', $newsletter);
 
         // //Páginas
@@ -42,7 +39,7 @@ class AppServiceProvider extends ServiceProvider
         // View()->share('viewPaginas', $paginas);
 
         // //Config
-        // $configuracoes = \App\Models\Config::find(1); 
+        // $configuracoes = \App\Models\Config::find(1);
         // View()->share('configuracoes', $configuracoes);
 
         // //Paginator do Bootstrap css

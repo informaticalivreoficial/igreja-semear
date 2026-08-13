@@ -2,13 +2,19 @@
 
 namespace App\Livewire\Dashboard\Roles;
 
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
 use Livewire\Component;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class Index extends Component
 {
-    public $name, $selectedPermissions = [], $roleId, $isEdit = false;
+    public $name;
+
+    public $selectedPermissions = [];
+
+    public $roleId;
+
+    public $isEdit = false;
 
     protected $rules = [
         'name' => 'required|string|unique:roles,name',
@@ -18,6 +24,7 @@ class Index extends Component
     public function render()
     {
         $title = 'Cargos';
+
         return view('livewire.dashboard.roles.index', [
             'roles' => Role::with('permissions')->get(),
             'permissions' => Permission::all(),
@@ -49,7 +56,7 @@ class Index extends Component
         $role = Role::findOrFail($this->roleId);
 
         $this->validate([
-            'name' => 'required|string|unique:roles,name,' . $this->roleId,
+            'name' => 'required|string|unique:roles,name,'.$this->roleId,
         ]);
 
         $role->update(['name' => $this->name]);
@@ -69,5 +76,4 @@ class Index extends Component
     {
         $this->reset(['name', 'selectedPermissions', 'roleId', 'isEdit']);
     }
-
 }

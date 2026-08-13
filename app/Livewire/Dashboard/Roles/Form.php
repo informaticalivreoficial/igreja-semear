@@ -3,13 +3,15 @@
 namespace App\Livewire\Dashboard\Roles;
 
 use Livewire\Component;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class Form extends Component
 {
     public $roleId;
+
     public $name;
+
     public $permissions = [];
 
     protected $listeners = ['editRole'];
@@ -27,14 +29,14 @@ class Form extends Component
     public function render()
     {
         return view('livewire.dashboard.roles.form', [
-            'allPermissions' => Permission::all()
+            'allPermissions' => Permission::all(),
         ]);
     }
 
     public function save()
     {
         $this->validate([
-            'name' => 'required|unique:roles,name,' . $this->roleId,
+            'name' => 'required|unique:roles,name,'.$this->roleId,
             'permissions' => 'array',
         ]);
 
@@ -42,6 +44,7 @@ class Form extends Component
         $role->syncPermissions($this->permissions);
 
         session()->flash('message', 'Role salva com sucesso.');
+
         return redirect()->route('admin.roles.index');
     }
 

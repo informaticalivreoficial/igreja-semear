@@ -122,15 +122,6 @@
                         <span>Meu Perfil</span>
                     </a>
 
-                    {{-- Financeiro --}}
-                    <a
-                        href="#"
-                        class="flex items-center gap-3 px-5 py-3 text-slate-700 hover:bg-slate-50 transition"
-                    >
-                        <i class="fas fa-file-invoice w-5 text-slate-400"></i>
-                        <span>Financeiro</span>
-                    </a>
-
                     {{-- Suporte --}}
                     <button
                         type="button"

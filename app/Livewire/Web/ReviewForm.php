@@ -10,7 +10,9 @@ use Livewire\Component;
 class ReviewForm extends Component
 {
     public $reservation;
+
     public $rating = 0;
+
     public $comment;
 
     public function mount($token)
@@ -27,7 +29,7 @@ class ReviewForm extends Component
     {
         $this->validate([
             'rating' => 'required|integer|min:1|max:5',
-            'comment' => 'required|min:10|max:1000'
+            'comment' => 'required|min:10|max:1000',
         ]);
 
         PropertyReview::create([
@@ -50,7 +52,7 @@ class ReviewForm extends Component
             'redirectUrl' => route('web.home'),
         ]);
 
-        $this->reset(['rating','comment']);
+        $this->reset(['rating', 'comment']);
     }
 
     public function render()

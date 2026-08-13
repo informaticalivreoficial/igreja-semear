@@ -1,15 +1,13 @@
 <?php
 
-use App\Livewire\Auth\CustomerLogin;
-use Illuminate\Support\Facades\Route;
-
-use App\Livewire\Auth\Login;
 use App\Livewire\Auth\ForgotPassword;
+use App\Livewire\Auth\Login;
 use App\Livewire\Auth\Register;
 use App\Livewire\Auth\ResetPassword;
 use App\Livewire\Auth\VerifyEmail;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 // Admin auth
 Route::middleware('guest')->group(function () {
@@ -19,7 +17,6 @@ Route::middleware('guest')->group(function () {
     Route::get('/reset-password/{token}', ResetPassword::class)->name('password.reset');
 });
 
-
 Route::middleware('auth')->group(function () {
     Route::get('/email/verify', VerifyEmail::class)->name('verification.notice');
 
@@ -27,6 +24,7 @@ Route::middleware('auth')->group(function () {
         EmailVerificationRequest $request
     ) {
         $request->fulfill();
+
         return redirect()->route('company.dashboard');
     })->middleware(['signed', 'throttle:6,1'])->name('verification.verify');
 
@@ -34,6 +32,7 @@ Route::middleware('auth')->group(function () {
         Request $request
     ) {
         $request->user()->sendEmailVerificationNotification();
+
         return back()->with('success', 'Novo email enviado.');
     })->middleware('throttle:6,1')->name('verification.send');
 });

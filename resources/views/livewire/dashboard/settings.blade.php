@@ -178,12 +178,6 @@
                                 </div>
                                 <div class="col-12 col-md-4 col-sm-4 col-lg-4"> 
                                     <div class="form-group">
-                                        <label class="labelforms"><b>Inscrição Estadual:</b></label>
-                                        <input type="text" class="form-control" placeholder="Inscrição Estadual" wire:model="configData.ie" id="ie">
-                                    </div>
-                                </div>
-                                <div class="col-12 col-md-4 col-sm-4 col-lg-4"> 
-                                    <div class="form-group">
                                         <label class="labelforms"><b>Ano de ínicio</b></label>
                                         <input type="text" class="form-control" placeholder="Ano de ínicio" wire:model="configData.init_date" id="init_date">
                                     </div>
@@ -200,24 +194,6 @@
                             />                                                                                     
                         </div>                                    
                     </div>                                       
-                    <div class="row mb-2">
-                        <div class="col-12 pt-4" wire:ignore>   
-                            <label class="labelforms text-muted"><b>Termos e Condições</b></label>
-                            <x-editor-quill 
-                                :value="$configData['terms_conditions']" 
-                                model="configData.terms_conditions" 
-                            />                                                                                     
-                        </div>                                    
-                    </div>                                        
-                    <div class="row mb-2">
-                        <div class="col-12 pt-4" wire:ignore>   
-                            <label class="labelforms text-muted"><b>Preferências de Cookies</b></label>
-                            <x-editor-quill 
-                                :value="$configData['cookies_preference']" 
-                                model="configData.cookies_preference" 
-                            />                                                                                     
-                        </div>                                    
-                    </div>                                        
                 </div> 
 
                 <!-- Conteúdo da aba Seo -->
@@ -366,13 +342,6 @@
                                 <label class="labelforms"><b>Email Adicional:</b></label>
                                 <input type="text" class="form-control" placeholder="Email Alternativo" 
                                     wire:model="configData.additional_email" id="additional_email">
-                            </div>
-                        </div>                            
-                        <div class="col-12 col-md-6 col-lg-4"> 
-                            <div class="form-group">
-                                <label class="labelforms"><b>Telegram:</b></label>
-                                <input type="text" class="form-control" placeholder="Telegram" 
-                                    wire:model="configData.telegram" id="telegram">
                             </div>
                         </div>                            
                     </div>                    

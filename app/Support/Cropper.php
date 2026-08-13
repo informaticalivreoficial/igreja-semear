@@ -1,22 +1,23 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: gustavoweb
  * Date: 2019-03-01
- * Time: 09:57 
+ * Time: 09:57
  */
 
 namespace App\Support;
 
-
 class Cropper
 {
-    public static function thumb(string $uri, int $width, int $height = null)
+    public static function thumb(string $uri, int $width, ?int $height = null)
     {
         $cropper = new \CoffeeCode\Cropper\Cropper('../public/storage/cache');
-        $pathThumb = $cropper->make(config('filesystems.disks.public.root') . '/' . $uri, $width, $height);
+        $pathThumb = $cropper->make(config('filesystems.disks.public.root').'/'.$uri, $width, $height);
 
-        $file = 'cache/' . collect(explode('/', $pathThumb))->last();
+        $file = 'cache/'.collect(explode('/', $pathThumb))->last();
+
         return $file;
     }
 
@@ -24,7 +25,7 @@ class Cropper
     {
         $cropper = new \CoffeeCode\Cropper\Cropper('../public/storage/cache');
 
-        if(!empty($path)) {
+        if (! empty($path)) {
             $cropper->flush($path);
         } else {
             $cropper->flush();

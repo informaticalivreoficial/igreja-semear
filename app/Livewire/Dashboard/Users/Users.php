@@ -3,24 +3,23 @@
 namespace App\Livewire\Dashboard\Users;
 
 use App\Models\User;
-use Livewire\Attributes\Title;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Masmerise\Toaster\Toaster;
 
 class Users extends Component
 {
     use WithPagination;
 
     protected $paginationTheme = 'bootstrap';
+
     public string $search = '';
+
     public string $sortField = 'name';
+
     public string $sortDirection = 'asc';
 
-    public bool $updateMode = false;
-        
-    #{Url}
     public function updatingSearch(): void
     {
         $this->resetPage();
@@ -36,32 +35,42 @@ class Users extends Component
         }
 
         $this->resetPage();
-    }    
+    }
 
-    #[Title('Clientes')]
+    #[Title('Membros')]
     public function render()
     {
-        $users = \App\Models\User::query()->when($this->search, function($query){
-                        $query->orWhere('name', 'LIKE', "%{$this->search}%");
-                        $query->orWhere('email', "%{$this->search}%");
-                    })->where('client', 1)->orderBy($this->sortField, $this->sortDirection)->paginate(35);
-        return view('livewire.dashboard.users.users',[
-            'users' => $users
+        $title = 'Membros';
+
+        $users = User::role('member')
+            ->when($this->search, function ($query) {
+                $query->where(function ($q) {
+                    $q->where('name', 'LIKE', "%{$this->search}%")
+                        ->orWhere('email', 'LIKE', "%{$this->search}%");
+                });
+            })
+            ->orderBy($this->sortField, $this->sortDirection)
+            ->paginate(35);
+
+        return view('livewire.dashboard.users.users', [
+            'title' => $title,
+            'users' => $users,
         ]);
     }
 
     public function setDeleteId($id)
     {
         $this->dispatch('swal:confirm', [
-            'title' => 'Excluir Cliente?',
+            'title' => 'Excluir Membro?',
             'text' => 'Essa ação não pode ser desfeita.',
             'icon' => 'warning',
             'confirmButtonText' => 'Sim, excluir',
             'cancelButtonText' => 'Cancelar',
             'confirmEvent' => 'deleteUser',
             'confirmParams' => [$id],
-        ]);        
+        ]);
     }
+
     #[On('deleteUser')]
     public function deleteUser($id)
     {
@@ -71,25 +80,17 @@ class Users extends Component
 
         $this->dispatch('swal', [
             'title' => 'Excluído!',
-            'text'  => 'Cliente excluído com sucesso.',
-            'icon'  => 'success',
+            'text' => 'Membro excluído com sucesso.',
+            'icon' => 'success',
             'timer' => 2000,
             'showConfirmButton' => false,
         ]);
     }
 
     public function toggleStatus($id)
-    {              
-        $user = User::findOrFail($id);
-        $user->status = !$user->status;        
-        $user->save();
-    }
-
-    public function edit($id)
     {
         $user = User::findOrFail($id);
-        $this->dispatch('userId');
-        $this->updateMode = true;
+        $user->status = ! $user->status;
+        $user->save();
     }
-
 }

@@ -2,8 +2,6 @@
 
 namespace App\Livewire\Web;
 
-use App\Mail\AdminReservationNotification;
-use App\Mail\ClientReservationReceived;
 use App\Mail\ReservationFormLinkMail;
 use App\Models\Property;
 use App\Models\PropertyBlockedDate;
@@ -14,6 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 
 class CheckoutPage extends Component
@@ -21,21 +20,31 @@ class CheckoutPage extends Component
     public Property $property;
 
     public $check_in;
+
     public $check_out;
+
     public $guests;
 
     public $extraGuests = 0;
+
     public $extraTotal = 0;
 
     public $name;
+
     public $email;
+
     public $phone;
+
     public $notes;
+
     public $review_token;
 
     public $nights;
+
     public $subtotal;
+
     public $cleaning_fee;
+
     public $total;
 
     public $editingTrip = false;
@@ -54,7 +63,7 @@ class CheckoutPage extends Component
         $this->guests = $guests;
 
         // validação básica
-        if (!$check_in || !$check_out) {
+        if (! $check_in || ! $check_out) {
             return redirect()->route('web.property', $property->slug);
         }
 
@@ -65,7 +74,7 @@ class CheckoutPage extends Component
             ->whereIn('status', ['waiting_payment', 'confirmed'])
             ->where(function ($q) {
                 $q->whereNull('expired_at')
-                ->orWhere('expired_at','>', now());
+                    ->orWhere('expired_at', '>', now());
             })
             ->get();
 
@@ -82,7 +91,7 @@ class CheckoutPage extends Component
         // 🔴 Datas bloqueadas manualmente
         $blockedDates = PropertyBlockedDate::where('property_id', $property->id)
             ->pluck('date')
-            ->map(fn($date) => Carbon::parse($date)->format('Y-m-d'))
+            ->map(fn ($date) => Carbon::parse($date)->format('Y-m-d'))
             ->toArray();
 
         // 🔥 Junta tudo e remove duplicados
@@ -105,7 +114,7 @@ class CheckoutPage extends Component
         $this->validate([
             'name' => 'required|min:3',
             'email' => 'required|email',
-            'phone' => 'required'
+            'phone' => 'required',
         ]);
 
         DB::transaction(function () {
@@ -121,7 +130,7 @@ class CheckoutPage extends Component
                     'client' => true,
                     'phone' => $this->phone,
                     'status' => 1,
-                    'password' => bcrypt(str()->random(10))
+                    'password' => bcrypt(str()->random(10)),
                 ]
             );
 
@@ -144,13 +153,13 @@ class CheckoutPage extends Component
                 'total_value' => $this->total,
                 'status' => 'waiting_payment',
                 'expired_at' => now()->addMinutes(30),
-            ]);            
+            ]);
 
             $admin = User::where('admin', true)->first();
 
             if ($admin) {
                 $admin->notify(new NewReservationNotification($reservation));
-            }            
+            }
 
             // 📧 Email para cliente
             Mail::to($this->email)->send(new ReservationFormLinkMail($reservation));
@@ -172,26 +181,26 @@ class CheckoutPage extends Component
             ->exists();
 
         if ($exists) {
-            throw \Illuminate\Validation\ValidationException::withMessages([
-                'check_in' => 'Estas datas não estão mais disponíveis.'
+            throw ValidationException::withMessages([
+                'check_in' => 'Estas datas não estão mais disponíveis.',
             ]);
         }
     }
 
     public function calculateTotal()
     {
-        if (!$this->check_in || !$this->check_out) {
+        if (! $this->check_in || ! $this->check_out) {
             return;
         }
 
-        $checkIn  = Carbon::parse($this->check_in);
+        $checkIn = Carbon::parse($this->check_in);
         $checkOut = Carbon::parse($this->check_out);
 
         if ($checkOut->lte($checkIn)) {
             return;
         }
 
-        $this->nights     = $checkIn->diffInDays($checkOut);
+        $this->nights = $checkIn->diffInDays($checkOut);
         $this->cleaning_fee = $this->property->cleaning_fee ?? 0;
 
         // ✅ Cálculo dia a dia considerando temporadas

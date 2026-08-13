@@ -13,9 +13,9 @@ class Cidade
             return null;
         }
         $cidade = DB::table(''.$tabela.'')->where('cidade_id', '=', $id)->get();
-        if(!empty($cidade)){
+        if (! empty($cidade)) {
             return $cidade[0]->cidade_nome.'/'.$cidade[0]->cidade_uf;
-        }else{
+        } else {
             return null;
         }
     }

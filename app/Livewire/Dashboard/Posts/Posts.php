@@ -3,8 +3,10 @@
 namespace App\Livewire\Dashboard\Posts;
 
 use App\Models\Post;
-use Livewire\Component;
+use App\Models\User;
+use Illuminate\Support\Collection;
 use Livewire\Attributes\On;
+use Livewire\Component;
 use Livewire\WithPagination;
 
 class Posts extends Component
@@ -23,15 +25,31 @@ class Posts extends Component
 
     public string $sortDirection = 'desc';
 
-    #{Url}
+    public string $filterType = '';
+
+    public string $filterAutor = '';
+
+    public Collection $autores;
+
+    public function mount()
+    {
+        $this->autores = User::role(['editor', 'admin'])->orderBy('name')->get();
+    }
+
     public function updatingSearch(): void
     {
         $this->resetPage();
     }
 
+    public function clearFilters()
+    {
+        $this->reset('search', 'filterType', 'filterAutor');
+        $this->resetPage();
+    }
+
     public function loadMore()
     {
-        $this->perPage += 12; // aumenta a quantidade de itens carregados
+        $this->perPage += 12;
     }
 
     public function sortBy(string $field): void
@@ -49,27 +67,35 @@ class Posts extends Component
     public function render()
     {
         $title = 'Lista de Posts';
-        $searchableFields = ['title','content','slug','category'];
+
         $posts = Post::query()
-            ->when($this->search, function ($query) use ($searchableFields) {
-                $query->where(function ($q) use ($searchableFields) {
-                    foreach ($searchableFields as $field) {
-                        $q->orWhere($field, 'LIKE', "%{$this->search}%");
-                    }
+            ->with('user')
+            ->when($this->search, function ($query) {
+                $query->where(function ($q) {
+                    $q->where('title', 'LIKE', "%{$this->search}%")
+                        ->orWhere('content', 'LIKE', "%{$this->search}%")
+                        ->orWhere('slug', 'LIKE', "%{$this->search}%");
                 });
+            })
+            ->when($this->filterType !== '', function ($query) {
+                $query->where('type', $this->filterType);
+            })
+            ->when($this->filterAutor !== '', function ($query) {
+                $query->where('autor', $this->filterAutor);
             })
             ->orderBy($this->sortField, $this->sortDirection)
             ->paginate($this->perPage);
-        return view('livewire.dashboard.posts.posts',[
+
+        return view('livewire.dashboard.posts.posts', [
             'title' => $title,
             'posts' => $posts,
         ]);
     }
 
     public function toggleStatus($id)
-    {              
+    {
         $post = Post::findOrFail($id);
-        $post->status = !$post->status;        
+        $post->status = ! $post->status;
         $post->save();
     }
 
@@ -83,7 +109,7 @@ class Posts extends Component
             'cancelButtonText' => 'Cancelar',
             'confirmEvent' => 'deletePost',
             'confirmParams' => [$id],
-        ]);        
+        ]);
     }
 
     #[On('deletePost')]
@@ -95,10 +121,10 @@ class Posts extends Component
 
         $this->dispatch('swal', [
             'title' => 'Excluído!',
-            'text'  => 'O Post e todas as imagens foram removidas!',
-            'icon'  => 'success',
+            'text' => 'O Post foi removido!',
+            'icon' => 'success',
             'timer' => 2000,
             'showConfirmButton' => false,
         ]);
-    }    
+    }
 }
