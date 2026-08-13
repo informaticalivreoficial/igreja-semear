@@ -15,7 +15,7 @@ class Posts extends Component
 
     public int $perPage = 25;
 
-    protected $paginationTheme = 'bootstrap';
+    protected $paginationTheme = 'tailwind';
 
     public string $search = '';
 

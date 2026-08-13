@@ -26,3 +26,9 @@ import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
 
 window.Toastify = Toastify;
+
+import mask from '@alpinejs/mask'
+
+document.addEventListener('alpine:init', () => {
+    window.Alpine.plugin(mask);
+})

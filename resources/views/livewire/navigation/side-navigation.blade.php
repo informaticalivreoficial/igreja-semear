@@ -1,216 +1,318 @@
-<aside class="main-sidebar sidebar-light-teal elevation-4">
+<aside
+    class="fixed inset-y-0 left-0 z-40 flex w-64 flex-col
+           bg-gradient-to-b from-forest-900 to-forest-800
+           shadow-2xl transition-all duration-300
+           -translate-x-full lg:translate-x-0"
+    :class="{
+        'translate-x-0': mobileOpen,
+        '-translate-x-full lg:translate-x-0': !mobileOpen,
+        'lg:w-20': collapsed,
+        'lg:w-64': !collapsed,
+    }"
+>
 
-    <a class="pt-3 d-flex justify-content-center cursor-pointer">
-        <img src="{{ $config->getlogoadmin() }}" alt="{{ $config->app_name }}"
-            class="brand-image elevation-3 h-12 w-auto">
-    </a>
+    {{-- Logo --}}
+    <div
+        class="flex h-16 shrink-0 items-center gap-3 border-b border-white/10 px-4"
+        :class="collapsed ? 'lg:justify-center lg:px-2' : 'lg:justify-start'"
+    >
+        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gold-500/15 ring-1 ring-gold-500/30">
+            <i class="fas fa-seedling text-gold-500"></i>
+        </div>
+        <div class="min-w-0" :class="collapsed ? 'lg:hidden' : ''">
+            <p class="truncate text-sm font-bold text-white">{{ $config->app_name ?? 'Comunidade Cristã Semear' }}</p>
+            <p class="truncate text-[11px] uppercase tracking-widest text-gold-500/80">Administração</p>
+        </div>
+    </div>
 
-    <div class="sidebar mt-3">
+    {{-- Navegação --}}
+    <nav class="flex-1 overflow-y-auto overflow-x-hidden px-3 py-4 sidebar-scroll">
+        <ul class="space-y-1">
 
-        <nav class="mt-2">
-            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+            {{-- Dashboard --}}
+            <li>
+                <a href="{{ route('admin.dashboard') }}" wire:navigate @click="closeMobile()"
+                   class="flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium transition
+                          {{ Route::is('admin.dashboard') ? 'bg-gold-500/15 text-gold-400' : 'text-slate-300 hover:bg-white/10 hover:text-white' }}">
+                    <i class="w-5 text-center text-base {{ Route::is('admin.dashboard') ? 'text-gold-400' : 'text-slate-400' }} fas fa-tachometer-alt"></i>
+                    <span :class="collapsed ? 'lg:hidden' : ''">Painel de Controle</span>
+                </a>
+            </li>
 
-                {{-- Dashboard --}}
-                <li class="nav-item">
-                    <a href="{{ route('admin.dashboard') }}" class="nav-link {{ Route::is('admin.dashboard') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-tachometer-alt"></i>
-                        <p>Painel de Controle</p>
-                    </a>
-                </li>
-
-                {{-- Usuários --}}
-                <li class="nav-item {{ Route::is('admin.users.*') ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ Route::is('admin.users.*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-users"></i>
-                        <p>Usuários <i class="fas fa-angle-left right"></i></p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="{{ route('admin.users.index') }}" class="nav-link {{ Route::is('admin.users.index') ? 'active' : '' }}">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Membros <span class="badge badge-info right">{{ $membersCount }}</span></p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.users.time') }}" class="nav-link {{ Route::is('admin.users.time') ? 'active' : '' }}">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Equipe <span class="badge badge-info right">{{ $equipeCount }}</span></p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.users.create') }}" class="nav-link {{ Route::is('admin.users.create') ? 'active' : '' }}">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Cadastrar Novo</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
-                {{-- Posts --}}
-                <li class="nav-item {{ Route::is('admin.posts.*') ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ Route::is('admin.posts.*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-pencil-alt"></i>
-                        <p>Posts <i class="fas fa-angle-left right"></i></p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="{{ route('admin.posts.index') }}" class="nav-link {{ Route::is('admin.posts.index') ? 'active' : '' }}">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Listar Todos <span class="badge badge-info right">{{ $postsCount }}</span></p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.posts.categories.index') }}" class="nav-link {{ Route::is('admin.posts.categories.index') ? 'active' : '' }}">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Categorias</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.posts.create') }}" class="nav-link {{ Route::is('admin.posts.create') ? 'active' : '' }}">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Cadastrar Novo</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
-                {{-- Slides --}}
-                <li class="nav-item {{ Route::is('admin.slides.*') ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ Route::is('admin.slides.*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-images"></i>
-                        <p>Slides <i class="fas fa-angle-left right"></i></p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="{{ route('admin.slides.index') }}" class="nav-link {{ Route::is('admin.slides.index') ? 'active' : '' }}">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Listar Todos <span class="badge badge-info right">{{ $slidesCount }}</span></p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.slides.create') }}" class="nav-link {{ Route::is('admin.slides.create') ? 'active' : '' }}">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Cadastrar Novo</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
-                {{-- Ministérios --}}
-                <li class="nav-item {{ Route::is('admin.ministries.*') ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ Route::is('admin.ministries.*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-hands-helping"></i>
-                        <p>Ministérios <i class="fas fa-angle-left right"></i></p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="{{ route('admin.ministries.index') }}" class="nav-link {{ Route::is('admin.ministries.index') ? 'active' : '' }}">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Listar Todos <span class="badge badge-info right">{{ $ministriesCount }}</span></p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.ministries.create') }}" class="nav-link {{ Route::is('admin.ministries.create') ? 'active' : '' }}">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Cadastrar Novo</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
-                {{-- Eventos --}}
-                <li class="nav-item {{ Route::is('admin.events.*') ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ Route::is('admin.events.*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-calendar-alt"></i>
-                        <p>Eventos <i class="fas fa-angle-left right"></i></p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="{{ route('admin.events.index') }}" class="nav-link {{ Route::is('admin.events.index') ? 'active' : '' }}">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Listar Todos <span class="badge badge-info right">{{ $eventsCount }}</span></p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.events.create') }}" class="nav-link {{ Route::is('admin.events.create') ? 'active' : '' }}">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Cadastrar Novo</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
-                {{-- Ofertas --}}
-                <li class="nav-item {{ Route::is('admin.offerings.*') ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ Route::is('admin.offerings.*') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-hand-holding-heart"></i>
-                        <p>Ofertas <i class="fas fa-angle-left right"></i></p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="{{ route('admin.offerings.index') }}" class="nav-link {{ Route::is('admin.offerings.index') ? 'active' : '' }}">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Listar Todas <span class="badge badge-info right">{{ $offeringsCount }}</span></p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.offerings.create') }}" class="nav-link {{ Route::is('admin.offerings.create') ? 'active' : '' }}">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Cadastrar Nova</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
-                @if (auth()->user()?->isSuperAdmin())
-                    {{-- Cargos & Permissões --}}
-                    <li class="nav-item {{ Route::is(['admin.roles', 'admin.permissions']) ? 'menu-open' : '' }}">
-                        <a href="#" class="nav-link {{ Route::is(['admin.roles', 'admin.permissions']) ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-user-shield"></i>
-                            <p>Acessos <i class="fas fa-angle-left right"></i></p>
+            {{-- Usuários --}}
+            <li x-data="{ open: @js(Route::is('admin.users.*')) }">
+                <button type="button" @click="collapsed ? collapsed = false : open = !open"
+                        class="flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium transition
+                               {{ Route::is('admin.users.*') ? 'bg-gold-500/15 text-gold-400' : 'text-slate-300 hover:bg-white/10 hover:text-white' }}">
+                    <i class="w-5 text-center text-base {{ Route::is('admin.users.*') ? 'text-gold-400' : 'text-slate-400' }} fas fa-users"></i>
+                    <span :class="collapsed ? 'lg:hidden' : ''">Usuários</span>
+                    <i class="fas fa-chevron-down ml-auto text-[10px] transition-transform duration-200 {{ Route::is('admin.users.*') ? 'text-gold-400' : 'text-slate-500' }}"
+                       :class="collapsed ? 'lg:hidden' : ''" x-show="open" x-cloak></i>
+                </button>
+                <ul x-show="open" class="mt-1 space-y-0.5 border-l border-white/10 pl-3" x-cloak>
+                    <li>
+                        <a href="{{ route('admin.users.index') }}" wire:navigate @click="closeMobile()"
+                           class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition
+                                  {{ Route::is('admin.users.index') ? 'text-gold-400' : 'text-slate-400 hover:bg-white/10 hover:text-white' }}">
+                            <i class="fas fa-circle text-[5px]"></i>
+                            <span :class="collapsed ? 'lg:hidden' : ''">Membros</span>
+                            <span class="ml-auto rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-slate-300" :class="collapsed ? 'lg:hidden' : ''">{{ $membersCount }}</span>
                         </a>
-                        <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a href="{{ route('admin.roles') }}" class="nav-link {{ Route::is('admin.roles') ? 'active' : '' }}">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Cargos</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ route('admin.permissions') }}" class="nav-link {{ Route::is('admin.permissions') ? 'active' : '' }}">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Permissões</p>
-                                </a>
-                            </li>
-                        </ul>
                     </li>
-                @endif
+                    <li>
+                        <a href="{{ route('admin.users.time') }}" wire:navigate @click="closeMobile()"
+                           class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition
+                                  {{ Route::is('admin.users.time') ? 'text-gold-400' : 'text-slate-400 hover:bg-white/10 hover:text-white' }}">
+                            <i class="fas fa-circle text-[5px]"></i>
+                            <span :class="collapsed ? 'lg:hidden' : ''">Equipe</span>
+                            <span class="ml-auto rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-slate-300" :class="collapsed ? 'lg:hidden' : ''">{{ $equipeCount }}</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.users.create') }}" wire:navigate @click="closeMobile()"
+                           class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition
+                                  {{ Route::is('admin.users.create') ? 'text-gold-400' : 'text-slate-400 hover:bg-white/10 hover:text-white' }}">
+                            <i class="fas fa-user-plus text-[11px]"></i>
+                            <span :class="collapsed ? 'lg:hidden' : ''">Cadastrar Novo</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
 
-                {{-- Configurações --}}
-                <li class="nav-item {{ Route::is(['admin.settings', 'admin.sitemap.generator']) ? 'menu-open' : '' }}">
-                    <a href="#" class="nav-link {{ Route::is(['admin.settings', 'admin.sitemap.generator']) ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-cog"></i>
-                        <p>Configurações <i class="fas fa-angle-left right"></i></p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="{{ route('admin.settings') }}" class="nav-link {{ Route::is('admin.settings') ? 'active' : '' }}">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Sistema</p>
+            {{-- Posts --}}
+            <li x-data="{ open: @js(Route::is('admin.posts.*')) }">
+                <button type="button" @click="collapsed ? collapsed = false : open = !open"
+                        class="flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium transition
+                               {{ Route::is('admin.posts.*') ? 'bg-gold-500/15 text-gold-400' : 'text-slate-300 hover:bg-white/10 hover:text-white' }}">
+                    <i class="w-5 text-center text-base {{ Route::is('admin.posts.*') ? 'text-gold-400' : 'text-slate-400' }} fas fa-pencil-alt"></i>
+                    <span :class="collapsed ? 'lg:hidden' : ''">Posts</span>
+                    <i class="fas fa-chevron-down ml-auto text-[10px] transition-transform duration-200 {{ Route::is('admin.posts.*') ? 'text-gold-400' : 'text-slate-500' }}"
+                       :class="collapsed ? 'lg:hidden' : ''" x-show="open" x-cloak></i>
+                </button>
+                <ul x-show="open" class="mt-1 space-y-0.5 border-l border-white/10 pl-3" x-cloak>
+                    <li>
+                        <a href="{{ route('admin.posts.index') }}" wire:navigate @click="closeMobile()"
+                           class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition
+                                  {{ Route::is('admin.posts.index') ? 'text-gold-400' : 'text-slate-400 hover:bg-white/10 hover:text-white' }}">
+                            <i class="fas fa-circle text-[5px]"></i>
+                            <span :class="collapsed ? 'lg:hidden' : ''">Listar Todos</span>
+                            <span class="ml-auto rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-slate-300" :class="collapsed ? 'lg:hidden' : ''">{{ $postsCount }}</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.posts.categories.index') }}" wire:navigate @click="closeMobile()"
+                           class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition
+                                  {{ Route::is('admin.posts.categories.index') ? 'text-gold-400' : 'text-slate-400 hover:bg-white/10 hover:text-white' }}">
+                            <i class="fas fa-tags text-[11px]"></i>
+                            <span :class="collapsed ? 'lg:hidden' : ''">Categorias</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.posts.create') }}" wire:navigate @click="closeMobile()"
+                           class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition
+                                  {{ Route::is('admin.posts.create') ? 'text-gold-400' : 'text-slate-400 hover:bg-white/10 hover:text-white' }}">
+                            <i class="fas fa-plus text-[11px]"></i>
+                            <span :class="collapsed ? 'lg:hidden' : ''">Cadastrar Novo</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            {{-- Slides --}}
+            <li x-data="{ open: @js(Route::is('admin.slides.*')) }">
+                <button type="button" @click="collapsed ? collapsed = false : open = !open"
+                        class="flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium transition
+                               {{ Route::is('admin.slides.*') ? 'bg-gold-500/15 text-gold-400' : 'text-slate-300 hover:bg-white/10 hover:text-white' }}">
+                    <i class="w-5 text-center text-base {{ Route::is('admin.slides.*') ? 'text-gold-400' : 'text-slate-400' }} fas fa-images"></i>
+                    <span :class="collapsed ? 'lg:hidden' : ''">Slides</span>
+                    <i class="fas fa-chevron-down ml-auto text-[10px] transition-transform duration-200 {{ Route::is('admin.slides.*') ? 'text-gold-400' : 'text-slate-500' }}"
+                       :class="collapsed ? 'lg:hidden' : ''" x-show="open" x-cloak></i>
+                </button>
+                <ul x-show="open" class="mt-1 space-y-0.5 border-l border-white/10 pl-3" x-cloak>
+                    <li>
+                        <a href="{{ route('admin.slides.index') }}" wire:navigate @click="closeMobile()"
+                           class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition
+                                  {{ Route::is('admin.slides.index') ? 'text-gold-400' : 'text-slate-400 hover:bg-white/10 hover:text-white' }}">
+                            <i class="fas fa-circle text-[5px]"></i>
+                            <span :class="collapsed ? 'lg:hidden' : ''">Listar Todos</span>
+                            <span class="ml-auto rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-slate-300" :class="collapsed ? 'lg:hidden' : ''">{{ $slidesCount }}</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.slides.create') }}" wire:navigate @click="closeMobile()"
+                           class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition
+                                  {{ Route::is('admin.slides.create') ? 'text-gold-400' : 'text-slate-400 hover:bg-white/10 hover:text-white' }}">
+                            <i class="fas fa-plus text-[11px]"></i>
+                            <span :class="collapsed ? 'lg:hidden' : ''">Cadastrar Novo</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            {{-- Ministérios --}}
+            <li x-data="{ open: @js(Route::is('admin.ministries.*')) }">
+                <button type="button" @click="collapsed ? collapsed = false : open = !open"
+                        class="flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium transition
+                               {{ Route::is('admin.ministries.*') ? 'bg-gold-500/15 text-gold-400' : 'text-slate-300 hover:bg-white/10 hover:text-white' }}">
+                    <i class="w-5 text-center text-base {{ Route::is('admin.ministries.*') ? 'text-gold-400' : 'text-slate-400' }} fas fa-hands-helping"></i>
+                    <span :class="collapsed ? 'lg:hidden' : ''">Ministérios</span>
+                    <i class="fas fa-chevron-down ml-auto text-[10px] transition-transform duration-200 {{ Route::is('admin.ministries.*') ? 'text-gold-400' : 'text-slate-500' }}"
+                       :class="collapsed ? 'lg:hidden' : ''" x-show="open" x-cloak></i>
+                </button>
+                <ul x-show="open" class="mt-1 space-y-0.5 border-l border-white/10 pl-3" x-cloak>
+                    <li>
+                        <a href="{{ route('admin.ministries.index') }}" wire:navigate @click="closeMobile()"
+                           class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition
+                                  {{ Route::is('admin.ministries.index') ? 'text-gold-400' : 'text-slate-400 hover:bg-white/10 hover:text-white' }}">
+                            <i class="fas fa-circle text-[5px]"></i>
+                            <span :class="collapsed ? 'lg:hidden' : ''">Listar Todos</span>
+                            <span class="ml-auto rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-slate-300" :class="collapsed ? 'lg:hidden' : ''">{{ $ministriesCount }}</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.ministries.create') }}" wire:navigate @click="closeMobile()"
+                           class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition
+                                  {{ Route::is('admin.ministries.create') ? 'text-gold-400' : 'text-slate-400 hover:bg-white/10 hover:text-white' }}">
+                            <i class="fas fa-plus text-[11px]"></i>
+                            <span :class="collapsed ? 'lg:hidden' : ''">Cadastrar Novo</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            {{-- Eventos --}}
+            <li x-data="{ open: @js(Route::is('admin.events.*')) }">
+                <button type="button" @click="collapsed ? collapsed = false : open = !open"
+                        class="flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium transition
+                               {{ Route::is('admin.events.*') ? 'bg-gold-500/15 text-gold-400' : 'text-slate-300 hover:bg-white/10 hover:text-white' }}">
+                    <i class="w-5 text-center text-base {{ Route::is('admin.events.*') ? 'text-gold-400' : 'text-slate-400' }} fas fa-calendar-alt"></i>
+                    <span :class="collapsed ? 'lg:hidden' : ''">Eventos</span>
+                    <i class="fas fa-chevron-down ml-auto text-[10px] transition-transform duration-200 {{ Route::is('admin.events.*') ? 'text-gold-400' : 'text-slate-500' }}"
+                       :class="collapsed ? 'lg:hidden' : ''" x-show="open" x-cloak></i>
+                </button>
+                <ul x-show="open" class="mt-1 space-y-0.5 border-l border-white/10 pl-3" x-cloak>
+                    <li>
+                        <a href="{{ route('admin.events.index') }}" wire:navigate @click="closeMobile()"
+                           class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition
+                                  {{ Route::is('admin.events.index') ? 'text-gold-400' : 'text-slate-400 hover:bg-white/10 hover:text-white' }}">
+                            <i class="fas fa-circle text-[5px]"></i>
+                            <span :class="collapsed ? 'lg:hidden' : ''">Listar Todos</span>
+                            <span class="ml-auto rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-slate-300" :class="collapsed ? 'lg:hidden' : ''">{{ $eventsCount }}</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.events.create') }}" wire:navigate @click="closeMobile()"
+                           class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition
+                                  {{ Route::is('admin.events.create') ? 'text-gold-400' : 'text-slate-400 hover:bg-white/10 hover:text-white' }}">
+                            <i class="fas fa-plus text-[11px]"></i>
+                            <span :class="collapsed ? 'lg:hidden' : ''">Cadastrar Novo</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            {{-- Ofertas --}}
+            <li x-data="{ open: @js(Route::is('admin.offerings.*')) }">
+                <button type="button" @click="collapsed ? collapsed = false : open = !open"
+                        class="flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium transition
+                               {{ Route::is('admin.offerings.*') ? 'bg-gold-500/15 text-gold-400' : 'text-slate-300 hover:bg-white/10 hover:text-white' }}">
+                    <i class="w-5 text-center text-base {{ Route::is('admin.offerings.*') ? 'text-gold-400' : 'text-slate-400' }} fas fa-hand-holding-heart"></i>
+                    <span :class="collapsed ? 'lg:hidden' : ''">Ofertas</span>
+                    <i class="fas fa-chevron-down ml-auto text-[10px] transition-transform duration-200 {{ Route::is('admin.offerings.*') ? 'text-gold-400' : 'text-slate-500' }}"
+                       :class="collapsed ? 'lg:hidden' : ''" x-show="open" x-cloak></i>
+                </button>
+                <ul x-show="open" class="mt-1 space-y-0.5 border-l border-white/10 pl-3" x-cloak>
+                    <li>
+                        <a href="{{ route('admin.offerings.index') }}" wire:navigate @click="closeMobile()"
+                           class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition
+                                  {{ Route::is('admin.offerings.index') ? 'text-gold-400' : 'text-slate-400 hover:bg-white/10 hover:text-white' }}">
+                            <i class="fas fa-circle text-[5px]"></i>
+                            <span :class="collapsed ? 'lg:hidden' : ''">Listar Todas</span>
+                            <span class="ml-auto rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-slate-300" :class="collapsed ? 'lg:hidden' : ''">{{ $offeringsCount }}</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.offerings.create') }}" wire:navigate @click="closeMobile()"
+                           class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition
+                                  {{ Route::is('admin.offerings.create') ? 'text-gold-400' : 'text-slate-400 hover:bg-white/10 hover:text-white' }}">
+                            <i class="fas fa-plus text-[11px]"></i>
+                            <span :class="collapsed ? 'lg:hidden' : ''">Cadastrar Nova</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            @if (auth()->user()?->isSuperAdmin())
+                {{-- Cargos & Permissões --}}
+                <li x-data="{ open: @js(Route::is(['admin.roles', 'admin.permissions'])) }">
+                    <button type="button" @click="collapsed ? collapsed = false : open = !open"
+                            class="flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium transition
+                                   {{ Route::is(['admin.roles', 'admin.permissions']) ? 'bg-gold-500/15 text-gold-400' : 'text-slate-300 hover:bg-white/10 hover:text-white' }}">
+                        <i class="w-5 text-center text-base {{ Route::is(['admin.roles', 'admin.permissions']) ? 'text-gold-400' : 'text-slate-400' }} fas fa-user-shield"></i>
+                        <span :class="collapsed ? 'lg:hidden' : ''">Acessos</span>
+                        <i class="fas fa-chevron-down ml-auto text-[10px] transition-transform duration-200 {{ Route::is(['admin.roles', 'admin.permissions']) ? 'text-gold-400' : 'text-slate-500' }}"
+                           :class="collapsed ? 'lg:hidden' : ''" x-show="open" x-cloak></i>
+                    </button>
+                    <ul x-show="open" class="mt-1 space-y-0.5 border-l border-white/10 pl-3" x-cloak>
+                        <li>
+                            <a href="{{ route('admin.roles') }}" wire:navigate @click="closeMobile()"
+                               class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition
+                                      {{ Route::is('admin.roles') ? 'text-gold-400' : 'text-slate-400 hover:bg-white/10 hover:text-white' }}">
+                                <i class="fas fa-shield-alt text-[11px]"></i>
+                                <span :class="collapsed ? 'lg:hidden' : ''">Cargos</span>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a href="{{ route('admin.sitemap.generator') }}" class="nav-link {{ Route::is('admin.sitemap.generator') ? 'active' : '' }}">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Mapa do Site</p>
+                        <li>
+                            <a href="{{ route('admin.permissions') }}" wire:navigate @click="closeMobile()"
+                               class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition
+                                      {{ Route::is('admin.permissions') ? 'text-gold-400' : 'text-slate-400 hover:bg-white/10 hover:text-white' }}">
+                                <i class="fas fa-key text-[11px]"></i>
+                                <span :class="collapsed ? 'lg:hidden' : ''">Permissões</span>
                             </a>
                         </li>
                     </ul>
                 </li>
+            @endif
 
-            </ul>
-        </nav>
+            {{-- Configurações --}}
+            <li x-data="{ open: @js(Route::is(['admin.settings', 'admin.sitemap.generator'])) }">
+                <button type="button" @click="collapsed ? collapsed = false : open = !open"
+                        class="flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium transition
+                               {{ Route::is(['admin.settings', 'admin.sitemap.generator']) ? 'bg-gold-500/15 text-gold-400' : 'text-slate-300 hover:bg-white/10 hover:text-white' }}">
+                    <i class="w-5 text-center text-base {{ Route::is(['admin.settings', 'admin.sitemap.generator']) ? 'text-gold-400' : 'text-slate-400' }} fas fa-cog"></i>
+                    <span :class="collapsed ? 'lg:hidden' : ''">Configurações</span>
+                    <i class="fas fa-chevron-down ml-auto text-[10px] transition-transform duration-200 {{ Route::is(['admin.settings', 'admin.sitemap.generator']) ? 'text-gold-400' : 'text-slate-500' }}"
+                       :class="collapsed ? 'lg:hidden' : ''" x-show="open" x-cloak></i>
+                </button>
+                <ul x-show="open" class="mt-1 space-y-0.5 border-l border-white/10 pl-3" x-cloak>
+                    <li>
+                        <a href="{{ route('admin.settings') }}" wire:navigate @click="closeMobile()"
+                           class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition
+                                  {{ Route::is('admin.settings') ? 'text-gold-400' : 'text-slate-400 hover:bg-white/10 hover:text-white' }}">
+                            <i class="fas fa-sliders-h text-[11px]"></i>
+                            <span :class="collapsed ? 'lg:hidden' : ''">Sistema</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.sitemap.generator') }}" wire:navigate @click="closeMobile()"
+                           class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition
+                                  {{ Route::is('admin.sitemap.generator') ? 'text-gold-400' : 'text-slate-400 hover:bg-white/10 hover:text-white' }}">
+                            <i class="fas fa-sitemap text-[11px]"></i>
+                            <span :class="collapsed ? 'lg:hidden' : ''">Mapa do Site</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
 
+        </ul>
+    </nav>
+
+    {{-- Rodapé do sidebar --}}
+    <div class="shrink-0 border-t border-white/10 px-4 py-3" :class="collapsed ? 'lg:px-2 lg:text-center' : ''">
+        <p class="text-[11px] text-slate-500" :class="collapsed ? 'lg:hidden' : ''">
+            © {{ date('Y') }} {{ $config->app_name ?? 'Semear' }}
+        </p>
+        <i class="fas fa-seedling text-slate-600 lg:hidden" :class="collapsed ? '' : 'lg:hidden'"></i>
     </div>
 
 </aside>

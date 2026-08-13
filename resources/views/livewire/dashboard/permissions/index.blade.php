@@ -1,60 +1,48 @@
 <div>
     @section('title', $title)
+
     <div class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1><i class="fas fa-shield-alt mr-2"></i> {{ $isEditing ? 'Editar' : 'Cadastrar' }}</h1>
-                </div>
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Painel de Controle</a></li>
-                        <li class="breadcrumb-item"><a wire:navigate href="{{ route('admin.permissions') }}">Permissões</a>
-                        </li>
-                        <li class="breadcrumb-item active">{{ $isEditing ? 'Editar' : 'Cadastrar' }}</li>
-                    </ol>
-                </div>
+        <h1><i class="fas fa-shield-alt"></i> {{ $isEditing ? 'Editar' : 'Cadastrar' }}</h1>
+        <nav class="breadcrumb">
+            <span class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Painel de Controle</a></span>
+            <span class="breadcrumb-item"><a wire:navigate href="{{ route('admin.permissions') }}">Permissões</a></span>
+            <span class="breadcrumb-item active">{{ $isEditing ? 'Editar' : 'Cadastrar' }}</span>
+        </nav>
+    </div>
+
+    <div class="card">
+        <div class="card-body text-slate-600">
+            <div class="mb-4 flex flex-col gap-3 sm:flex-row">
+                <input type="text" wire:model.defer="name" placeholder="Nome da permissão" class="form-control flex-1">
+                <button type="submit" class="btn btn-success">{{ $isEditing ? 'Atualizar' : 'Salvar' }}</button>
+                @if ($isEditing)
+                    <button type="button" wire:click="resetForm" class="btn btn-default">Cancelar</button>
+                @endif
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th class="w-28">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($permissions as $permission)
+                            <tr>
+                                <td>{{ $permission->name }}</td>
+                                <td>
+                                    <div class="flex items-center gap-2">
+                                        <button wire:click="edit({{ $permission->id }})" class="btn btn-xs btn-default" title="Editar"><i class="fas fa-pen"></i></button>
+                                        <button wire:click="delete({{ $permission->id }})" class="btn btn-xs btn-danger text-white"><i class="fas fa-trash"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
-
-    <div class="card card-teal card-outline">
-        <div class="card-body text-muted">
-            <div class="row">
-                <div class="col-12">
-                    <div class="input-group mb-3">
-                        <input type="text" wire:model.defer="name" placeholder="Nome da permissão" class="form-control rounded-0">
-                        <span class="input-group-append mr-1">
-                          <button type="submit" class="btn btn-success btn-flat">{{ $isEditing ? 'Atualizar' : 'Salvar' }}</button>
-                        </span>
-                        @if($isEditing)
-                            <span class="input-group-append">
-                                <button type="button" wire:click="resetForm" class="btn btn-default btn-flat">Cancelar</button>
-                            </span>
-                        @endif                            
-                    </div>
-                </div>
-            </div>
-
-            <table class="table table-bordered table-striped projects">
-                <thead>
-                    <tr>
-                        <th>Nome</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($permissions as $permission)                    
-                    <tr>                            
-                        <td>{{ $permission->name }}</td>
-                        <td>
-                            <button wire:click="edit({{ $permission->id }})" class="btn btn-xs btn-default" title="Editar"><i class="fas fa-pen"></i></button>
-                            <button wire:click="delete({{ $permission->id }})" class="btn btn-xs btn-danger text-white"><i class="fas fa-trash"></i></button>                            
-                        </td>
-                    </tr>                        
-                    @endforeach
-                </tbody>                
-            </table>
-        </div>        
-    </div>    
 </div>

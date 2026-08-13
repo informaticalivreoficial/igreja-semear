@@ -1,41 +1,27 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" x-data>
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>@yield( 'title', env('APP_NAME') )</title>
+    <title>@yield('title', env('APP_NAME')) | {{ env('APP_NAME') }}</title>
 
-    <link rel="icon" href="{{ asset('theme/images/chave.png')}}" type="image/x-icon">
+    <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
 
     {{-- FontAwesome --}}
-    <link rel="stylesheet" href="{{ asset('theme/plugins/fontawesome-free/css/all.min.css') }}">
-    {{-- Bootstrap 4 --}}
-    <link rel="stylesheet" href="{{ asset('theme/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}">
 
-    <link rel="stylesheet" href="{{ asset('theme/plugins/icheck-bootstrap/icheck-bootstrap.min.css') }}">
-    {{-- JQVMap --}}
-    <link rel="stylesheet" href="{{ asset('theme/plugins/jqvmap/jqvmap.min.css') }}">
-
-    
-    {{-- Theme style --}}
-    <link rel="stylesheet" href="{{ asset('theme/dist/css/adminlte.min.css') }}">
-    {{-- overlayScrollbars --}}
-    <link rel="stylesheet" href="{{ asset('theme/plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
-    
     {{-- Tom Select --}}
     <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
-    
-    {{-- Toastr --}}
+
+    {{-- Toastify --}}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 
-    {{-- General Styles --}}
-    <link rel="stylesheet" href="{{ asset('theme/dist/css/styles.css') }}">
-    <link rel="stylesheet" href="{{ asset('theme/dist/css/action-buttons.css') }}">
-    
+    {{-- basicLightbox --}}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/basiclightbox@5/dist/basicLightbox.min.css">
 
+    {{-- Quill --}}
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 
     <style>
@@ -46,45 +32,44 @@
         .basicLightbox__placeholder {
             z-index: 9999 !important;
         }
+
+        .ql-editor {
+            min-height: 180px;
+            max-height: 350px;
+            overflow-y: auto;
+        }
     </style>
 
     @stack('styles')
-    
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="hold-transition sidebar-mini text-sm">
-    <div class="wrapper">
-        <livewire:navigation.top-navigation />
+<body class="bg-paper min-h-screen text-slate-800 antialiased">
+    <div x-data="appShell()" class="min-h-screen">
 
+        {{-- Sidebar Desktop + Drawer Mobile --}}
         <livewire:navigation.side-navigation />
 
-        <div class="content-wrapper">
-            {{-- <div class="content-header">
-                <div class="container-fluid">
-                    <div class="row mb-2">
-                        <div class="col-sm-6">
-                            <h1 class="m-0">Dashboard</h1>
-                        </div>
+        {{-- Overlay (mobile) --}}
+        <div x-show="mobileOpen" x-transition-opacity
+             @click="mobileOpen = false"
+             class="fixed inset-0 z-30 bg-forest-900/60 backdrop-blur-sm lg:hidden"
+             style="display:none;"></div>
 
-                        <div class="col-sm-6">
-                            <ol class="breadcrumb float-sm-right">
-                                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                                <li class="breadcrumb-item active">Dashboard v1</li>
-                            </ol>
-                        </div>
-                    </div>
-                </div>
-            </div> --}}
+        {{-- Conteúdo Principal --}}
+        <div class="flex min-h-screen flex-col transition-[padding-left] duration-300 lg:pl-64"
+             :class="collapsed ? 'lg:!pl-20' : 'lg:pl-64'">
 
-            <section class="content">
-                <div class="container-fluid">
-                    {{ $slot }}
-                </div>
-            </section>
+            {{-- Topbar --}}
+            <livewire:navigation.top-navigation />
+
+            <main class="flex-1 px-4 py-6 sm:px-6 lg:px-8">
+                {{ $slot }}
+            </main>
+
+            <livewire:navigation.footer />
         </div>
-
-        <livewire:navigation.footer />
     </div>
 
     @auth
@@ -92,52 +77,50 @@
         <livewire:components.toastr-notification />
     @endauth
 
-    {{-- jQuery --}}
-    <script src="{{ asset('theme/plugins/jquery/jquery.min.js') }}"></script> 
-
-    {{-- Bootstrap 4 --}}
-    <script src="{{ asset('theme/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-
-    <script src="{{ asset('theme/plugins/sparklines/sparkline.js') }}"></script>
-
-    {{-- JQVMap --}}
-    <script src="{{ asset('theme/plugins/jqvmap/jquery.vmap.min.js') }}"></script>
-    
-    {{-- daterangepicker --}}
-    <script src="{{ asset('theme/plugins/moment/moment.min.js') }}"></script>
-
-    {{-- Tempusdominus Bootstrap 4 --}}
-    <script src="{{ asset('theme/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js') }}"></script>
-
-    
     {{-- Tom Select --}}
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
-
-    {{-- overlayScrollbars --}}
-    <script src="{{ asset('theme/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script>
-
-    <script src="{{ asset('theme/dist/js/adminlte.js') }}"></script>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    {{-- Toastr --}}
-    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/basiclightbox@5/dist/basicLightbox.min.js"></script>
 
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <script src="https://unpkg.com/quill-image-resize-module/image-resize.min.js"></script>
 
-    {{-- 👈 Registra UMA vez aqui, antes do alpine:init --}}
     <script>
         if (typeof ImageResize !== 'undefined') {
             Quill.register('modules/imageResize', ImageResize.default, true);
         }
     </script>
 
-    @stack('scripts') 
+    @stack('scripts')
 
     <script>
+        function appShell() {
+            return {
+                collapsed: false,
+                mobileOpen: false,
+
+                toggleSidebar() {
+                    if (window.innerWidth < 1024) {
+                        this.mobileOpen = !this.mobileOpen;
+                    } else {
+                        this.collapsed = !this.collapsed;
+                    }
+                },
+
+                closeMobile() {
+                    this.mobileOpen = false;
+                },
+
+                toggleFullscreen() {
+                    if (!document.fullscreenElement) {
+                        document.documentElement.requestFullscreen();
+                    } else {
+                        document.exitFullscreen();
+                    }
+                },
+            };
+        }
+
         // Listener genérico para todos os tipos de SweetAlert
         ['swal', 'swal:error', 'swal:success', 'swal:info', 'swal:warning'].forEach(eventName => {
             window.addEventListener(eventName, (event) => {
@@ -156,7 +139,6 @@
                     showConfirmButton: data.showConfirmButton ?? true,
                     confirmButtonText: data.confirmButtonText ?? 'OK',
                 }).then((result) => {
-                    // ADAPTAÇÃO AQUI: Verifica se existe uma URL para redirecionar
                     if (data.redirectUrl) {
                         window.location.href = data.redirectUrl;
                     }
@@ -187,12 +169,7 @@
                 quill: null,
 
                 init() {
-                    if (this.quill) return; // 🔥 evita duplicar editor
-
-                    // 🔥 Registrar módulo de redimensionamento
-                    // if (typeof ImageResize !== 'undefined') {
-                    //     Quill.register('modules/imageResize', ImageResize.default);
-                    // }
+                    if (this.quill) return;
 
                     this.quill = new Quill(this.$refs.editor, {
                         theme: 'snow',
@@ -207,9 +184,8 @@
                                 [{ list: 'ordered' }, { list: 'bullet' }],
                                 ['blockquote'],
                                 ['link', 'image'],
-                                ['clean'], 
+                                ['clean'],
                             ],
-                            // 🖼️ Módulo de redimensionamento visual
                             imageResize: {
                                 displaySize: true,
                                 modules: ['Resize', 'DisplaySize']
@@ -217,25 +193,20 @@
                         },
                     });
 
-                    // 🔥 SCROLL AQUI
                     const editorEl = this.$refs.editor.querySelector('.ql-editor');
                     editorEl.style.maxHeight = '350px';
                     editorEl.style.overflowY = 'auto';
 
-                    // Conteúdo inicial (edit)
                     if (value) {
                         this.quill.root.innerHTML = value;
                     }
 
-                    // 🔥 SINCRONIZAÇÃO INICIAL (create FIX)
                     this.sync();
 
-                    // Atualização ao digitar
                     this.quill.on('text-change', () => {
                         this.sync();
                     });
 
-                    // Adicionar suporte a alinhamento de imagens
                     this.addImageAlignmentSupport();
                 },
 
@@ -258,8 +229,7 @@
                             if (parent) {
                                 const alignment = parent.className.match(/ql-align-(\w+)/);
                                 if (alignment) {
-                                    const alignType = alignment[1];
-                                    this.applyImageAlignment(e.target, alignType);
+                                    this.applyImageAlignment(e.target, alignment[1]);
                                 }
                             }
                         }
@@ -292,7 +262,7 @@
                     img.style.marginRight = '';
                     img.style.display = 'block';
 
-                    switch(alignment) {
+                    switch (alignment) {
                         case 'center':
                             img.style.marginLeft = 'auto';
                             img.style.marginRight = 'auto';

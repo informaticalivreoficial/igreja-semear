@@ -15,7 +15,7 @@ class Slides extends Component
     // Quantidade de itens por página
     public int $perPage = 25;
 
-    protected $paginationTheme = 'bootstrap';
+    protected $paginationTheme = 'tailwind';
 
     public string $search = '';
 

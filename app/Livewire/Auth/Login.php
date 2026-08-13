@@ -90,7 +90,7 @@ class Login extends Component
             'message' => 'Bem-vindo de volta, '.Renato::getPrimeiroNome($user->name).'!',
         ]);
 
-        return redirect()->route('admin');
+        return redirect()->route('admin.dashboard');
     }
 
     #[Title('Login')]

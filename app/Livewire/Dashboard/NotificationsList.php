@@ -10,7 +10,7 @@ class NotificationsList extends Component
 {
     use WithPagination;
 
-    protected $paginationTheme = 'bootstrap';
+    protected $paginationTheme = 'tailwind';
 
     public function markAsRead($notificationId)
     {
