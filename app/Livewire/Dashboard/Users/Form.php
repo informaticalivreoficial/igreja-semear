@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Dashboard\Users;
 
+use App\Models\Family;
 use App\Models\Ministry;
 use App\Models\User;
 use Illuminate\Support\Collection;
@@ -78,9 +79,15 @@ class Form extends Component
 
     public array $ministries = [];
 
+    public $family_id = '';
+
+    public $family_role = '';
+
     public Collection $roles;
 
     public Collection $ministryOptions;
+
+    public Collection $familyOptions;
 
     public $password;
 
@@ -119,6 +126,7 @@ class Form extends Component
     {
         $this->roles = Role::orderBy('name')->get();
         $this->ministryOptions = Ministry::orderBy('name')->get();
+        $this->familyOptions = Family::orderBy('name')->get();
 
         $this->user = $user;
 
@@ -151,6 +159,8 @@ class Form extends Component
             $this->information = $user->information;
             $this->role = $user->getRoleNames()->first() ?? 'member';
             $this->ministries = $user->ministries()->pluck('ministries.id')->map(fn ($id) => (string) $id)->all();
+            $this->family_id = $user->member?->family_id ? (string) $user->member->family_id : '';
+            $this->family_role = $user->member?->family_role ?? '';
         }
     }
 
@@ -216,6 +226,38 @@ class Form extends Component
 
         $this->user->syncRoles([$this->role]);
         $this->user->ministries()->sync($this->ministries ?? []);
+
+        // Sincronizar registro na tabela members (fonte de dados do membro)
+        if ($this->role === 'member' || $this->user->member()->exists()) {
+            $this->user->member()->updateOrCreate(
+                ['user_id' => $this->user->id],
+                [
+                    'family_id' => $this->family_id ?: null,
+                    'family_role' => $this->family_role ?: null,
+                    'name' => $this->name,
+                    'gender' => $this->gender,
+                    'cpf' => $this->cpf,
+                    'rg' => $this->rg,
+                    'rg_expedition' => $this->rg_expedition,
+                    'birthday' => $this->birthday,
+                    'naturalness' => $this->naturalness,
+                    'civil_status' => $this->civil_status,
+                    'baptism' => (bool) $this->baptism,
+                    'baptism_date' => $this->baptism_date,
+                    'postcode' => $this->postcode,
+                    'street' => $this->street,
+                    'number' => $this->number,
+                    'neighborhood' => $this->neighborhood,
+                    'state' => $this->state,
+                    'city' => $this->city,
+                    'complement' => $this->complement,
+                    'cell_phone' => $this->cell_phone,
+                    'whatsapp' => $this->whatsapp,
+                    'email' => $this->email,
+                    'status' => (bool) $this->status,
+                ]
+            );
+        }
 
         $this->dispatch('swal', [
             'title' => 'Sucesso!',

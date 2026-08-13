@@ -21,6 +21,12 @@ class RedirectIfAuthenticated
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
+                $user = Auth::guard($guard)->user();
+
+                if ($user->member && ! $user->isPastor() && ! $user->isLider()) {
+                    return redirect()->route('member.dashboard');
+                }
+
                 return redirect(RouteServiceProvider::HOME);
             }
         }

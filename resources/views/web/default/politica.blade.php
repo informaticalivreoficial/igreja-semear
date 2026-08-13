@@ -1,29 +1,32 @@
 @extends("web.{$configuracoes->template}.master.master")
 
 @section('content')
-<main class="site-main page-spacing">   
-    <div class="container-fluid page-banner about-banner" style="background-color:#3B4C76 !important;">
-        <div class="container">
-            <h3 style="color: #fff;">Política de Privacidade</h3>
-            <ol class="breadcrumb">
-                <li><a style="color: #fff;" href="{{route('web.home')}}">Início</a></li>
-                <li class="active">Política de Privacidade</li>
-            </ol>
+    <section class="page-hero py-14">
+        <div class="container-site">
+            <nav class="breadcrumb-site" aria-label="breadcrumb">
+                <a href="{{ route('web.home') }}">Início</a>
+                <span class="sep">/</span>
+                <span>Política de Privacidade</span>
+            </nav>
+            <h1 class="font-display mt-3 text-3xl font-bold text-white sm:text-4xl">Política de Privacidade</h1>
         </div>
-    </div>
-    
-    <div class="section-padding"></div>
-    
-    <div class="container">		
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12 col-sm-12 col-xs-12">                    
-                    {!! $configuracoes->privacy_policy !!}								
-                    <br />                           
+    </section>
+
+    <section class="bg-white py-16">
+        <div class="container-site max-w-4xl">
+            @if(optional($configuracoes)->privacy_policy)
+                <div class="prose-site text-slate-700">
+                    {!! $configuracoes->privacy_policy !!}
                 </div>
-            </div>
+            @else
+                <div class="prose-site text-slate-700">
+                    <p>
+                        A {{ optional($configuracoes)->app_name ?: 'Semear' }} preza pela privacidade dos dados
+                        dos seus visitantes e membros. Esta página apresentará em breve a nossa Política de Privacidade
+                        detalhada, explicando quais dados coletamos e como os utilizamos.
+                    </p>
+                </div>
+            @endif
         </div>
-    </div>
-    <div class="section-padding"></div>    
-</main>
+    </section>
 @endsection

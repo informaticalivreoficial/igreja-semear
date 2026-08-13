@@ -42,7 +42,7 @@ class SendEmailController extends Controller
         }
 
         $data = [
-            'sitename' => $this->configService->getConfig()->nomedosite,
+            'sitename' => $this->configService->getConfig()->app_name ?? 'Semear',
             'siteemail' => $this->configService->getConfig()->email,
             'reply_name' => $request->nome,
             'reply_email' => $request->email,
@@ -50,7 +50,7 @@ class SendEmailController extends Controller
         ];
 
         $retorno = [
-            'sitename' => $this->configService->getConfig()->nomedosite,
+            'sitename' => $this->configService->getConfig()->app_name ?? 'Semear',
             'siteemail' => $this->configService->getConfig()->email,
             'reply_name' => $request->nome,
             'reply_email' => $request->email,

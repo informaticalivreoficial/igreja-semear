@@ -90,6 +90,11 @@ class Login extends Component
             'message' => 'Bem-vindo de volta, '.Renato::getPrimeiroNome($user->name).'!',
         ]);
 
+        // ✅ Redirecionar conforme o perfil
+        if ($user->isMember() && ! $user->isPastor() && ! $user->isLider()) {
+            return redirect()->route('member.dashboard');
+        }
+
         return redirect()->route('admin.dashboard');
     }
 

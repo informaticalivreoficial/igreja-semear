@@ -222,6 +222,13 @@
                                 {!! $configData['maps_google'] ?? '' !!}
                             </div>
                         </div>
+
+                        <hr class="my-6 border-slate-200">
+                        <h5 class="mb-3 text-lg font-semibold text-slate-600">Transmissão ao Vivo:</h5>
+                        <div class="form-group">
+                            <label class="labelforms"><b>Link da Transmissão</b> <small class="text-sky-600">(URL do YouTube usada na página de transmissão ao vivo do site)</small></label>
+                            <input type="text" class="form-control" placeholder="https://www.youtube.com/watch?v=..." wire:model="configData.live_url" id="live_url">
+                        </div>
                     </div>
 
                     <!-- Conteúdo da aba contato -->

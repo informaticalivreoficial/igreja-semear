@@ -296,6 +296,25 @@
                                     @endforeach
                                 </div>
                             </div>
+                            <div class="form-group">
+                                <label class="labelforms"><b>Família</b></label>
+                                <select class="form-control" wire:model="family_id">
+                                    <option value="">Sem família</option>
+                                    @foreach ($familyOptions as $familyOption)
+                                        <option value="{{ $familyOption->id }}">{{ $familyOption->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="labelforms"><b>Papel na família</b></label>
+                                <select class="form-control" wire:model="family_role">
+                                    <option value="">Selecione</option>
+                                    <option value="chefe">Chefe da família</option>
+                                    <option value="conjuge">Cônjuge</option>
+                                    <option value="filho">Filho(a)</option>
+                                    <option value="outro">Outro</option>
+                                </select>
+                            </div>
                         </div>
 
                         @if (!$user?->exists)

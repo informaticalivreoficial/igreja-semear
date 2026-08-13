@@ -309,7 +309,7 @@ class Settings extends Component
             'zipcode', 'street', 'number', 'complement', 'neighborhood', 'state', 'city',
             'facebook', 'twitter', 'youtube', 'instagram', 'linkedin', 'information',
             'privacy_policy', 'maps_google', 'metatags', 'analytics_id', 'rss', 'rss_data',
-            'sitemap', 'sitemap_data',
+            'sitemap', 'sitemap_data', 'live_url',
         ];
 
         return array_intersect_key($this->configData, array_flip($columns));

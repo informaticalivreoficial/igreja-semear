@@ -50,6 +50,7 @@ class Config extends Model
         'information',
         'privacy_policy',
         'maps_google',
+        'live_url',
         'metatags', 'rss',
         'rss_data',
         'sitemap',

@@ -18,6 +18,9 @@ class DatabaseSeeder extends Seeder
             MinistriesTableSeeder::class,
             EventsTableSeeder::class,
             OfferingsTableSeeder::class,
+            SitePagesSeeder::class,
+            FamiliesTableSeeder::class,
+            AnnouncementsTableSeeder::class,
         ]);
     }
 }

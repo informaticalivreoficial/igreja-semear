@@ -1,57 +1,36 @@
 @extends("web.{$configuracoes->template}.master.master")
 
 @section('content')
-<main class="site-main page-spacing">
-    <!-- Page Banner -->
-    <div class="container-fluid page-banner about-banner" style="background-image: url({{$post->cover()}});">
-        <div class="container" style="margin-top: -20px !important;">
-            <h3 style="color: #fff;">{{$post->titulo}}</h3>
-            <ol class="breadcrumb">
-                <li><a style="color: #fff;" href="{{route('web.home')}}">Início</a></li>
-                <li class="active">{{$post->titulo}}</li>
-            </ol>
+    <section class="page-hero py-14">
+        <div class="container-site">
+            <nav class="breadcrumb-site" aria-label="breadcrumb">
+                <a href="{{ route('web.home') }}">Início</a>
+                <span class="sep">/</span>
+                <span>{{ $post->title }}</span>
+            </nav>
+            <h1 class="font-display mt-3 text-3xl font-bold text-white sm:text-4xl">{{ $post->title }}</h1>
         </div>
-    </div><!-- Page Banner /- -->
-    
-    <div class="section-padding"></div>
-    <!-- container -->
-    <div class="container">		
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12 col-sm-12 col-xs-12">                    
-                    {!!$post->content!!}									
-                    <br />
+    </section>
 
-                    @if($post->images()->get()->count()) 
-                        <div id="booking-carousel" class="carousel slide booking-carousel" data-ride="carousel">  
-                            <div class="carousel-inner" role="listbox">
-                                @foreach($post->images()->get() as $key => $image)
-                                    <div class="item{{($key == 1 ? ' active' : '')}}">
-                                        <img src="{{ $image->url_image }}" alt="{{ $image->url_image }}" />
-                                    </div>
-                                @endforeach
-                            </div>                      
-                            <a class="left carousel-control" href="#booking-carousel" role="button" data-slide="prev">
-                                <span class="fa fa-caret-left" aria-hidden="true"></span>
-                            </a>
-                            <a class="right carousel-control" href="#booking-carousel" role="button" data-slide="next">
-                                <span class="fa fa-caret-right" aria-hidden="true"></span>
-                            </a>
-                        </div>                                                   
-                    @endif                                   
-                </div>
+    <section class="bg-white py-16">
+        <div class="container-site max-w-4xl">
+            <div class="prose-site text-slate-700">
+                {!! $post->content !!}
             </div>
+
+            @if($post->slug === 'localizacao' && optional($configuracoes)->maps_google)
+                <div class="mt-10 overflow-hidden rounded-2xl border border-slate-100 shadow-sm">
+                    {!! $configuracoes->maps_google !!}
+                </div>
+            @endif
+
+            @if($post->images()->get()->count())
+                <div class="mt-10 grid gap-4 sm:grid-cols-2">
+                    @foreach($post->images()->get() as $image)
+                        <img src="{{ $image->path }}" alt="{{ $post->title }}" class="w-full rounded-2xl object-cover shadow-sm">
+                    @endforeach
+                </div>
+            @endif
         </div>
-    </div><!-- container /- -->
-    <div class="section-padding"></div>
-    
-</main>
-@endsection
-
-@section('css')
-    
-@endsection
-
-@section('js')
-    
+    </section>
 @endsection

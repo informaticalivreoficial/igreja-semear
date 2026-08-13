@@ -1,81 +1,58 @@
 @extends("web.{$configuracoes->template}.master.master")
 
 @section('content')
-<div class="container">
-	<div class="pageContentArea archive-content">
-        <header class="h">
-            <h2 style="color: #fff;">{{(!empty($posts) && $posts[0]->tipo == 'noticia' ? 'Notícias' : 'Blog')}}</h2>
-        </header>  
-        @if(!empty($posts) && $posts->count() > 0)
-            <div class="row"> 
-                @foreach($posts as $post)
-                <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4" style="padding: 3%;">
-                    <article style="min-height: 330px;">
-                        <figure>
-                            <img src="{{$post->cover()}}" alt="{{$post->titulo}}">
-                        </figure>
-                        <header>
-                            <h5 style="text-transform: lowercase;">
-                                <a href="{{route(($post->tipo == 'noticia' ? 'web.noticia' : 'web.blog.artigo'), [ 'slug' => $post->slug ])}}">
-                                    {{$post->titulo}}
-                                </a>
-                            </h5>
-                        </header>
-                        {!! Words($post->content, 21) !!} 
-                        <b><a href="{{route(($post->tipo == 'noticia' ? 'web.noticia' : 'web.blog.artigo'), [ 'slug' => $post->slug ])}}" class="readMore">Leia+</a></b>
-                    </article>
-                </div>
-                @endforeach
-            </div>
-            
-            <div class="row" style="padding: 20px;">
-                <div class="col-sm-12">
-                    @if (isset($filters))
-                        {{ $posts->appends($filters)->links() }}
-                    @else
-                        {{ $posts->links() }}
-                    @endif
-                </div>                
-            </div>
-        @endif
-    </div>        
-</div>
-@endsection
+    {{-- HERO --}}
+    <section class="page-hero py-14">
+        <div class="container-site">
+            <nav class="breadcrumb-site" aria-label="breadcrumb">
+                <a href="{{ route('web.home') }}">Início</a>
+                <span class="sep">/</span>
+                @if(isset($categoria) && $categoria)
+                    <a href="{{ route('web.blog.artigos') }}">Blog</a>
+                    <span class="sep">/</span>
+                    <span>{{ $categoria->title }}</span>
+                @else
+                    <span>{{ $title ?? 'Blog' }}</span>
+                @endif
+            </nav>
+            <h1 class="font-display mt-3 text-3xl font-bold text-white sm:text-4xl">
+                {{ isset($categoria) && $categoria ? $categoria->title : ($title ?? 'Blog') }}
+            </h1>
+            @if(isset($categoria) && $categoria && $categoria->content)
+                <p class="mt-3 max-w-2xl text-sky-100/90">{{ $categoria->content }}</p>
+            @endif
+        </div>
+    </section>
 
-@section('css')
-    <style>
-        .h {
-            padding: 20px 20px 0 40px;
-            background: #53c1ef;
-            min-height: 75px;
-            position: relative;
-        }
-        .pagination-custom{
-            margin: 0;
-            display: -ms-flexbox;
-            display: flex;
-            padding-left: 0;
-            list-style: none;
-            border-radius: 0.25rem;
-        }
-        .pagination-custom li a {
-            border-radius: 30px;
-            margin-right: 8px;
-            color:#7c7c7c;
-            border: 1px solid #ddd;
-            position: relative;
-            float: left;
-            padding: 6px 12px;
-            width: 40px;
-            height: 40px;
-            text-align: center;
-            line-height: 25px;
-            font-weight: 600;
-        }
-        .pagination-custom>.active>a, .pagination-custom>.active>a:hover, .pagination-custom>li>a:hover {
-            color: #fff;
-            background: #007bff;
-            border: 1px solid transparent;
-        }
-    </style>
+    {{-- CONTEÚDO --}}
+    <section class="bg-slate-50 py-16">
+        <div class="container-site grid gap-10 lg:grid-cols-[1fr_320px]">
+            <div>
+                @if(isset($posts) && $posts->count())
+                    <div class="grid gap-6 sm:grid-cols-2">
+                        @foreach($posts as $post)
+                            @include('web.default.partials.post-card', ['post' => $post])
+                        @endforeach
+                    </div>
+
+                    @if(method_exists($posts, 'links'))
+                        <div class="mt-12">
+                            {{ $posts->withQueryString()->links() }}
+                        </div>
+                    @endif
+                @else
+                    <div class="rounded-2xl border border-slate-100 bg-white p-12 text-center shadow-sm">
+                        <p class="font-display text-xl font-bold text-slate-900">Nenhuma publicação encontrada</p>
+                        <p class="mt-2 text-sm text-slate-500">Tente novamente em breve ou faça uma nova busca.</p>
+                    </div>
+                @endif
+            </div>
+
+            @include('web.default.partials.blog-sidebar', [
+                'categorias' => $categorias ?? collect(),
+                'recentes' => $recentes ?? collect(),
+                'active' => $categoria ?? null,
+            ])
+        </div>
+    </section>
 @endsection

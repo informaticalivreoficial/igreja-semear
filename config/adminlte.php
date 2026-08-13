@@ -1,5 +1,13 @@
 <?php
 
+use JeroenNoten\LaravelAdminLte\Menu\Filters\ActiveFilter;
+use JeroenNoten\LaravelAdminLte\Menu\Filters\ClassesFilter;
+use JeroenNoten\LaravelAdminLte\Menu\Filters\DataFilter;
+use JeroenNoten\LaravelAdminLte\Menu\Filters\GateFilter;
+use JeroenNoten\LaravelAdminLte\Menu\Filters\HrefFilter;
+use JeroenNoten\LaravelAdminLte\Menu\Filters\LangFilter;
+use JeroenNoten\LaravelAdminLte\Menu\Filters\SearchFilter;
+
 return [
 
     /*
@@ -225,91 +233,91 @@ return [
     */
 
     'menu' => [
-        // Navbar items:        
+        // Navbar items:
         [
-            'type'         => 'fullscreen-widget',
+            'type' => 'fullscreen-widget',
             'topnav_right' => true,
         ],
 
         // Sidebar items:
         [
             'text' => 'Painel de Controle',
-            'url'  => 'admin',
+            'url' => 'admin',
             'icon' => 'fas fa-tachometer-alt',
         ],
         [
             'text' => 'Configurações',
-            'url'  => 'admin/configuracoes',
+            'url' => 'admin/configuracoes',
             'icon' => 'fas fa-cog',
         ],
         [
-            'text' => 'Usuários',            
+            'text' => 'Usuários',
             'icon' => 'fas fa-fw fa-users',
             'submenu' => [
                 [
                     'text' => 'Membros',
-                    'url'  => 'admin/usuarios',
+                    'url' => 'admin/usuarios',
                 ],
                 [
                     'text' => 'Time',
-                    'url'  => 'admin/usuarios/time',
+                    'url' => 'admin/usuarios/time',
                 ],
                 [
                     'text' => 'Criar Novo',
-                    'url'  => 'admin/usuarios/create',
-                ]
-            ]
+                    'url' => 'admin/usuarios/create',
+                ],
+            ],
         ],
         [
-            'text' => 'Posts',            
+            'text' => 'Posts',
             'icon' => 'fas fa-fw fa-pen',
             'submenu' => [
                 [
                     'text' => 'Cadastrar Post',
-                    'url'  => 'admin/posts/create',
-                ],                
+                    'url' => 'admin/posts/create',
+                ],
                 [
                     'text' => 'Artigos',
-                    'url'  => 'admin/posts/artigos',
+                    'url' => 'admin/posts/artigos',
                 ],
                 [
                     'text' => 'Páginas',
-                    'url'  => 'admin/posts/paginas',
+                    'url' => 'admin/posts/paginas',
                 ],
                 [
                     'text' => 'Categorias',
-                    'url'  => 'admin/posts/categorias',
-                ]
-            ]
+                    'url' => 'admin/posts/categorias',
+                ],
+            ],
         ],
         [
             'text' => 'Banner Slides',
-            'url'  => 'admin/slides',
+            'url' => 'admin/slides',
             'icon' => 'fas fa-film',
         ],
         [
-            'text' => 'Email',            
+            'text' => 'Email',
             'icon' => 'fas fa-fw fa-envelope',
             'submenu' => [
                 [
                     'text' => 'Enviar Email',
-                    'url'  => 'admin/email/enviar-email',
+                    'url' => 'admin/email/enviar-email',
                 ],
                 [
                     'text' => 'Listas',
-                    'url'  => 'admin/listas',
+                    'url' => 'admin/listas',
                 ],
                 [
                     'text' => 'Cadastrar Lista',
-                    'url'  => 'admin/listas/cadastrar',
+                    'url' => 'admin/listas/cadastrar',
                 ],
                 [
                     'text' => 'Cadastrar Email',
-                    'url'  => 'admin/listas/email/cadastrar',
+                    'url' => 'admin/listas/email/cadastrar',
                 ],
-            ]
-        ],      
-        
+            ],
+        ],
+
     ],
 
     /*
@@ -325,13 +333,13 @@ return [
     */
 
     'filters' => [
-        JeroenNoten\LaravelAdminLte\Menu\Filters\GateFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\HrefFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\SearchFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\ActiveFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\ClassesFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\LangFilter::class,
-        JeroenNoten\LaravelAdminLte\Menu\Filters\DataFilter::class,
+        GateFilter::class,
+        HrefFilter::class,
+        SearchFilter::class,
+        ActiveFilter::class,
+        ClassesFilter::class,
+        LangFilter::class,
+        DataFilter::class,
     ],
 
     /*
@@ -444,7 +452,7 @@ return [
                     'type' => 'js',
                     'asset' => true,
                     'location' => 'vendor/ekko-lightbox/ekko-lightbox.min.js',
-                ],                
+                ],
                 [
                     'type' => 'css',
                     'asset' => true,
@@ -459,7 +467,7 @@ return [
                     'type' => 'js',
                     'asset' => true,
                     'location' => 'vendor/toastr/toastr.min.js',
-                ],                
+                ],
                 [
                     'type' => 'css',
                     'asset' => true,

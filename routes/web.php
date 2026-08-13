@@ -1,11 +1,15 @@
 <?php
 
+use App\Http\Controllers\Web\MemberAreaController;
 use App\Http\Controllers\Web\RssFeedController;
 use App\Http\Controllers\Web\SendEmailController;
 use App\Http\Controllers\Web\WebController;
+use App\Livewire\Dashboard\Announcements\AnnouncementForm;
+use App\Livewire\Dashboard\Announcements\Announcements;
 use App\Livewire\Dashboard\Dashboard;
 use App\Livewire\Dashboard\Events\EventForm;
 use App\Livewire\Dashboard\Events\Events;
+use App\Livewire\Dashboard\Families\Families;
 use App\Livewire\Dashboard\Ministries\Ministries;
 use App\Livewire\Dashboard\Ministries\MinistryForm;
 use App\Livewire\Dashboard\NotificationsList;
@@ -15,6 +19,8 @@ use App\Livewire\Dashboard\Permissions\Index as PermissionIndex;
 use App\Livewire\Dashboard\Posts\CatPosts;
 use App\Livewire\Dashboard\Posts\PostForm;
 use App\Livewire\Dashboard\Posts\Posts;
+use App\Livewire\Dashboard\PrayerRequests\PrayerRequests;
+use App\Livewire\Dashboard\Registrations\Registrations;
 use App\Livewire\Dashboard\Roles\Index as RoleIndex;
 use App\Livewire\Dashboard\Settings;
 use App\Livewire\Dashboard\Sitemap\SitemapGenerator;
@@ -46,6 +52,10 @@ Route::group(['as' => 'web.'], function () {
     Route::match(['post', 'get'], '/blog/pesquisar', [WebController::class, 'searchBlog'])->name('blog.searchBlog');
 
     // *************************************** Páginas *******************************************/
+    Route::get('/ministerios', [WebController::class, 'ministerios'])->name('ministerios');
+    Route::get('/eventos', [WebController::class, 'eventos'])->name('eventos');
+    Route::get('/pedido-de-oracao', [WebController::class, 'pedidoOracao'])->name('pedido-oracao');
+    Route::get('/transmissao-ao-vivo', [WebController::class, 'transmissao'])->name('transmissao');
     Route::get('/pagina/{slug}', [WebController::class, 'pagina'])->name('pagina');
     Route::get('/noticia/{slug}', [WebController::class, 'noticia'])->name('noticia');
     Route::get('/noticias', [WebController::class, 'noticias'])->name('noticias');
@@ -61,7 +71,24 @@ Route::group(['as' => 'web.'], function () {
 
 });
 
-Route::group(['middleware' => ['auth', 'verified'], 'prefix' => 'admin', 'as' => 'admin.'], function () {
+/** Área do membro */
+Route::middleware(['auth', 'member'])->prefix('minha-conta')->as('member.')->group(function () {
+    Route::get('/', [MemberAreaController::class, 'dashboard'])->name('dashboard');
+    Route::get('/perfil', [MemberAreaController::class, 'perfil'])->name('perfil');
+    Route::post('/perfil', [MemberAreaController::class, 'updatePerfil'])->name('perfil.update');
+    Route::get('/familia', [MemberAreaController::class, 'familia'])->name('familia');
+    Route::get('/agenda', [MemberAreaController::class, 'agenda'])->name('agenda');
+    Route::post('/inscrever', [MemberAreaController::class, 'inscrever'])->name('inscrever');
+    Route::post('/inscricao/{registration}/cancelar', [MemberAreaController::class, 'cancelarInscricao'])->name('inscricao.cancelar');
+    Route::get('/inscricoes', [MemberAreaController::class, 'inscricoes'])->name('inscricoes');
+    Route::get('/historico', [MemberAreaController::class, 'historico'])->name('historico');
+    Route::get('/oracoes', [MemberAreaController::class, 'oracoes'])->name('oracoes');
+    Route::post('/oracoes', [MemberAreaController::class, 'storeOracao'])->name('oracoes.store');
+    Route::get('/contribuicoes', [MemberAreaController::class, 'contribuicoes'])->name('contribuicoes');
+    Route::get('/avisos', [MemberAreaController::class, 'avisos'])->name('avisos');
+});
+
+Route::group(['middleware' => ['auth', 'staff'], 'prefix' => 'admin', 'as' => 'admin.'], function () {
 
     Route::get('/', Dashboard::class)->name('dashboard');
     Route::get('configuracoes', Settings::class)->name('settings');
@@ -107,4 +134,18 @@ Route::group(['middleware' => ['auth', 'verified'], 'prefix' => 'admin', 'as' =>
     Route::get('usuarios/cadastrar', Form::class)->name('users.create');
     Route::get('usuarios/{user}/editar', Form::class)->name('users.edit');
     Route::get('usuarios/{user}/visualizar', ViewUser::class)->name('users.view');
+
+    // *********************** Famílias ******************************************/
+    Route::get('familias', Families::class)->name('families.index');
+
+    // *********************** Inscrições ****************************************/
+    Route::get('inscricoes', Registrations::class)->name('registrations.index');
+
+    // *********************** Pedidos de oração *********************************/
+    Route::get('pedidos-de-oracao', PrayerRequests::class)->name('prayers.index');
+
+    // *********************** Avisos ********************************************/
+    Route::get('avisos/{announcement}/editar', AnnouncementForm::class)->name('announcements.edit');
+    Route::get('avisos/cadastrar', AnnouncementForm::class)->name('announcements.create');
+    Route::get('avisos', Announcements::class)->name('announcements.index');
 });

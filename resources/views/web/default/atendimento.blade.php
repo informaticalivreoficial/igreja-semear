@@ -1,178 +1,115 @@
 @extends("web.{$configuracoes->template}.master.master")
 
 @section('content')
-<main class="site-main page-spacing">
-	<!-- Page Banner -->
-	<div class="container-fluid page-banner about-banner" style="background-color:#3B4C76 !important;">
-		<div class="container">
-			<h3 style="color: #fff;">Atendimento</h3>
-			<ol class="breadcrumb">
-				<li><a style="color: #fff;" href="{{route('web.home')}}">Início</a></li>
-				<li class="active">Atendimento</li>
-			</ol>
-		</div>
-	</div><!-- Page Banner /- -->	
-	<!-- Container -->
-	<div class="container" style="margin-top: 30px;">
-		<div class="row">			
-			<!-- Contact Content -->
-			<div class="col-md-7 col-sm-7 col-xs-12 contact-content">
-				<h4>Preencha o Formulário</h4>
-				<form method="post" action="" name="atendimento" class="contact-form j_formsubmit" autocomplete="off">
+    <section class="page-hero py-14">
+        <div class="container-site">
+            <nav class="breadcrumb-site" aria-label="breadcrumb">
+                <a href="{{ route('web.home') }}">Início</a>
+                <span class="sep">/</span>
+                <span>Atendimento</span>
+            </nav>
+            <h1 class="font-display mt-3 text-3xl font-bold text-white sm:text-4xl">Atendimento</h1>
+            <p class="mt-3 max-w-2xl text-sky-100/90">Nossa equipe está pronta para melhor atender as suas demandas!</p>
+        </div>
+    </section>
+
+    <section class="bg-white py-16">
+        <div class="container-site grid gap-10 lg:grid-cols-2">
+            <div>
+                <h2 class="section-title">Envie sua mensagem</h2>
+                <form method="post" action="" id="form-atendimento" class="mt-8 space-y-5" autocomplete="off">
                     @csrf
                     <div id="js-contact-result"></div>
-                    <!-- HONEYPOT -->
-                    <input type="hidden" class="noclear" name="bairro" value="" />
-                    <input type="text" class="noclear" style="display: none;" name="cidade" value="" />
-                    <div class="form_hide">
-    					<div class="form-group">
-    						<input type="text" class="form-control" id="input_name" name="nome" placeholder="Seu Nome" value="" />
-    					</div>
-    					<div class="form-group">
-    						<input type="email" class="form-control" id="input_email" name="email" placeholder="E-mail" value="" />
-    					</div>
-    					<div class="form-group">
-    						<textarea id="textarea_message" class="form-control" rows="5" name="mensagem" placeholder="Digite sua mensagem"></textarea>
-    					</div>
-    					<div class="form-group">
-    						<input id="js-contact-btn" class="noclear" type="submit" value="Enviar Agora" />
-    					</div> 
+
+                    <input type="hidden" name="bairro" value="">
+                    <input type="hidden" name="cidade" value="">
+
+                    <div>
+                        <label for="input_name" class="mb-1.5 block text-sm font-semibold text-slate-800">Seu Nome</label>
+                        <input type="text" id="input_name" name="nome" class="input-site" placeholder="Seu Nome">
                     </div>
-				</form>
-			</div>
-			<!-- Contact Content -->
-			<div class="col-md-5 col-sm-5 col-xs-12 contact-content">
-				<h4>Atendimento</h4>
-				<div class="contact-detail">
-					<i class="fa fa-map-marker"></i>
-					<h5>Endereço</h5>
-					<p>
-                        @if($configuracoes->rua)	
-                            {{$configuracoes->rua}}
-                            @if($configuracoes->num)
-                            , {{$configuracoes->num}}
-                            @endif
-                            @if($configuracoes->bairro)
-                            , {{$configuracoes->bairro}}
-                            @endif
-                            @if($configuracoes->cidade)  
-                            - {{\App\Helpers\Cidade::getCidadeNome($configuracoes->cidade, 'cidades')}}
-                            @endif
-                        @endif
-                    </p>
-				</div>
-				<div class="contact-detail">
-					<i class="fa fa-phone"></i>
-					<h5>Telefones</h5>
-					<p>
-                        @if ($configuracoes->telefone1)
-                            <span>
-                                <a href="tel:{{\App\Helpers\Renato::limpatelefone($configuracoes->telefone1)}}">{{$configuracoes->telefone1}}</a>
-                            </span>                        
-                        @endif   
-                        @if ($configuracoes->telefone2)
-                            <span>
-                                <a href="tel:{{\App\Helpers\Renato::limpatelefone($configuracoes->telefone2)}}">{{$configuracoes->telefone2}}</a>
-                            </span>                        
-                        @endif   
-                        @if ($configuracoes->telefone3)
-                            <span>
-                                <a href="tel:{{\App\Helpers\Renato::limpatelefone($configuracoes->telefone3)}}">{{$configuracoes->telefone3}}</a>
-                            </span>                        
-                        @endif   
-                        @if ($configuracoes->whatsapp)
-                            <span>
-                                <a href="{{\App\Helpers\WhatsApp::getNumZap($configuracoes->whatsapp ,'Atendimento '.$configuracoes->nomedosite)}}">WhatsApp: {{$configuracoes->whatsapp}}</a>
-                            </span>                        
-                        @endif
-                    </p>
-				</div>
-				<div class="contact-detail">
-					<i class="fa fa-envelope"></i>
-					<h5>E-mail</h5>
-					<p>
-                        @if ($configuracoes->email)
-                            <a href="mailto:{{$configuracoes->email}}" title="{{$configuracoes->email}}">{{$configuracoes->email}}</a>
-                        @endif                                      
-                        @if ($configuracoes->email1)
-                            <a href="mailto:{{$configuracoes->email1}}" title="{{$configuracoes->email1}}">{{$configuracoes->email1}}</a>
-                        @endif                                      
-                    </p>
-				</div>
-				<ul>
-                    @if ($configuracoes->facebook)
-                        <li><a target="_blank" href="{{$configuracoes->facebook}}" title="Facebook"><i class="fa fa-facebook"></i></a></li>
-                    @endif
-                    @if ($configuracoes->twitter)
-                        <li><a target="_blank" href="{{$configuracoes->twitter}}" title="Twitter"><i class="fa fa-twitter"></i></a></li>
-                    @endif
-                    @if ($configuracoes->instagram)
-                        <li><a target="_blank" href="{{$configuracoes->instagram}}" title="Instagram"><i class="fa fa-instagram"></i></a></li>
-                    @endif
-                    @if ($configuracoes->linkedin)
-                        <li><a target="_blank" href="{{$configuracoes->linkedin}}" title="linkedin"><i class="fa fa-linkedin"></i></a></li>
-                    @endif
-                    @if ($configuracoes->youtube)
-                        <li><a target="_blank" href="{{$configuracoes->youtube}}" title="Youtube"><i class="fa fa-youtube-play"></i></a></li>
-                    @endif
-				</ul>
-			</div>
-		</div>			
-	</div>
-	<div class="section-padding"></div>
-</main>
+                    <div>
+                        <label for="input_email" class="mb-1.5 block text-sm font-semibold text-slate-800">E-mail</label>
+                        <input type="email" id="input_email" name="email" class="input-site" placeholder="E-mail">
+                    </div>
+                    <div>
+                        <label for="textarea_message" class="mb-1.5 block text-sm font-semibold text-slate-800">Mensagem</label>
+                        <textarea id="textarea_message" name="mensagem" rows="5" class="input-site resize-none" placeholder="Digite sua mensagem"></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary">Enviar Agora</button>
+                </form>
+            </div>
 
+            @if($configuracoes)
+                <div class="space-y-5">
+                    <div class="rounded-2xl border border-slate-100 bg-slate-50 p-6">
+                        <h3 class="font-display text-lg font-bold text-slate-900">Endereço</h3>
+                        <p class="mt-2 text-sm text-slate-600">
+                            {{ trim(implode(', ', array_filter([$configuracoes->street, $configuracoes->number, $configuracoes->neighborhood, $configuracoes->city, $configuracoes->state]))) ?: 'Informação não preenchida.' }}
+                        </p>
+                    </div>
+
+                    <div class="rounded-2xl border border-slate-100 bg-slate-50 p-6">
+                        <h3 class="font-display text-lg font-bold text-slate-900">Telefones</h3>
+                        <div class="mt-2 space-y-1 text-sm text-slate-600">
+                            @if($configuracoes->phone || $configuracoes->cell_phone)
+                                <p><a href="tel:{{ $configuracoes->cell_phone ?: $configuracoes->phone }}" class="text-sky-600 hover:text-sky-700">{{ $configuracoes->cell_phone ?: $configuracoes->phone }}</a></p>
+                            @endif
+                            @if($configuracoes->whatsapp)
+                                <p>WhatsApp: <a href="https://wa.me/{{ preg_replace('/\D/', '', $configuracoes->whatsapp) }}" target="_blank" rel="noopener noreferrer" class="text-sky-600 hover:text-sky-700">{{ $configuracoes->whatsapp }}</a></p>
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="rounded-2xl border border-slate-100 bg-slate-50 p-6">
+                        <h3 class="font-display text-lg font-bold text-slate-900">E-mail</h3>
+                        <p class="mt-2 text-sm">
+                            @if($configuracoes->email)
+                                <a href="mailto:{{ $configuracoes->email }}" class="text-sky-600 hover:text-sky-700">{{ $configuracoes->email }}</a>
+                            @endif
+                            @if($configuracoes->additional_email)
+                                <br><a href="mailto:{{ $configuracoes->additional_email }}" class="text-sky-600 hover:text-sky-700">{{ $configuracoes->additional_email }}</a>
+                            @endif
+                        </p>
+                    </div>
+                </div>
+            @endif
+        </div>
+    </section>
 @endsection
 
-@section('js')
-<script>
-    $(function () {
+@push('js')
+    <script>
+        document.getElementById('form-atendimento').addEventListener('submit', function (e) {
+            e.preventDefault();
+            var form = this;
+            var result = document.getElementById('js-contact-result');
+            result.innerHTML = '';
+            var btn = form.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.textContent = 'Carregando...';
 
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
+            var params = new URLSearchParams(new FormData(form));
 
-        // Seletor, Evento/efeitos, CallBack, Ação
-        $('.j_formsubmit').submit(function (){
-            var form = $(this);
-            var dataString = $(form).serialize();
-
-            $.ajax({
-                url: "{{ route('web.sendEmail') }}",
-                data: dataString,
-                type: 'GET',
-                dataType: 'JSON',
-                beforeSend: function(){
-                    form.find("#js-contact-btn").attr("disabled", true);
-                    form.find('#js-contact-btn').val("Carregando...");                
-                    form.find('.alert').fadeOut(500, function(){
-                        $(this).remove();
-                    });
-                },
-                success: function(resposta){
-                    $('html, body').animate({scrollTop:$('#js-contact-result').offset().top-100}, 'slow');
-                    if(resposta.error){
-                        form.find('#js-contact-result').html('<div class="alert alert-danger error-msg">'+ resposta.error +'</div>');
-                        form.find('.error-msg').fadeIn();                    
-                    }else{
-                        form.find('#js-contact-result').html('<div class="alert alert-success error-msg">'+ resposta.sucess +'</div>');
-                        form.find('.error-msg').fadeIn();                    
-                        form.find('input[class!="noclear"]').val('');
-                        form.find('textarea[class!="noclear"]').val('');
-                        form.find('.form_hide').fadeOut(500);
+            fetch('{{ route('web.sendEmail') }}?' + params.toString(), {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+                .then(function (r) { return r.json(); })
+                .then(function (res) {
+                    if (res.error) {
+                        result.innerHTML = '<div class="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">' + res.error + '</div>';
+                    } else {
+                        result.innerHTML = '<div class="rounded-lg bg-green-50 px-4 py-3 text-sm text-green-700">' + (res.sucess || 'Mensagem enviada!') + '</div>';
+                        form.reset();
                     }
-                },
-                complete: function(resposta){
-                    form.find("#js-contact-btn").attr("disabled", false);
-                    form.find('#js-contact-btn').val("Enviar Agora");                                
-                }
-            });
-
-            return false;
+                })
+                .catch(function () {
+                    result.innerHTML = '<div class="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">Ocorreu um erro ao enviar. Tente novamente.</div>';
+                })
+                .finally(function () {
+                    btn.disabled = false;
+                    btn.textContent = 'Enviar Agora';
+                });
         });
-
-    });
-</script>   
-@endsection
+    </script>
+@endpush

@@ -16,3 +16,5 @@ yarn-error.log
 /arquivos_locais
 /nbproject/private/
 /nbproject
+opencode.json
+/.opencode
