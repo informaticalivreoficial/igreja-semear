@@ -1,0 +1,122 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    body {
+        font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+        @apply bg-white text-slate-600 antialiased;
+    }
+
+    .font-display {
+        font-family: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+    }
+
+    [x-cloak] {
+        display: none !important;
+    }
+}
+
+@layer components {
+    .container-site {
+        @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+    }
+
+    .btn {
+        @apply inline-flex items-center justify-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold transition duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
+    }
+
+    .btn-primary {
+        @apply inline-flex items-center justify-center gap-2 rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white transition duration-150 hover:bg-brand-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2;
+    }
+
+    .btn-secondary {
+        @apply inline-flex items-center justify-center gap-2 rounded-lg bg-accent-500 px-5 py-2.5 text-sm font-semibold text-slate-900 transition duration-150 hover:bg-accent-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-400 focus-visible:ring-offset-2;
+    }
+
+    .btn-outline {
+        @apply inline-flex items-center justify-center gap-2 rounded-lg border border-white/40 px-5 py-2.5 text-sm font-semibold text-white transition duration-150 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2;
+    }
+
+    .btn-white {
+        @apply inline-flex items-center justify-center gap-2 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-brand-700 transition duration-150 hover:bg-brand-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2;
+    }
+
+    .btn-sm {
+        @apply px-3.5 py-2 text-xs;
+    }
+
+    .input-site {
+        @apply w-full rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-700 placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20;
+    }
+
+    .form-control {
+        @apply w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-700 placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20;
+    }
+
+    .card-post {
+        @apply flex flex-col overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-lg;
+    }
+
+    .badge-cat {
+        @apply inline-flex items-center rounded-full bg-brand-600/10 px-3 py-1 text-xs font-semibold text-brand-700;
+    }
+
+    .badge-cat-amber {
+        @apply inline-flex items-center rounded-full bg-accent-500/15 px-3 py-1 text-xs font-semibold text-accent-700;
+    }
+
+    .section-title {
+        @apply font-display text-3xl font-bold text-brand-900 sm:text-4xl;
+    }
+
+    .page-hero {
+        @apply bg-gradient-to-br from-brand-800 via-brand-700 to-brand-600 text-white;
+    }
+
+    .breadcrumb-site {
+        @apply flex flex-wrap items-center gap-2 text-sm text-brand-100;
+    }
+
+    .breadcrumb-site a {
+        @apply font-medium text-white transition hover:text-accent-300;
+    }
+
+    .breadcrumb-site .sep {
+        @apply text-brand-300;
+    }
+
+    .prose-site h2 {
+        @apply font-display mt-8 mb-3 text-2xl font-bold text-brand-900;
+    }
+
+    .prose-site h3 {
+        @apply font-display mt-6 mb-2 text-xl font-bold text-brand-900;
+    }
+
+    .prose-site p {
+        @apply my-4 leading-7;
+    }
+
+    .prose-site ul {
+        @apply my-4 list-disc space-y-1 pl-5;
+    }
+
+    .prose-site ol {
+        @apply my-4 list-decimal space-y-1 pl-5;
+    }
+
+    .prose-site a {
+        @apply text-brand-600 underline underline-offset-2 hover:text-brand-700;
+    }
+
+    .prose-site blockquote {
+        @apply my-6 border-l-4 border-brand-500 bg-brand-50 px-5 py-3 italic text-brand-700;
+    }
+
+    .prose-site img {
+        @apply my-6 h-auto w-full rounded-xl;
+    }
+}
