@@ -82,7 +82,7 @@
     </div>
 
     {{-- LADO DIREITO --}}
-    <div class="w-full lg:w-1/2 flex items-center justify-center px-6 py-12">
+    <div class="w-full lg:w-1/2 flex items-center justify-center px-6 py-8">
         <div class="w-full max-w-md">
 
             {{-- Header --}}

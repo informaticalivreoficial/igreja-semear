@@ -19,15 +19,17 @@ class Login extends Component
 {
     use WithToastr;
 
-    public $email = '';
+    public string $email = '';
 
-    public $password = '';
+    public string $password = '';
 
-    public $config;
+    public bool $remember = false;
 
-    public function mount()
+    public ?Config $config = null;
+
+    public function mount(Config $config)
     {
-        $this->config = Config::first();
+        $this->config = $config->first();
     }
 
     // Log the user in
@@ -82,7 +84,7 @@ class Login extends Component
         RateLimiter::clear(request()->ip());
 
         // Login the user
-        Auth::login($user);
+        Auth::login($user, $this->remember);
 
         // ✅ Toast pós-login (via session)
         session()->flash('toast', [

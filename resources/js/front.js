@@ -27,6 +27,42 @@ import "toastify-js/src/toastify.css";
 
 window.Toastify = Toastify;
 
+const toastColors = {
+    success: '#16a34a',
+    error: '#dc2626',
+    warning: '#f59e0b',
+    info: '#2563eb',
+};
+
+window.showToast = function (type, message) {
+    if (!message) {
+        return;
+    }
+
+    Toastify({
+        text: message,
+        duration: 4000,
+        gravity: 'top',
+        position: 'right',
+        close: true,
+        style: {
+            background: toastColors[type] ?? '#2563eb',
+        },
+    }).showToast();
+};
+
+document.addEventListener('livewire:init', () => {
+    Livewire.on('toast', (event) => {
+        const data = event?.detail?.[0] ?? event;
+
+        if (!data?.message) {
+            return;
+        }
+
+        showToast(data.type, data.message);
+    });
+});
+
 document.addEventListener('alpine:init', () => {
     Alpine.data('cookieConsent', () => ({
         open: false,

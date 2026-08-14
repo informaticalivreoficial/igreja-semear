@@ -356,6 +356,18 @@
 
         @livewireScripts
 
+        @if (session('toast'))
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    const toast = @js(session('toast'));
+
+                    if (window.showToast) {
+                        window.showToast(toast.type, toast.message);
+                    }
+                });
+            </script>
+        @endif
+
         @yield('js')
         @stack('js')
     </body>

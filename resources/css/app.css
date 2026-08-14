@@ -208,23 +208,13 @@
     scrollbar-color: #cbd5e1 transparent;
 }
 
-/* Sidebar scroll (verde escuro) */
+/* Sidebar scroll (verde escuro) - esconde a barra de rolagem */
 .sidebar-scroll::-webkit-scrollbar {
-    width: 5px;
-}
-.sidebar-scroll::-webkit-scrollbar-track {
-    background: transparent;
-}
-.sidebar-scroll::-webkit-scrollbar-thumb {
-    background: rgba(196, 168, 74, 0.35);
-    border-radius: 999px;
-}
-.sidebar-scroll::-webkit-scrollbar-thumb:hover {
-    background: rgba(196, 168, 74, 0.55);
+    display: none;
 }
 .sidebar-scroll {
-    scrollbar-width: thin;
-    scrollbar-color: rgba(196, 168, 74, 0.35) transparent;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }
 
 /* Alpine cloaking */

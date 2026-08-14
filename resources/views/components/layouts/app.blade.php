@@ -58,8 +58,8 @@
              style="display:none;"></div>
 
         {{-- Conteúdo Principal --}}
-        <div class="flex min-h-screen flex-col transition-[padding-left] duration-300 lg:pl-64"
-             :class="collapsed ? 'lg:!pl-20' : 'lg:pl-64'">
+        <div class="flex min-h-screen flex-col transition-[padding-left] duration-300 lg:pl-60"
+             :class="collapsed ? 'lg:!pl-20' : 'lg:pl-60'">
 
             {{-- Topbar --}}
             <livewire:navigation.top-navigation />
@@ -280,7 +280,7 @@
                     this.sync();
                 },
             }));
-        });
+        });        
     </script>
 </body>
 </html>
