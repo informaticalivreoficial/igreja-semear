@@ -14,18 +14,18 @@ class Slide extends Model
     protected $table = 'slides';
 
     protected $fillable = [
-        'titulo',
-        'subtitulo',
-        'botaolabel',
-        'imagem',
+        'title',
+        'subtitle',
+        'button_label',
+        'image',
         'content',
         'link',
         'target',
         'slug',
-        'expira',
-        'status',
-        'exibir_titulo',
-        'categoria',
+        'category',
+        'expires_at',
+        'is_active',
+        'show_title',
     ];
 
     /**
@@ -35,9 +35,9 @@ class Slide extends Model
      */
     protected $casts = [
         'target' => 'boolean',
-        'status' => 'boolean',
-        'exibir_titulo' => 'boolean',
-        'expira' => 'date',
+        'is_active' => 'boolean',
+        'show_title' => 'boolean',
+        'expires_at' => 'date',
     ];
 
     /**
@@ -45,48 +45,48 @@ class Slide extends Model
      */
     public function scopeAvailable($query)
     {
-        return $query->where('status', 1);
+        return $query->where('is_active', true);
     }
 
     public function scopeUnavailable($query)
     {
-        return $query->where('status', 0);
+        return $query->where('is_active', false);
     }
 
     /**
-     * Accessors and Mutators
+     * Accessors
      */
-    public function getimagem()
+    public function getImageUrlAttribute()
     {
-        if (empty($this->imagem) || ! Storage::disk('public')->exists($this->imagem)) {
+        if (empty($this->image)) {
+            return '';
+        }
+
+        return Storage::disk('public')->url($this->image);
+    }
+
+    public function imageUrl()
+    {
+        if (empty($this->image) || ! Storage::disk('public')->exists($this->image)) {
             return url(asset('backend/assets/images/image.jpg'));
         }
 
-        return Storage::disk('public')->url($this->imagem);
+        return Storage::disk('public')->url($this->image);
     }
 
-    public function getUrlImagemAttribute()
+    public function setExpiresAtAttribute($value)
     {
-        if (! empty($this->imagem)) {
-            return Storage::disk('public')->url($this->imagem);
-        }
-
-        return '';
-    }
-
-    public function setExpiraAttribute($value)
-    {
-        $this->attributes['expira'] = (! empty($value) ? $this->convertStringToDate($value) : null);
+        $this->attributes['expires_at'] = (! empty($value) ? $this->convertStringToDate($value) : null);
     }
 
     public function setSlug()
     {
-        if (! empty($this->titulo)) {
-            $post = Slide::where('titulo', $this->titulo)->first();
-            if (! empty($post) && $post->id != $this->id) {
-                $this->attributes['slug'] = Str::slug($this->titulo).'-'.$this->id;
+        if (! empty($this->title)) {
+            $slide = Slide::where('title', $this->title)->first();
+            if (! empty($slide) && $slide->id != $this->id) {
+                $this->attributes['slug'] = Str::slug($this->title).'-'.$this->id;
             } else {
-                $this->attributes['slug'] = Str::slug($this->titulo);
+                $this->attributes['slug'] = Str::slug($this->title);
             }
             $this->save();
         }

@@ -14,13 +14,13 @@ class SlideForm extends Component
 
     public ?Slide $slide = null;
 
-    public $titulo;
+    public $title;
 
-    public $subtitulo;
+    public $subtitle;
 
-    public $botaolabel;
+    public $button_label;
 
-    public $imagem;
+    public $image;
 
     public $content;
 
@@ -28,22 +28,22 @@ class SlideForm extends Component
 
     public $target = false;
 
-    public $exibir_titulo = true;
+    public $show_title = true;
 
-    public $categoria;
+    public $category;
 
-    public $expira;
+    public $expires_at;
 
-    public $status = false;
+    public $is_active = false;
 
-    public ?string $imagemPath = null;
+    public ?string $imagePath = null;
 
     protected function rules(): array
     {
         return [
-            'titulo' => 'required|string|max:255',
-            'imagem' => $this->slide ? 'nullable|image|max:2048' : 'nullable|image|max:2048',
-            'expira' => 'nullable|date_format:d/m/Y',
+            'title' => 'required|string|max:255',
+            'image' => 'nullable|image|max:2048',
+            'expires_at' => 'nullable|date_format:d/m/Y',
         ];
     }
 
@@ -58,17 +58,17 @@ class SlideForm extends Component
     {
         if ($slide->exists) {
             $this->slide = $slide;
-            $this->imagemPath = $slide->imagem;
-            $this->titulo = $slide->titulo;
-            $this->subtitulo = $slide->subtitulo;
-            $this->botaolabel = $slide->botaolabel;
+            $this->imagePath = $slide->image;
+            $this->title = $slide->title;
+            $this->subtitle = $slide->subtitle;
+            $this->button_label = $slide->button_label;
             $this->content = $slide->content;
             $this->link = $slide->link;
             $this->target = (bool) $slide->target;
-            $this->exibir_titulo = (bool) $slide->exibir_titulo;
-            $this->categoria = $slide->categoria;
-            $this->expira = $slide->expira?->format('d/m/Y');
-            $this->status = (bool) $slide->status;
+            $this->show_title = (bool) $slide->show_title;
+            $this->category = $slide->category;
+            $this->expires_at = $slide->expires_at?->format('d/m/Y');
+            $this->is_active = (bool) $slide->is_active;
         } else {
             $this->slide = new Slide;
         }
@@ -78,30 +78,30 @@ class SlideForm extends Component
     {
         $this->validate();
 
-        if ($this->imagem) {
-            if ($this->slide?->exists && $this->imagemPath) {
-                Storage::disk('public')->delete($this->imagemPath);
+        if ($this->image) {
+            if ($this->slide?->exists && $this->imagePath) {
+                Storage::disk('public')->delete($this->imagePath);
             }
-            $this->imagemPath = $this->imagem->store('slides', 'public');
+            $this->imagePath = $this->image->store('slides', 'public');
         }
 
-        $slug = Str::slug($this->titulo);
+        $slug = Str::slug($this->title);
         if (Slide::where('slug', $slug)->where('id', '!=', $this->slide->id ?? 0)->exists()) {
             $slug = $slug.'-'.Str::random(4);
         }
 
         $data = [
-            'titulo' => $this->titulo,
-            'subtitulo' => $this->subtitulo,
-            'botaolabel' => $this->botaolabel,
-            'imagem' => $this->imagemPath,
+            'title' => $this->title,
+            'subtitle' => $this->subtitle,
+            'button_label' => $this->button_label,
+            'image' => $this->imagePath,
             'content' => $this->content,
             'link' => $this->link,
             'target' => (bool) $this->target,
-            'exibir_titulo' => (bool) $this->exibir_titulo,
-            'categoria' => $this->categoria,
-            'expira' => $this->expira,
-            'status' => (bool) $this->status,
+            'show_title' => (bool) $this->show_title,
+            'category' => $this->category,
+            'expires_at' => $this->expires_at,
+            'is_active' => (bool) $this->is_active,
             'slug' => $slug,
         ];
 

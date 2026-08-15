@@ -10,11 +10,13 @@ use App\Models\Ministry;
 use App\Models\Post;
 use App\Models\Slide;
 use App\Models\User;
+use App\Notifications\NewMemberRegistered;
 use App\Services\ConfigService;
 use App\Support\Seo;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 
 class WebController extends Controller
 {
@@ -41,7 +43,7 @@ class WebController extends Controller
 
         return view('web.'.$config->template.'.home', [
             'head' => $head,
-            'slides' => Slide::where('status', 1)->orderByDesc('id')->get(),
+            'slides' => Slide::where('is_active', true)->orderByDesc('id')->get(),
             'artigos' => Post::where('type', 'artigo')->postson()
                 ->with(['categoriaObject'])
                 ->orderByDesc('publish_at')->limit(3)->get(),
@@ -450,45 +452,65 @@ class WebController extends Controller
             $this->configService->getMetaImg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
         );
 
-        return view('web.'.$config->template.'.membro.cadastro', [
+        return view('web.'.$config->template.'.member.cadastro', [
             'head' => $head,
         ]);
     }
 
     public function createMemberSend(Request $request)
     {
-        if ($request->name == '') {
+        $name = trim((string) $request->name);
+
+        if ($name === '') {
             return response()->json(['error' => 'Por favor preencha o campo <strong>Nome</strong>']);
         }
-        if ($request->birthday == '') {
+
+        if ($request->birthday === '') {
             return response()->json(['error' => 'Por favor preencha a <strong>Data de Nascimento</strong>']);
         }
 
-        $birthday = Carbon::createFromFormat('d/m/Y', $request->birthday)->format('Y-m-d');
-        if (Carbon::parse($birthday)->gt(Carbon::parse(now())->format('Y-m-d'))) {
-            return response()->json(['error' => 'Você selecionou uma <strong>Data</strong> inválida!']);
+        try {
+            $birthday = Carbon::createFromFormat('d/m/Y', $request->birthday)->format('Y-m-d');
+        } catch (\Throwable $e) {
+            return response()->json(['error' => 'Informe uma <strong>Data de Nascimento</strong> válida (dd/mm/aaaa).']);
         }
-        if ($request->gender == '') {
+
+        if (Carbon::parse($birthday)->gt(Carbon::today())) {
+            return response()->json(['error' => 'Você selecionou uma <strong>Data de Nascimento</strong> inválida!']);
+        }
+
+        if (! in_array($request->gender, ['masculino', 'feminino'])) {
             return response()->json(['error' => 'Por favor informe o <strong>sexo</strong>']);
         }
+
         if (! filter_var($request->email, FILTER_VALIDATE_EMAIL)) {
-            return response()->json(['error' => 'O campo <strong>Email</strong> está vazio ou não tem um formato válido!']);
+            return response()->json(['error' => 'O campo <strong>E-mail</strong> está vazio ou não tem um formato válido!']);
         }
-        if ($request->whatsapp == '') {
-            return response()->json(['error' => 'Por favor preencha o campo <strong>Telefone</strong>']);
+
+        if (strlen(preg_replace('/\D/', '', (string) $request->whatsapp)) < 10) {
+            return response()->json(['error' => 'Por favor preencha o campo <strong>Celular / WhatsApp</strong> corretamente.']);
         }
-        if ($request->baptism_date && $request->baptism_date != null) {
-            $baptism_date = Carbon::createFromFormat('d/m/Y', $request->baptism_date)->format('Y-m-d');
-            if (Carbon::parse($baptism_date)->gt(Carbon::parse(now())->format('Y-m-d'))) {
-                return response()->json(['error' => 'Você selecionou uma <strong>Data</strong> inválida!']);
+
+        $isBaptized = $request->baptism === 'true';
+
+        if ($isBaptized && $request->baptism_date) {
+            try {
+                $baptism_date = Carbon::createFromFormat('d/m/Y', $request->baptism_date)->format('Y-m-d');
+            } catch (\Throwable $e) {
+                return response()->json(['error' => 'Informe uma <strong>Data de Batismo</strong> válida (dd/mm/aaaa).']);
+            }
+
+            if (Carbon::parse($baptism_date)->gt(Carbon::today())) {
+                return response()->json(['error' => 'Você selecionou uma <strong>Data de Batismo</strong> inválida!']);
             }
         }
+
         if (! empty($request->bairro) || ! empty($request->cidade)) {
             return response()->json(['error' => '<strong>ERRO</strong> Você está praticando SPAM!']);
         }
 
         $data = [
-            'name' => $request->name,
+            'name' => $name,
             'birthday' => $request->birthday,
             'civil_status' => $request->civil_status,
             'gender' => $request->gender,
@@ -505,8 +527,8 @@ class WebController extends Controller
             'neighborhood' => $request->neighborhood,
             'state' => $request->state,
             'city' => $request->city,
-            'baptism' => $request->baptism,
-            'baptism_date' => $request->baptism_date ? $request->baptism_date : null,
+            'baptism' => $isBaptized,
+            'baptism_date' => $isBaptized && $request->baptism_date ? $request->baptism_date : null,
         ];
 
         $data_email = [
@@ -524,11 +546,28 @@ class WebController extends Controller
 
         $this->storeMember($data, $data_email);
 
+        $this->notifyAdmins($data);
+
         return response()->json([
             'cadastro' => 'Cadastro realizado com sucesso!',
             'email_success' => 'Email de confirmação enviado com sucesso!',
             'name' => $data['name'],
         ]);
+    }
+
+    protected function notifyAdmins(array $data): void
+    {
+        $admins = User::role(['super admin', 'admin', 'pastor', 'lider'])->get();
+
+        if ($admins->isEmpty()) {
+            return;
+        }
+
+        $member = User::where('email', $data['email'])->first();
+
+        if ($member) {
+            Notification::send($admins, new NewMemberRegistered($member));
+        }
     }
 
     public function storeMember($data, $member_email)

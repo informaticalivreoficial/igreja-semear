@@ -42,20 +42,20 @@
                             @foreach ($slides as $slide)
                             <tr>
                                 <td class="text-center">
-                                    <img src="{{ $slide->getUrlImagemAttribute() ?: asset('backend/assets/images/image.jpg') }}"
-                                        alt="{{ $slide->titulo }}" width="80" height="45"
+                                    <img src="{{ $slide->image_url ?: asset('backend/assets/images/image.jpg') }}"
+                                        alt="{{ $slide->title }}" width="80" height="45"
                                         class="rounded-md object-cover">
                                 </td>
                                 <td>
-                                    <p class="font-semibold text-slate-700">{{ $slide->titulo }}</p>
-                                    @if ($slide->subtitulo)
-                                        <p class="text-xs text-slate-500">{{ $slide->subtitulo }}</p>
+                                    <p class="font-semibold text-slate-700">{{ $slide->title }}</p>
+                                    @if ($slide->subtitle)
+                                        <p class="text-xs text-slate-500">{{ $slide->subtitle }}</p>
                                     @endif
                                 </td>
-                                <td class="text-center">{{ $slide->categoria ?? '—' }}</td>
-                                <td class="text-center whitespace-nowrap">{{ $slide->expira?->format('d/m/Y') ?? '—' }}</td>
+                                <td class="text-center">{{ $slide->category ?? '—' }}</td>
+                                <td class="text-center whitespace-nowrap">{{ $slide->expires_at?->format('d/m/Y') ?? '—' }}</td>
                                 <td class="text-center">
-                                    @if ($slide->exibir_titulo)
+                                    @if ($slide->show_title)
                                         <span class="badge badge-success">Sim</span>
                                     @else
                                         <span class="badge badge-secondary">Não</span>
@@ -63,7 +63,7 @@
                                 </td>
                                 <td class="text-center">
                                     <x-forms.switch-toggle
-                                        :checked="(bool) $slide->status"
+                                        :checked="(bool) $slide->is_active"
                                         wire:click="toggleStatus({{ $slide->id }})" />
                                 </td>
                                 <td class="text-center">

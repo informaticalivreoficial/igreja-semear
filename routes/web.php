@@ -4,6 +4,7 @@ use App\Http\Controllers\Web\MemberAreaController;
 use App\Http\Controllers\Web\RssFeedController;
 use App\Http\Controllers\Web\SendEmailController;
 use App\Http\Controllers\Web\WebController;
+use App\Http\Controllers\Webhook\PaymentWebhookController;
 use App\Livewire\Dashboard\Announcements\AnnouncementForm;
 use App\Livewire\Dashboard\Announcements\Announcements;
 use App\Livewire\Dashboard\Dashboard;
@@ -12,9 +13,9 @@ use App\Livewire\Dashboard\Events\Events;
 use App\Livewire\Dashboard\Families\Families;
 use App\Livewire\Dashboard\Ministries\Ministries;
 use App\Livewire\Dashboard\Ministries\MinistryForm;
+use App\Livewire\Dashboard\Donations\DonationForm;
+use App\Livewire\Dashboard\Donations\Donations;
 use App\Livewire\Dashboard\NotificationsList;
-use App\Livewire\Dashboard\Offerings\OfferingForm;
-use App\Livewire\Dashboard\Offerings\Offerings;
 use App\Livewire\Dashboard\Permissions\Index as PermissionIndex;
 use App\Livewire\Dashboard\Posts\CatPosts;
 use App\Livewire\Dashboard\Posts\PostForm;
@@ -69,6 +70,9 @@ Route::group(['as' => 'web.'], function () {
     Route::get('/politica-de-privacidade', [WebController::class, 'politica'])->name('politica');
     Route::get('/sitemap', [WebController::class, 'sitemap'])->name('sitemap');
 
+    // ****************************** Doações *****************************************/
+    Route::get('/doacoes', \App\Livewire\Web\DonationForm::class)->name('doacoes');
+
 });
 
 /** Área do membro */
@@ -112,10 +116,10 @@ Route::group(['middleware' => ['auth', 'staff'], 'prefix' => 'admin', 'as' => 'a
     Route::get('eventos/cadastrar', EventForm::class)->name('events.create');
     Route::get('eventos', Events::class)->name('events.index');
 
-    // *********************** Ofertas *********************************************/
-    Route::get('ofertas/{offering}/editar', OfferingForm::class)->name('offerings.edit');
-    Route::get('ofertas/cadastrar', OfferingForm::class)->name('offerings.create');
-    Route::get('ofertas', Offerings::class)->name('offerings.index');
+    // *********************** Doações *********************************************/
+    Route::get('doacoes/{donation}/editar', DonationForm::class)->name('donations.edit');
+    Route::get('doacoes/cadastrar', DonationForm::class)->name('donations.create');
+    Route::get('doacoes', Donations::class)->name('donations.index');
 
     // *********************** Posts *********************************************/
     Route::get('posts/{post}/editar', PostForm::class)->name('posts.edit');
@@ -149,3 +153,7 @@ Route::group(['middleware' => ['auth', 'staff'], 'prefix' => 'admin', 'as' => 'a
     Route::get('avisos/cadastrar', AnnouncementForm::class)->name('announcements.create');
     Route::get('avisos', Announcements::class)->name('announcements.index');
 });
+
+/** Webhooks de pagamento (fora do grupo web -> sem CSRF) */
+Route::post('/webhooks/payments/{gateway}', PaymentWebhookController::class)
+    ->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class);

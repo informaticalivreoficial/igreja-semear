@@ -81,13 +81,13 @@
                     <i class="fas fa-hand-holding-heart text-xl"></i>
                 </div>
                 <div class="min-w-0">
-                    <p class="text-3xl font-bold text-slate-800">R$ {{ number_format($offeringsYear, 2, ',', '.') }}</p>
-                    <p class="text-sm text-slate-500">Ofertas em {{ now()->year }}</p>
+                    <p class="text-3xl font-bold text-slate-800">R$ {{ number_format($donationsYear, 2, ',', '.') }}</p>
+                    <p class="text-sm text-slate-500">Doações em {{ now()->year }}</p>
                 </div>
             </div>
-            <a href="{{ route('admin.offerings.index') }}" wire:navigate
+            <a href="{{ route('admin.donations.index') }}" wire:navigate
                class="flex items-center justify-between border-t border-slate-100 bg-slate-50/50 px-5 py-2.5 text-xs font-medium text-forest-600 transition hover:bg-forest-50">
-                Ver ofertas <i class="fas fa-arrow-right"></i>
+                Ver doações <i class="fas fa-arrow-right"></i>
             </a>
         </div>
 
@@ -101,9 +101,9 @@
                     <p class="text-sm text-slate-500">Dízimos (total)</p>
                 </div>
             </div>
-            <a href="{{ route('admin.offerings.index') }}" wire:navigate
+            <a href="{{ route('admin.donations.index') }}" wire:navigate
                class="flex items-center justify-between border-t border-slate-100 bg-slate-50/50 px-5 py-2.5 text-xs font-medium text-forest-600 transition hover:bg-forest-50">
-                Ver ofertas <i class="fas fa-arrow-right"></i>
+                Ver doações <i class="fas fa-arrow-right"></i>
             </a>
         </div>
 

@@ -29,7 +29,12 @@ class AppServiceProvider extends ServiceProvider
     {
         Paginator::useTailwind();
 
-        $configuracoes = Config::find(1);
+        try {
+            $configuracoes = Config::find(1);
+        } catch (\Throwable) {
+            $configuracoes = null;
+        }
+
         View::share('configuracoes', $configuracoes);
         View::share('viewPaginas', $configuracoes
             ? Post::where('type', 'pagina')->where('menu', 1)->postson()->get()

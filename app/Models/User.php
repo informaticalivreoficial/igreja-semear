@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -73,11 +72,6 @@ class User extends Authenticatable
         return $this->belongsToMany(Ministry::class, 'ministry_member')
             ->withPivot('role')
             ->withTimestamps();
-    }
-
-    public function offerings(): HasMany
-    {
-        return $this->hasMany(Offering::class);
     }
 
     public function member(): HasOne

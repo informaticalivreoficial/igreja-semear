@@ -16,23 +16,23 @@
                 <div class="grid grid-cols-1 gap-x-6 md:grid-cols-2 lg:grid-cols-3">
                     <div class="form-group">
                         <label class="labelforms"><b>*Título</b></label>
-                        <input type="text" class="form-control @error('titulo') is-invalid @enderror"
-                            placeholder="Título do banner" wire:model="titulo">
-                        @error('titulo')
+                        <input type="text" class="form-control @error('title') is-invalid @enderror"
+                            placeholder="Título do banner" wire:model="title">
+                        @error('title')
                             <span class="error erro-feedback">{{ $message }}</span>
                         @enderror
                     </div>
                     <div class="form-group">
                         <label class="labelforms"><b>Subtítulo</b></label>
-                        <input type="text" class="form-control" placeholder="Subtítulo do banner" wire:model="subtitulo">
+                        <input type="text" class="form-control" placeholder="Subtítulo do banner" wire:model="subtitle">
                     </div>
                     <div class="form-group">
                         <label class="labelforms"><b>Categoria</b></label>
-                        <input type="text" class="form-control" placeholder="Ex.: Destaque, Promoção..." wire:model="categoria">
+                        <input type="text" class="form-control" placeholder="Ex.: Destaque, Promoção..." wire:model="category">
                     </div>
                     <div class="form-group">
                         <label class="labelforms"><b>Rótulo do Botão</b></label>
-                        <input type="text" class="form-control" placeholder="Ex.: Saiba mais" wire:model="botaolabel">
+                        <input type="text" class="form-control" placeholder="Ex.: Saiba mais" wire:model="button_label">
                     </div>
                     <div class="form-group">
                         <label class="labelforms"><b>Link</b></label>
@@ -44,11 +44,11 @@
                             <i class="far fa-calendar-alt pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
                             <input type="text"
                                 class="form-control pl-9"
-                                x-data="{ value: @entangle('expira').defer }"
+                                x-data="{ value: @entangle('expires_at').defer }"
                                 x-init="flatpickr($el, { dateFormat: 'd/m/Y', allowInput: true, defaultDate: value || null })"
-                                wire:model="expira" placeholder="dd/mm/aaaa">
+                                wire:model="expires_at" placeholder="dd/mm/aaaa">
                         </div>
-                        @error('expira')
+                        @error('expires_at')
                             <span class="error erro-feedback">{{ $message }}</span>
                         @enderror
                     </div>
@@ -65,19 +65,19 @@
                         <input type="file" class="block w-full text-sm text-slate-500
                             file:mr-4 file:rounded-lg file:border-0 file:bg-forest-50 file:px-4 file:py-2
                             file:text-sm file:font-semibold file:text-forest-700 hover:file:bg-forest-100"
-                            wire:model="imagem">
-                        @error('imagem')
+                            wire:model="image">
+                        @error('image')
                             <span class="error erro-feedback">{{ $message }}</span>
                         @enderror
-                        @if ($imagemPath)
+                        @if ($imagePath)
                             <div class="mt-2">
-                                <img src="{{ asset('storage/'.$imagemPath) }}" alt="Prévia"
+                                <img src="{{ asset('storage/'.$imagePath) }}" alt="Prévia"
                                     class="rounded-lg border border-slate-200" style="max-height: 120px;">
                             </div>
                         @endif
-                        @if ($imagem)
+                        @if ($image)
                             <div class="mt-2">
-                                <img src="{{ $imagem->temporaryUrl() }}" alt="Prévia"
+                                <img src="{{ $image->temporaryUrl() }}" alt="Prévia"
                                     class="rounded-lg border border-slate-200" style="max-height: 120px;">
                             </div>
                         @endif
@@ -86,7 +86,7 @@
                         <label class="labelforms"><b>Opções</b></label>
                         <div class="space-y-3 rounded-xl border border-slate-200 bg-slate-50/60 p-4">
                             <label class="flex cursor-pointer items-center gap-3">
-                                <input type="checkbox" class="h-4 w-4 rounded border-slate-300 text-forest-600 focus:ring-gold-400" id="exibir_titulo" wire:model="exibir_titulo">
+                                <input type="checkbox" class="h-4 w-4 rounded border-slate-300 text-forest-600 focus:ring-gold-400" id="show_title" wire:model="show_title">
                                 <span class="text-sm text-slate-700">Exibir título</span>
                             </label>
                             <label class="flex cursor-pointer items-center gap-3">
@@ -94,7 +94,7 @@
                                 <span class="text-sm text-slate-700">Abrir link em nova aba</span>
                             </label>
                             <label class="flex cursor-pointer items-center gap-3">
-                                <input type="checkbox" class="h-4 w-4 rounded border-slate-300 text-forest-600 focus:ring-gold-400" id="status" wire:model="status">
+                                <input type="checkbox" class="h-4 w-4 rounded border-slate-300 text-forest-600 focus:ring-gold-400" id="is_active" wire:model="is_active">
                                 <span class="text-sm text-slate-700">Ativo</span>
                             </label>
                         </div>

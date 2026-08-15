@@ -7,7 +7,7 @@
 
     <title>@yield('title', env('APP_NAME')) | {{ env('APP_NAME') }}</title>
 
-    <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
+    <link rel="icon" href="{{ asset('theme/images/chave.png')}}" type="image/x-icon">
 
     {{-- FontAwesome --}}
     <link rel="stylesheet" href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}">

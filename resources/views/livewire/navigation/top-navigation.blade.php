@@ -3,11 +3,11 @@
         $cover = Storage::url(auth()->user()->avatar);
     } else {
         if (auth()->user()->gender == 'masculino') {
-            $cover = asset('backend/assets/images/avatar5.png');
+            $cover = asset('theme/images/avatar5.png');
         } elseif (auth()->user()->gender == 'feminino') {
-            $cover = asset('backend/assets/images/avatar3.png');
+            $cover = asset('theme/images/avatar3.png');
         } else {
-            $cover = asset('backend/assets/images/avatar3.png');
+            $cover = asset('theme/images/avatar3.png');
         }
     }
 @endphp

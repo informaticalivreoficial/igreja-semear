@@ -33,6 +33,9 @@
                         'support_ticket'       => 'fas fa-life-ring',
                         'subscription'         => 'fas fa-credit-card',
                         'ArticleCreated'       => 'fas fa-file-alt',
+                        'new_member'           => 'fas fa-user-plus',
+                        'new_prayer_request'   => 'fas fa-praying-hands',
+                        'new_atendimento'      => 'fas fa-envelope',
                         default                => 'fas fa-bell',
                     };
 

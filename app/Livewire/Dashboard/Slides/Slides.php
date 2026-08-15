@@ -46,7 +46,7 @@ class Slides extends Component
     public function render()
     {
         $title = 'Banners - Slides';
-        $searchableFields = ['titulo'];
+        $searchableFields = ['title'];
         $slides = Slide::query()
             ->when($this->search, function ($query) use ($searchableFields) {
                 $query->where(function ($q) use ($searchableFields) {
@@ -67,7 +67,7 @@ class Slides extends Component
     public function toggleStatus($id)
     {
         $slide = Slide::findOrFail($id);
-        $slide->status = ! $slide->status;
+        $slide->is_active = ! $slide->is_active;
         $slide->save();
     }
 
@@ -89,9 +89,9 @@ class Slides extends Component
     {
         $slide = Slide::findOrFail($id);
 
-        $imagemPath = $slide->imagem;
-        if ($imagemPath && Storage::disk('public')->exists($imagemPath)) {
-            Storage::disk('public')->delete($imagemPath);
+        $imagePath = $slide->image;
+        if ($imagePath && Storage::disk('public')->exists($imagePath)) {
+            Storage::disk('public')->delete($imagePath);
         }
 
         $slide->delete();

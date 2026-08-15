@@ -16,10 +16,10 @@
                     x-transition.opacity.duration.700ms
                     class="absolute inset-0"
                 >
-                    @if($slide->imagem)
+                    @if($slide->image)
                         <img
-                            src="{{ \Illuminate\Support\Facades\Storage::url($slide->imagem) }}"
-                            alt="{{ $slide->titulo }}"
+                            src="{{ \Illuminate\Support\Facades\Storage::url($slide->image) }}"
+                            alt="{{ $slide->title }}"
                             class="h-full w-full object-cover opacity-50"
                         >
                     @else
@@ -34,13 +34,13 @@
                     @foreach($slides as $i => $slide)
                         <div x-show="active === {{ $i }}" x-transition:enter.delay.200ms>
                             <span class="badge-cat !bg-white/10 !text-amber-300">Bem-vindo à {{ optional($configuracoes)->app_name ?: 'Comunidade Cristã Semear' }}</span>
-                            <h1 class="font-display mt-4 text-4xl font-bold leading-tight sm:text-5xl">{{ $slide->titulo }}</h1>
-                            @if($slide->subtitulo)
-                                <p class="mt-4 text-lg text-sky-100/90">{{ $slide->subtitulo }}</p>
+                            <h1 class="font-display mt-4 text-4xl font-bold leading-tight sm:text-5xl">{{ $slide->title }}</h1>
+                            @if($slide->subtitle)
+                                <p class="mt-4 text-lg text-sky-100/90">{{ $slide->subtitle }}</p>
                             @endif
-                            @if($slide->botaolabel && $slide->link)
+                            @if($slide->button_label && $slide->link)
                                 <a href="{{ $slide->link }}" target="{{ $slide->target ?: '_self' }}" class="btn-secondary mt-6">
-                                    {{ $slide->botaolabel }}
+                                    {{ $slide->button_label }}
                                 </a>
                             @endif
                         </div>

@@ -22,6 +22,14 @@
             <strong>Nome: </strong><strong style="color:#09F;">{{ $nome }}</strong>
             <br />
             <strong>E-mail: </strong><strong style="color:#09F;">{{ $email }}</strong>
+            @if(!empty($phone))
+                <br />
+                <strong>Telefone: </strong><strong style="color:#09F;">{{ $phone }}</strong>
+            @endif
+            @if($privacy)
+                <br />
+                <em>O usuário concordou com a Política de Privacidade.</em>
+            @endif
             <br />
             <strong>Mensagem: </strong>            
             </p>

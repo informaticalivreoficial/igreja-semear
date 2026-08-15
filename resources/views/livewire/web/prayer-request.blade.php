@@ -15,7 +15,17 @@
 
         <div>
             <label for="oracao-phone" class="mb-1.5 block text-sm font-semibold text-slate-800">Telefone / WhatsApp</label>
-            <input type="text" id="oracao-phone" wire:model="phone" class="input-site" placeholder="(00) 00000-0000">
+            <input
+                type="text"
+                id="oracao-phone"
+                wire:model="phone"
+                x-data
+                x-init="if (window.IMask && !$el._imask) { $el._imask = IMask($el, { mask: '(00) 00000-0000' }); }"
+                class="input-site"
+                placeholder="(00) 00000-0000"
+                inputmode="tel"
+            >
+            @error('phone') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
         </div>
 
         <div>
@@ -29,7 +39,7 @@
             <span>
                 Autorizo a {{ optional($configuracoes)->app_name ?: 'Semear' }} a receber o meu pedido e, se necessário,
                 colocá-lo na rede de oração. Li e aceito a
-                <a href="{{ route('web.politica') }}" class="text-sky-600 underline">Política de Privacidade</a>.
+                <a href="{{ route('web.politica') }}" target="_blank" rel="noopener" class="text-sky-600 underline">Política de Privacidade</a>.
             </span>
         </label>
         @error('privacy') <p class="text-xs text-red-600">{{ $message }}</p> @enderror

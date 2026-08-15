@@ -2,9 +2,11 @@
 
 namespace App\Livewire\Dashboard;
 
+use App\Enums\DonationStatusEnum;
+use App\Enums\DonationTypeEnum;
+use App\Models\Donation;
 use App\Models\Event;
 use App\Models\Ministry;
-use App\Models\Offering;
 use App\Models\Post;
 use App\Models\Slide;
 use App\Models\User;
@@ -24,9 +26,11 @@ class Dashboard extends Component
         $eventsCount = Event::count();
         $membersCount = User::role('member')->count();
 
-        $offeringsTotal = Offering::sum('amount');
-        $offeringsYear = Offering::whereYear('offering_date', now()->year)->sum('amount');
-        $dizimosTotal = Offering::where('type', 'dizimo')->sum('amount');
+        $donationsTotal = Donation::where('status', DonationStatusEnum::Paid->value)->sum('amount');
+        $donationsYear = Donation::where('status', DonationStatusEnum::Paid->value)
+            ->whereYear('created_at', now()->year)->sum('amount');
+        $dizimosTotal = Donation::where('status', DonationStatusEnum::Paid->value)
+            ->where('type', DonationTypeEnum::Tithe->value)->sum('amount');
 
         $topposts = Post::orderBy('views', 'desc')->take(5)->get();
 
@@ -41,7 +45,7 @@ class Dashboard extends Component
         return view('livewire.dashboard.dashboard', compact(
             'postsCount', 'postsYearCount', 'newsCount', 'articlesCount',
             'slidesCount', 'ministriesCount', 'eventsCount', 'membersCount',
-            'offeringsTotal', 'offeringsYear', 'dizimosTotal',
+            'donationsTotal', 'donationsYear', 'dizimosTotal',
             'topposts', 'upcomingEvents', 'title'
         ));
     }

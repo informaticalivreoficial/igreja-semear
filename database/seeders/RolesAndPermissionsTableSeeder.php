@@ -20,7 +20,7 @@ class RolesAndPermissionsTableSeeder extends Seeder
             'manage members',
             'manage ministries',
             'manage events',
-            'manage offerings',
+            'manage donations',
             'manage settings',
             'manage users',
         ];
@@ -42,7 +42,7 @@ class RolesAndPermissionsTableSeeder extends Seeder
             'manage members',
             'manage ministries',
             'manage events',
-            'manage offerings',
+            'manage donations',
         ]);
         $editor->syncPermissions([
             'view dashboard',

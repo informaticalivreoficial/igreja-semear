@@ -2,7 +2,7 @@
     @section('title', $title)
 
     <div class="content-header">
-        <h1><i class="fas fa-hands-praying"></i> Pedidos de oração</h1>
+        <h1><i class="fas fa-praying-hands"></i> Pedidos de oração</h1>
         <nav class="breadcrumb">
             <span class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Painel de Controle</a></span>
             <span class="breadcrumb-item active">Pedidos de oração</span>
@@ -38,12 +38,6 @@
 
                                 <p class="mt-3 text-sm leading-6 text-slate-600">{{ $request->message }}</p>
 
-                                @if($request->answer)
-                                    <div class="mt-3 rounded-lg bg-gold-500/10 p-3 text-sm text-gold-900">
-                                        <strong>Resposta:</strong> {{ $request->answer }}
-                                    </div>
-                                @endif
-
                                 @if($request->email || $request->phone)
                                     <p class="mt-3 text-xs text-slate-400">
                                         @if($request->email) {{ $request->email }} @endif
@@ -52,9 +46,11 @@
                                 @endif
 
                                 <div class="mt-4 flex items-center gap-2 border-t border-slate-100 pt-3">
-                                    <button wire:click="openAnswer({{ $request->id }})" class="btn btn-xs btn-primary">
-                                        <i class="fas fa-reply"></i> Responder
-                                    </button>
+                                    @if($request->status !== 'respondido')
+                                        <button wire:click="openAnswer({{ $request->id }})" class="btn btn-xs btn-primary">
+                                            <i class="fas fa-reply"></i> Responder
+                                        </button>
+                                    @endif
                                     <button wire:click="setDeleteId({{ $request->id }})" class="btn btn-xs btn-danger" title="Excluir"><i class="fas fa-trash"></i></button>
                                 </div>
                             </div>
@@ -82,9 +78,15 @@
                     <textarea wire:model="answer" rows="5" class="form-control" placeholder="Escreva a resposta/orientação..."></textarea>
                     @error('answer') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
 
+                    <p class="mt-3 text-xs text-slate-500">
+                        A resposta será enviada <strong>somente por e-mail</strong> para
+                        {{ optional($requests->firstWhere('id', $answeringId))->email ?? 'o solicitante' }}
+                        e o pedido será marcado como <strong>respondido</strong>.
+                    </p>
+
                     <div class="mt-6 flex justify-end gap-2">
                         <button type="button" wire:click="closeAnswer" class="btn btn-sm btn-default">Cancelar</button>
-                        <button type="submit" class="btn btn-sm btn-primary">Salvar resposta</button>
+                        <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-paper-plane"></i> Enviar por e-mail</button>
                     </div>
                 </form>
             </div>

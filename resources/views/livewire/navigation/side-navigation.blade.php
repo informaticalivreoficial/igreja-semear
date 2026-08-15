@@ -211,32 +211,32 @@
                 </ul>
             </li>
 
-            {{-- Ofertas --}}
-            <li x-data="{ open: @js(Route::is('admin.offerings.*')) }">
+            {{-- Doações --}}
+            <li x-data="{ open: @js(Route::is('admin.donations.*')) }">
                 <button type="button" @click="collapsed ? collapsed = false : open = !open"
                         class="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition
-                               {{ Route::is('admin.offerings.*') ? 'bg-gold-500/15 text-gold-400' : 'text-slate-300 hover:bg-white/10 hover:text-white' }}">
-                    <i class="w-5 text-center text-base {{ Route::is('admin.offerings.*') ? 'text-gold-400' : 'text-slate-400' }} fas fa-hand-holding-heart"></i>
-                    <span :class="collapsed ? 'lg:hidden' : ''">Ofertas</span>
-                    <i class="fas fa-chevron-down ml-auto text-[10px] transition-transform duration-200 {{ Route::is('admin.offerings.*') ? 'text-gold-400' : 'text-slate-500' }}"
+                               {{ Route::is('admin.donations.*') ? 'bg-gold-500/15 text-gold-400' : 'text-slate-300 hover:bg-white/10 hover:text-white' }}">
+                    <i class="w-5 text-center text-base {{ Route::is('admin.donations.*') ? 'text-gold-400' : 'text-slate-400' }} fas fa-money-bill-wave"></i>
+                    <span :class="collapsed ? 'lg:hidden' : ''">Doações</span>
+                    <i class="fas fa-chevron-down ml-auto text-[10px] transition-transform duration-200 {{ Route::is('admin.donations.*') ? 'text-gold-400' : 'text-slate-500' }}"
                        :class="collapsed ? 'lg:hidden' : ''" x-show="open" x-cloak></i>
                 </button>
                 <ul x-show="open" class="mt-0.5 space-y-0.5 border-l border-white/10 pl-2.5" x-cloak>
                     <li>
-                        <a href="{{ route('admin.offerings.index') }}" wire:navigate @click="closeMobile()"
+                        <a href="{{ route('admin.donations.index') }}" wire:navigate @click="closeMobile()"
                            class="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm transition
-                                  {{ Route::is('admin.offerings.index') ? 'text-gold-400' : 'text-slate-400 hover:bg-white/10 hover:text-white' }}">
+                                  {{ Route::is('admin.donations.index') ? 'text-gold-400' : 'text-slate-400 hover:bg-white/10 hover:text-white' }}">
                             <i class="fas fa-circle text-[5px]"></i>
                             <span :class="collapsed ? 'lg:hidden' : ''">Listar Todas</span>
-                            <span class="ml-auto rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-slate-300" :class="collapsed ? 'lg:hidden' : ''">{{ $offeringsCount }}</span>
+                            <span class="ml-auto rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-slate-300" :class="collapsed ? 'lg:hidden' : ''">{{ $donationsCount }}</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('admin.offerings.create') }}" wire:navigate @click="closeMobile()"
+                        <a href="{{ route('admin.donations.create') }}" wire:navigate @click="closeMobile()"
                            class="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm transition
-                                  {{ Route::is('admin.offerings.create') ? 'text-gold-400' : 'text-slate-400 hover:bg-white/10 hover:text-white' }}">
+                                  {{ Route::is('admin.donations.create') ? 'text-gold-400' : 'text-slate-400 hover:bg-white/10 hover:text-white' }}">
                             <i class="fas fa-plus text-[11px]"></i>
-                            <span :class="collapsed ? 'lg:hidden' : ''">Cadastrar Nova</span>
+                            <span :class="collapsed ? 'lg:hidden' : ''">Cadastrar Manual</span>
                         </a>
                     </li>
                 </ul>
@@ -283,7 +283,7 @@
                 <a href="{{ route('admin.prayers.index') }}" wire:navigate @click="closeMobile()"
                    class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition
                           {{ Route::is('admin.prayers.index') ? 'bg-gold-500/15 text-gold-400' : 'text-slate-300 hover:bg-white/10 hover:text-white' }}">
-                    <i class="w-5 text-center text-base {{ Route::is('admin.prayers.index') ? 'text-gold-400' : 'text-slate-400' }} fas fa-hands-praying"></i>
+                    <i class="w-5 text-center text-base {{ Route::is('admin.prayers.index') ? 'text-gold-400' : 'text-slate-400' }} fas fa-praying-hands"></i>
                     <span :class="collapsed ? 'lg:hidden' : ''">Pedidos de oração</span>
                     @if($pendingPrayersCount > 0)
                         <span class="ml-auto rounded-full bg-amber-500/20 px-2 py-0.5 text-[11px] font-bold text-amber-300" :class="collapsed ? 'lg:hidden' : ''">{{ $pendingPrayersCount }}</span>

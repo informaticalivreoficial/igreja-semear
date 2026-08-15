@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Announcement;
+use App\Models\Donation;
 use App\Models\Event;
 use App\Models\EventRegistration;
 use App\Models\Member;
@@ -253,8 +254,11 @@ class MemberAreaController extends Controller
     {
         $data = $this->layoutData('Minhas contribuições', 'contribuicoes');
 
-        $data['ofertas'] = Auth::user()->offerings()->orderByDesc('offering_date')->get();
-        $data['total'] = $data['ofertas']->sum('amount');
+        $data['doacoes'] = Donation::whereHas('member', function ($q) {
+            $q->where('user_id', Auth::id());
+        })->orderByDesc('created_at')->get();
+
+        $data['total'] = $data['doacoes']->sum('amount');
 
         return $this->view('contribuicoes', $data);
     }

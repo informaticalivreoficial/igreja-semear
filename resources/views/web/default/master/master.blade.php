@@ -20,6 +20,8 @@
 
         @vite(['resources/css/front.css', 'resources/js/front.js'])
 
+        <link rel="stylesheet" href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}">
+
         @livewireStyles
 
         @yield('css')
@@ -91,7 +93,7 @@
                         $slugAtivo = request()->routeIs('web.pagina') ? request()->route('slug') : null;
                         $igrejaAtiva = request()->routeIs('web.ministerios') || in_array($slugAtivo, ['cultos-e-horarios', 'pregacoes', 'galeria-de-fotos']);
                         $blogAtivo = request()->routeIs('web.blog.*', 'web.noticia*');
-                        $maisAtiva = request()->routeIs('web.atendimento', 'web.pedido-oracao', 'web.transmissao') || in_array($slugAtivo, ['localizacao', 'doacoes']);
+                        $maisAtiva = request()->routeIs('web.atendimento', 'web.pedido-oracao', 'web.transmissao', 'web.doacoes') || in_array($slugAtivo, ['localizacao', 'doacoes']);
                     @endphp
 
                     <a href="{{ route('web.home') }}"
@@ -150,7 +152,7 @@
                                 <a href="{{ route('web.atendimento') }}" class="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-sky-700">Contato</a>
                                 <a href="{{ route('web.pagina', ['slug' => 'localizacao']) }}" class="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-sky-700">Localização</a>
                                 <a href="{{ route('web.pedido-oracao') }}" class="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-sky-700">Pedido de oração</a>
-                                <a href="{{ route('web.pagina', ['slug' => 'doacoes']) }}" class="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-sky-700">Doações</a>
+                                <a href="{{ route('web.doacoes') }}" class="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-sky-700">Doações</a>
                                 <a href="{{ route('web.transmissao') }}" class="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-sky-700">Ao vivo</a>
                             </div>
                         </div>
@@ -162,7 +164,7 @@
                         <livewire:web.site-search />
                     </div>
 
-                    <a href="{{ route('web.pagina', ['slug' => 'doacoes']) }}" class="btn-secondary btn-sm hidden md:inline-flex">
+                    <a href="{{ route('web.doacoes') }}" class="btn-secondary btn-sm hidden md:inline-flex">
                         Doações
                     </a>
 
@@ -243,7 +245,7 @@
                             <a href="{{ route('web.atendimento') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-100">Contato</a>
                             <a href="{{ route('web.pagina', ['slug' => 'localizacao']) }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-100">Localização</a>
                             <a href="{{ route('web.pedido-oracao') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-100">Pedido de oração</a>
-                            <a href="{{ route('web.pagina', ['slug' => 'doacoes']) }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-100">Doações</a>
+                            <a href="{{ route('web.doacoes') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-100">Doações</a>
                             <a href="{{ route('web.transmissao') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-100">Ao vivo</a>
                         </div>
 
@@ -320,7 +322,7 @@
             <div class="border-t border-brand-100">
                 <div class="container-site flex flex-col items-center justify-between gap-3 py-5 text-xs text-brand-300/70 sm:flex-row">
                     <div class="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
-                        <a href="{{ route('web.pagina', ['slug' => 'doacoes']) }}" class="transition hover:text-white">Doações</a>
+                        <a href="{{ route('web.doacoes') }}" class="transition hover:text-white">Doações</a>
                         <a href="{{ route('web.pedido-oracao') }}" class="transition hover:text-white">Pedido de oração</a>
                         <a href="{{ route('web.pagina', ['slug' => 'localizacao']) }}" class="transition hover:text-white">Localização</a>
                         <a href="{{ route('web.politica') }}" class="transition hover:text-white">Política de Privacidade</a>

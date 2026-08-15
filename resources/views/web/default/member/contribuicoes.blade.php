@@ -21,19 +21,19 @@
                 <div class="mb-6 rounded-2xl bg-sky-700 p-6 text-white shadow-sm">
                     <p class="text-sm font-semibold text-sky-100">Total contribuído</p>
                     <p class="font-display mt-1 text-3xl font-bold">R$ {{ number_format($total, 2, ',', '.') }}</p>
-                    <p class="mt-1 text-xs text-sky-200">{{ $ofertas->count() }} {{ $ofertas->count() === 1 ? 'registro' : 'registros' }}</p>
+                    <p class="mt-1 text-xs text-sky-200">{{ $doacoes->count() }} {{ $doacoes->count() === 1 ? 'registro' : 'registros' }}</p>
                 </div>
 
-                @forelse($ofertas as $oferta)
+                @forelse($doacoes as $doacao)
                     <div class="mb-3 flex items-center justify-between rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
                         <div>
-                            <p class="text-sm font-semibold text-slate-800">{{ 'Oferta' }}</p>
-                            <p class="text-xs text-slate-500">{{ $oferta->offering_date?->translatedFormat('d \d\e F \d\e Y') }}</p>
+                            <p class="text-sm font-semibold text-slate-800">{{ $doacao->type_label }}</p>
+                            <p class="text-xs text-slate-500">{{ $doacao->created_at?->translatedFormat('d \d\e F \d\e Y') }}</p>
                         </div>
                         <div class="text-right">
-                            <p class="text-sm font-bold text-sky-700">R$ {{ number_format($oferta->amount, 2, ',', '.') }}</p>
-                            @if($oferta->payment_method)
-                                <p class="text-xs capitalize text-slate-400">{{ $oferta->payment_method }}</p>
+                            <p class="text-sm font-bold text-sky-700">R$ {{ number_format($doacao->amount, 2, ',', '.') }}</p>
+                            @if($doacao->method_label && $doacao->method_label !== '—')
+                                <p class="text-xs capitalize text-slate-400">{{ $doacao->method_label }}</p>
                             @endif
                         </div>
                     </div>

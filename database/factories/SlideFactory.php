@@ -18,21 +18,21 @@ class SlideFactory extends Factory
      */
     public function definition(): array
     {
-        $titulo = fake()->unique()->words(3, true);
+        $title = fake()->unique()->words(3, true);
 
         return [
-            'titulo' => ucfirst($titulo),
-            'subtitulo' => fake()->optional()->sentence(5),
-            'botaolabel' => fake()->randomElement(['Saiba mais', 'Participe', 'Inscreva-se']),
-            'imagem' => 'slides/'.Str::random(20).'.jpg',
+            'title' => ucfirst($title),
+            'subtitle' => fake()->optional()->sentence(5),
+            'button_label' => fake()->randomElement(['Saiba mais', 'Participe', 'Inscreva-se']),
+            'image' => 'slides/'.Str::random(20).'.jpg',
             'content' => fake()->optional()->paragraphs(2, true),
             'link' => fake()->optional()->url(),
             'target' => fake()->boolean(30),
-            'slug' => Str::slug($titulo),
-            'categoria' => fake()->optional()->word(),
-            'expira' => fake()->optional()->dateTimeBetween('now', '+1 year')?->format('d/m/Y'),
-            'status' => fake()->boolean(80),
-            'exibir_titulo' => true,
+            'slug' => Str::slug($title),
+            'category' => fake()->optional()->word(),
+            'expires_at' => fake()->optional()->dateTimeBetween('now', '+1 year')?->format('d/m/Y'),
+            'is_active' => fake()->boolean(80),
+            'show_title' => true,
         ];
     }
 }

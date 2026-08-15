@@ -8,7 +8,7 @@ use App\Models\Event;
 use App\Models\EventRegistration;
 use App\Models\Family;
 use App\Models\Ministry;
-use App\Models\Offering;
+use App\Models\Donation;
 use App\Models\Post;
 use App\Models\PrayerRequest;
 use App\Models\Slide;
@@ -25,7 +25,7 @@ class SideNavigation extends Component
         $slidesCount = Slide::count();
         $ministriesCount = Ministry::count();
         $eventsCount = Event::count();
-        $offeringsCount = Offering::count();
+        $donationsCount = Donation::count();
         $familiesCount = Family::count();
         $announcementsCount = Announcement::count();
         $pendingRegistrationsCount = EventRegistration::where('status', EventRegistration::STATUS_PENDENTE)->count();
@@ -39,7 +39,7 @@ class SideNavigation extends Component
             'slidesCount' => $slidesCount,
             'ministriesCount' => $ministriesCount,
             'eventsCount' => $eventsCount,
-            'offeringsCount' => $offeringsCount,
+            'donationsCount' => $donationsCount,
             'familiesCount' => $familiesCount,
             'announcementsCount' => $announcementsCount,
             'pendingRegistrationsCount' => $pendingRegistrationsCount,

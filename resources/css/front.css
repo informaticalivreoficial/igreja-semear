@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&display=swap');
+@import 'flatpickr/dist/flatpickr.min.css';
 
 @tailwind base;
 @tailwind components;
@@ -17,6 +18,36 @@
     [x-cloak] {
         display: none !important;
     }
+}
+
+.flatpickr-calendar * {
+    box-sizing: border-box;
+}
+
+.flatpickr-calendar {
+    font-size: 14px;
+}
+
+.flatpickr-day {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flatpickr-weekday {
+    text-align: center;
+}
+
+.flatpickr-day.selected {
+    @apply bg-brand-600 border-brand-600 text-white;
+}
+
+.flatpickr-day.inRange {
+    @apply bg-brand-100;
+}
+
+.flatpickr-day.today {
+    @apply border-brand-500;
 }
 
 @layer components {

@@ -63,6 +63,9 @@
                         'reservation_created'  => 'fas fa-calendar-check',
                         'support_ticket'       => 'fas fa-life-ring',
                         'ArticleCreated'       => 'fas fa-file-alt',
+                        'new_member'           => 'fas fa-user-plus',
+                        'new_prayer_request'   => 'fas fa-praying-hands',
+                        'new_atendimento'      => 'fas fa-envelope',
                         default => 'fas fa-bell',
                     };
 
