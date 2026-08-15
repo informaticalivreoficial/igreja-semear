@@ -11,33 +11,31 @@
 
     <div class="card">
         <div class="card-header">
-            <div class="flex flex-wrap items-center justify-between gap-3">
-                <div class="flex flex-wrap items-center gap-2">
-                    <input type="text"
-                        wire:model.live.debounce.500ms="search"
-                        class="form-control form-control-sm w-44"
-                        placeholder="Pesquisar">
+            <div class="flex flex-1 flex-wrap items-center gap-2">
+                <input type="text"
+                    wire:model.live.debounce.500ms="search"
+                    class="form-control form-control-sm min-w-40 flex-1"
+                    placeholder="Pesquisar">
 
-                    <select wire:model.live="filterType" class="form-control form-control-sm w-32">
-                        <option value="">Tipo</option>
-                        <option value="artigo">Artigo</option>
-                        <option value="noticia">Notícia</option>
-                        <option value="pagina">Página</option>
-                    </select>
+                <select wire:model.live="filterType" class="form-control form-control-sm w-28">
+                    <option value="">Tipo</option>
+                    <option value="artigo">Artigo</option>
+                    <option value="noticia">Notícia</option>
+                    <option value="pagina">Página</option>
+                </select>
 
-                    <select wire:model.live="filterAutor" class="form-control form-control-sm w-40">
-                        <option value="">Autor</option>
-                        @foreach($autores as $autor)
-                            <option value="{{ $autor->id }}">{{ $autor->name }}</option>
-                        @endforeach
-                    </select>
+                <select wire:model.live="filterAutor" class="form-control form-control-sm w-40">
+                    <option value="">Autor</option>
+                    @foreach($autores as $autor)
+                        <option value="{{ $autor->id }}">{{ $autor->name }}</option>
+                    @endforeach
+                </select>
 
-                    <button wire:click="clearFilters" class="btn btn-sm btn-light">
-                        Limpar
-                    </button>
-                </div>
+                <button wire:click="clearFilters" class="btn btn-sm btn-light">
+                    Limpar
+                </button>
 
-                <a wire:navigate href="{{ route('admin.posts.create') }}" class="btn btn-sm btn-primary">
+                <a wire:navigate href="{{ route('admin.posts.create') }}" class="btn btn-sm btn-primary ml-auto">
                     <i class="fas fa-plus"></i> Cadastrar Novo
                 </a>
             </div>

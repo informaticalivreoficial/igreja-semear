@@ -264,7 +264,15 @@
         <footer class="bg-brand-900 text-brand-100">
             <div class="container-site grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4">
                 <div>
-                    <span class="font-display text-2xl font-bold text-white">{{ optional($configuracoes)->app_name ?: 'Semear' }}</span>
+                    <a href="{{ route('web.home') }}" class="flex shrink-0 items-center gap-3">
+                        @if($configuracoes && $configuracoes->watermark)
+                            <img src="{{ $configuracoes->getwatermark() }}" alt="{{ $configuracoes->app_name }}" class="h-12 w-auto">
+                        @else
+                            <span class="font-display text-2xl font-bold text-sky-800">
+                                {{ optional($configuracoes)->app_name ?: 'Semear' }}
+                            </span>
+                        @endif
+                    </a>
                     <p class="mt-4 text-sm leading-6 text-brand-300/80">
                         {{ optional($configuracoes)->information ?: 'Comunidade Cristã Semear.' }}
                     </p>

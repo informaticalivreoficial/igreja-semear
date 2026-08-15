@@ -162,7 +162,7 @@ class PostForm extends Component
             $this->type = $post->type;
             $this->category = $post->category; // ✅ Corrigido
             $this->status = $post->status ?? 1;
-            $this->publish_at = $post->publish_at ? $post->publish_at : now()->format('d/m/Y');
+            $this->publish_at = $post->publish_at ? $post->publish_at->format('d/m/Y') : now()->format('d/m/Y');
             // $this->publish_at = $post->publish_at?->format('d/m/Y H:i');
             $this->thumb_caption = $post->thumb_caption ?? '';
             $this->comments = $post->comments ?? 0;
@@ -204,7 +204,6 @@ class PostForm extends Component
 
     public function save(string $mode = 'draft')
     {
-
         $validated = $this->validate();
         $validated['status'] = $mode === 'published' ? 1 : 0;
 
@@ -255,6 +254,7 @@ class PostForm extends Component
             }
 
             // Salvar imagens
+            $maxOrder = (int) PostGb::where('post', $this->post->id)->max('order_img');
             foreach ($this->images as $index => $image) {
                 if ($index >= $allowed) {
                     break;
@@ -264,6 +264,7 @@ class PostForm extends Component
                 PostGb::create([
                     'post' => $this->post->id,
                     'path' => $path,
+                    'order_img' => $maxOrder + $index + 1,
                     'cover' => $this->cover ?? null,
                 ]);
             }
@@ -306,6 +307,31 @@ class PostForm extends Component
             $this->savedImages = collect($this->savedImages)->filter(fn ($img) => $img->id !== $id);
             $this->post->refresh(); // Para garantir que os dados estejam atualizados
         }
+    }
+
+    // Reordenar imagens salvas (drag & drop na edição)
+    public function reorderImages($ids)
+    {
+        if (! $this->post?->exists) {
+            return;
+        }
+
+        $ids = collect($ids)->map(fn ($id) => (int) $id)->values();
+        $existing = $this->post->images()->pluck('id')->map(fn ($id) => (int) $id);
+
+        $order = $ids->intersect($existing)
+            ->concat($existing->diff($ids))
+            ->unique()
+            ->values();
+
+        foreach ($order as $position => $imageId) {
+            PostGb::where('id', $imageId)
+                ->where('post', $this->post->id)
+                ->update(['order_img' => $position]);
+        }
+
+        $this->post->refresh();
+        $this->savedImages = $this->post->images;
     }
 
     public function toggleCover($imageId)

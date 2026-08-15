@@ -13,7 +13,7 @@
     <form wire:submit.prevent="save" autocomplete="off">
         <div class="card">
             <div class="card-body">
-                <div class="grid grid-cols-1 gap-x-6 md:grid-cols-2 lg:grid-cols-3">
+                <div class="grid grid-cols-1 gap-x-6 sm:grid-cols-2 xl:grid-cols-4">
                     <div class="form-group">
                         <label class="labelforms"><b>*Nome</b></label>
                         <input type="text" class="form-control @error('name') is-invalid @enderror"
@@ -59,7 +59,7 @@
                     <div class="card-body">
                         <div class="form-group">
                             <label class="labelforms"><b>Papel no ministério</b></label>
-                            <select class="form-control md:w-1/2" wire:model="memberRole">
+                            <select class="form-control w-full sm:w-1/2" wire:model="memberRole">
                                 <option value="membro">Membro</option>
                                 <option value="coordenador">Coordenador</option>
                                 <option value="secretario">Secretário(a)</option>
@@ -68,33 +68,38 @@
                             </select>
                         </div>
 
-                        <label class="labelforms"><b>Membros selecionados</b></label>
-                        <div class="max-h-[220px] overflow-y-auto rounded-lg border border-slate-200 bg-white p-3">
-                            @forelse ($memberIds as $id)
-                                @php $member = $members->firstWhere('id', (int) $id); @endphp
-                                @if ($member)
-                                    <label class="flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-forest-50" wire:key="member-{{ $id }}">
-                                        <input class="rounded border-slate-300 text-forest-600 focus:ring-gold-400" type="checkbox"
-                                            id="member-{{ $id }}" value="{{ $id }}" wire:model="memberIds">
-                                        <span class="text-sm text-slate-700">{{ $member->name }}</span>
-                                    </label>
-                                @endif
-                            @empty
-                                <span class="text-sm text-slate-400">Nenhum membro selecionado. Marque abaixo.</span>
-                            @endforelse
-                        </div>
+                        <div class="grid grid-cols-1 gap-x-6 lg:grid-cols-2">
+                            <div>
+                                <label class="labelforms"><b>Membros selecionados</b></label>
+                                <div class="max-h-[220px] overflow-y-auto rounded-lg border border-slate-200 bg-white p-3">
+                                    @forelse ($memberIds as $id)
+                                        @php $member = $members->firstWhere('id', (int) $id); @endphp
+                                        @if ($member)
+                                            <label class="flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-brand-50" wire:key="member-{{ $id }}">
+                                                <input class="rounded border-slate-300 text-brand-600 focus:ring-brand-400" type="checkbox"
+                                                    id="member-{{ $id }}" value="{{ $id }}" wire:model="memberIds">
+                                                <span class="text-sm text-slate-700">{{ $member->name }}</span>
+                                            </label>
+                                        @endif
+                                    @empty
+                                        <span class="text-sm text-slate-400">Nenhum membro selecionado. Marque abaixo.</span>
+                                    @endforelse
+                                </div>
+                            </div>
 
-                        <div class="mt-4" x-data="{}">
-                            <input type="text" id="member-search" class="form-control form-control-sm mb-2"
-                                placeholder="Buscar membro..." @input="$refs.memberlist.querySelectorAll('label').forEach(el => el.style.display = el.textContent.toLowerCase().includes($event.target.value.toLowerCase()) ? '' : 'none')">
-                            <div class="max-h-[220px] overflow-y-auto rounded-lg border border-slate-200 bg-white p-3" x-ref="memberlist">
-                                @foreach ($members as $member)
-                                    <label class="flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-forest-50" wire:key="allmember-{{ $member->id }}">
-                                        <input class="rounded border-slate-300 text-forest-600 focus:ring-gold-400" type="checkbox"
-                                            id="allmember-{{ $member->id }}" value="{{ $member->id }}" wire:model="memberIds">
-                                        <span class="text-sm text-slate-700">{{ $member->name }}</span>
-                                    </label>
-                                @endforeach
+                            <div>
+                                <label class="labelforms"><b>Buscar e adicionar membros</b></label>
+                                <input type="text" id="member-search" class="form-control form-control-sm mb-2"
+                                    placeholder="Buscar membro..." @input="$refs.memberlist.querySelectorAll('label').forEach(el => el.style.display = el.textContent.toLowerCase().includes($event.target.value.toLowerCase()) ? '' : 'none')">
+                                <div class="max-h-[220px] overflow-y-auto rounded-lg border border-slate-200 bg-white p-3" x-ref="memberlist">
+                                    @foreach ($members as $member)
+                                        <label class="flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-brand-50" wire:key="allmember-{{ $member->id }}">
+                                            <input class="rounded border-slate-300 text-brand-600 focus:ring-brand-400" type="checkbox"
+                                                id="allmember-{{ $member->id }}" value="{{ $member->id }}" wire:model="memberIds">
+                                            <span class="text-sm text-slate-700">{{ $member->name }}</span>
+                                        </label>
+                                    @endforeach
+                                </div>
                             </div>
                         </div>
                         @error('memberIds')
@@ -108,7 +113,7 @@
                         <h4 class="card-title text-slate-700"><strong>Descrição</strong></h4>
                     </div>
                     <div class="card-body">
-                        <div class="grid grid-cols-1 gap-x-6 md:grid-cols-2">
+                        <div class="grid grid-cols-1 gap-x-6 sm:grid-cols-2">
                             <div class="form-group">
                                 <label class="labelforms"><b>Descrição</b></label>
                                 <textarea class="form-control" rows="4" wire:model="description"
@@ -131,8 +136,8 @@
                     </div>
                 </div>
 
-                <div class="mt-4 flex justify-end pb-2">
-                    <button type="submit" class="btn btn-primary btn-lg">
+                <div class="mt-4 flex flex-col gap-2 pb-2 sm:flex-row sm:justify-end">
+                    <button type="submit" class="btn btn-primary btn-lg w-full sm:w-auto">
                         <i class="fas fa-check mr-2"></i>{{ $ministry?->exists ? 'Atualizar Agora' : 'Cadastrar Agora' }}
                     </button>
                 </div>

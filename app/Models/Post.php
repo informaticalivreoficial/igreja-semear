@@ -83,7 +83,9 @@ class Post extends Model
 
     public function images()
     {
-        return $this->hasMany(PostGb::class, 'post', 'id')->orderBy('cover', 'ASC');
+        return $this->hasMany(PostGb::class, 'post', 'id')
+            ->orderBy('order_img', 'asc')
+            ->orderBy('id', 'asc');
     }
 
     public function countimages()

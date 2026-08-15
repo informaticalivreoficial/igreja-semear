@@ -11,16 +11,14 @@
 
     <div class="card">
         <div class="card-header">
-            <div class="flex flex-wrap items-center justify-between gap-3">
-                <input type="text"
-                    wire:model.live.debounce.500ms="search"
-                    class="form-control form-control-sm w-44"
-                    placeholder="Pesquisar">
+            <input type="text"
+                wire:model.live.debounce.500ms="search"
+                class="form-control form-control-sm min-w-40 flex-1"
+                placeholder="Pesquisar...">
 
-                <a wire:navigate href="{{ route('admin.ministries.create') }}" class="btn btn-sm btn-primary">
-                    <i class="fas fa-plus"></i> Cadastrar Novo
-                </a>
-            </div>
+            <a wire:navigate href="{{ route('admin.ministries.create') }}" class="btn btn-sm btn-primary shrink-0">
+                <i class="fas fa-plus"></i> Cadastrar Novo
+            </a>
         </div>
 
         <div class="card-body p-0 sm:p-5">
@@ -34,7 +32,6 @@
                                 </th>
                                 <th class="text-center">Líder</th>
                                 <th class="text-center">Membros</th>
-                                <th class="text-center">Status</th>
                                 <th class="text-center">Ações</th>
                             </tr>
                         </thead>
@@ -42,22 +39,31 @@
                             @foreach ($ministries as $ministry)
                             <tr class="{{ $ministry->status ? '' : 'bg-amber-50/70' }}">
                                 <td>
-                                    <span class="mr-2 inline-block rounded-md" style="width: 14px; height: 14px; background: {{ $ministry->color ?? '#343a40' }};"></span>
-                                    <span class="font-medium text-slate-700">{{ $ministry->name }}</span>
+                                    <div class="flex items-center gap-3">
+                                        @if ($ministry->cover)
+                                            <img src="{{ asset('storage/' . $ministry->cover) }}"
+                                                alt="{{ $ministry->name }}"
+                                                class="h-10 w-10 shrink-0 rounded-lg border border-slate-200 object-cover">
+                                        @else
+                                            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg"
+                                                style="background: {{ $ministry->color ?? '#343a40' }};">
+                                                <i class="fas fa-hands-helping text-sm text-white"></i>
+                                            </span>
+                                        @endif
+                                        <span class="font-medium text-slate-700">{{ $ministry->name }}</span>
+                                    </div>
                                 </td>
                                 <td class="text-center">{{ $ministry->leader?->name ?? '—' }}</td>
                                 <td class="text-center">{{ $ministry->members_count ?? $ministry->members->count() }}</td>
                                 <td class="text-center">
-                                    <x-forms.switch-toggle
-                                        wire:key="safe-switch-{{ $ministry->id }}"
-                                        wire:click="toggleStatus({{ $ministry->id }})"
-                                        :checked="$ministry->status"
-                                        size="sm"
-                                        color="green"
-                                    />
-                                </td>
-                                <td class="text-center">
                                     <div class="flex items-center justify-center gap-2">
+                                        <x-forms.switch-toggle
+                                            wire:key="safe-switch-{{ $ministry->id }}"
+                                            wire:click="toggleStatus({{ $ministry->id }})"
+                                            :checked="$ministry->status"
+                                            size="sm"
+                                            color="green"
+                                        />
                                         <a title="Editar Ministério" href="{{ route('admin.ministries.edit', $ministry->id) }}" wire:navigate class="btn btn-xs btn-default"><i class="fas fa-pen"></i></a>
                                         <button type="button"
                                             class="btn btn-xs btn-danger"

@@ -3,6 +3,7 @@
 namespace App\Livewire\Dashboard;
 
 use App\Models\Config;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
@@ -152,6 +153,8 @@ class Settings extends Component
         $config = Config::findOrFail(1);
         $this->configData = $config->toArray();
 
+        $this->normalizeDates();
+
         // Converte os campos de imagem salvos no banco para URLs
         foreach (['logo', 'logo_admin', 'logo_footer', 'favicon', 'metaimg', 'imgheader', 'watermark'] as $field) {
             if (! empty($config->$field)) {
@@ -182,6 +185,8 @@ class Settings extends Component
             // remove campos que não podem ser atualizados manualmente
             unset($this->configData['id'], $this->configData['created_at'], $this->configData['updated_at']);
             $this->configData['metatags'] = implode(',', $this->tags ?? []);
+
+            $this->normalizeDates();
 
             // Salva somente colunas existentes na tabela config
             Config::where('id', 1)->update($this->fillableConfigData());
@@ -298,6 +303,21 @@ class Settings extends Component
         }
 
         return Storage::url($this->configData['imgheader']);
+    }
+
+    /**
+     * Normaliza os campos de data (colunas DATE no MySQL) para 'Y-m-d' e o status para inteiro,
+     * pois o update usa query builder (sem casts do Eloquent) e o toArray() serializa datas em ISO.
+     */
+    protected function normalizeDates(): void
+    {
+        foreach (['init_date', 'rss_data', 'sitemap_data'] as $field) {
+            $value = trim((string) ($this->configData[$field] ?? ''));
+
+            $this->configData[$field] = $value !== '' ? Carbon::parse($value)->format('Y-m-d') : null;
+        }
+
+        $this->configData['status'] = (int) filter_var($this->configData['status'] ?? false, FILTER_VALIDATE_BOOLEAN);
     }
 
     protected function fillableConfigData(): array

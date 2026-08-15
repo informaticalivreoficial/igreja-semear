@@ -258,4 +258,56 @@
 
 - [ ] Conferir visual em `/atendimento` (máscara, validação, Swal, política em nova aba, cards de contato).
 - [ ] Verificar sino/notificações no admin após um contato real.
-- [ ] Suíte completa: 20 testes passando (7 DonationForm + 3 MemberRegistration + 3 PrayerRequest + 2 PrayerRequestsAdmin + 4 Atendimento + 1 Unit).
+- [ ] Suíte completa: 21 testes passando (7 DonationForm + 3 MemberRegistration + 3 PrayerRequest + 2 PrayerRequestsAdmin + 4 Atendimento + 1 Settings + 1 Unit).
+
+---
+
+# Admin - Salvar Configurações com data (init_date) - Bug corrigido ✅
+
+## O que foi feito
+
+1. **Bug**: ao salvar as configurações no admin (ou ao salvar após upload de imagem), o update do `config` quebrava com `SQLSTATE[22007] ... Incorrect date value: '2016-08-14T03:00:00.000000Z' for column config.init_date`.
+
+2. **Causa**: `Settings::mount()` usa `$config->toArray()`, e o cast `date` do Eloquent serializa `init_date` (e `rss_data`/`sitemap_data`) para ISO `Y-m-d\TH:i:s.u\Z`. O `Settings::update()` salva via **query builder** (`Config::where('id', 1)->update(...)`), que **não aplica casts**, mandando a string ISO crua para a coluna `DATE` do MySQL.
+
+3. **Correção** (`app/Livewire/Dashboard/Settings.php`): novo método `normalizeDates()` chamado no `mount()` e antes do `update()` — formata `init_date`/`rss_data`/`sitemap_data` para `Y-m-d` (ou null) e `status` para int (0/1).
+
+4. **Testes**: `tests/Feature/SettingsTest.php` (1/1): `Livewire::test(Settings::class)->call('update')` salva `init_date` como `2016-08-14` sem erro.
+
+## Para continuar
+
+- [ ] Conferir em `/admin/configuracoes`: campo "Ano de início" mostrando `2016-08-14` e salvar/upload de imagem sem erro.
+
+---
+
+# Admin Posts - Editar/Salvar quebrava (publish_at) + Reordenação de Imagens - Status: Implementado ✅
+
+## O que foi feito
+
+1. **Reordenação de imagens (drag & drop) nos posts**:
+   - `app/Models/Post.php`: relação `images()` agora ordena por `order_img asc, id asc` (antes `cover ASC`) — a ordem arrastada reflete no admin e na página pública (`pagina.blade.php` usa `$post->images()->get()`).
+   - `app/Livewire/Dashboard/Posts/PostForm.php`: novo método `reorderImages($ids)` (valida IDs do post, concatena ids não listados no fim, grava `order_img`); no `save()`, uploads novos recebem `order_img = maxOrder + index + 1` (via `PostGb::where('post', id)->max('order_img')`).
+   - `resources/views/livewire/dashboard/posts/post-form.blade.php`: drag & drop (Alpine + HTML5, `@drop.prevent` → `@this.call('reorderImages', ids)`) nos tiles salvos (só edição), dica azul (`border-blue-200 bg-blue-50 text-blue-700`), efeitos: tile arrastado `opacity-40 scale-95`, tile alvo `ring-4 ring-blue-500 ring-offset-2`, contêiner `border-dashed border-blue-400 bg-blue-50/50` durante drag. **Importante**: Tailwind é 3.4.17 e o config usa `extend` — a paleta `blue` padrão segue disponível.
+
+2. **Bug crítico "post não salva" corrigido** (o usuário achava que a ordenação tinha quebrado — era um bug antigo independente):
+   - **Sintoma**: clicar em "Atualizar e Publicar"/"Salvar" em um post existente não fazia nada: sem swal, sem erro visível, sem persistência.
+   - **Causa raiz**: `mount()` em modo edição fazia `$this->publish_at = $post->publish_at` — o cast `date` do Eloquent devolve um **Carbon**, que ia cru para a propriedade. A regra `'publish_at' => 'nullable|date_format:d/m/Y'` falhava → `ValidationException` lançada **antes** do try/catch do `save()` → save nunca rodava, sem swal, sem persistência. E o erro era **invisível** porque o blade **não tinha bloco `@error('publish_at')`** para esse campo. Posts com `publish_at` NULL salvavam (caiam no `now()->format('d/m/Y')`) — por isso "funcionava antes" em alguns posts.
+   - **Correção**: `mount()` edição agora faz `$post->publish_at ? $post->publish_at->format('d/m/Y') : now()->format('d/m/Y')`; adicionado `@error('publish_at')` no blade (feedback visual caso ocorra de novo).
+
+3. **Testes** (`tests/Feature/PostSaveTest.php`, 4/4; `tests/Feature/PostPageRenderTest.php`, 1/1):
+   - `test_save_published_post`: criação de post válido sem erros.
+   - `test_update_post`: atualização persiste título.
+   - `test_update_post_browser_mimic_dispatches_swal`: post com `publish_at` no BD (formato real), imita o snapshot do navegador (category/type/status) e garante `assertDispatched('swal')` + persistência — **regressão do bug do publish_at**.
+   - `test_reorder_images`: reordena 3 imagens e verifica `order_img` (0/1/2) após `reorderImages([c,a,b])`.
+   - `test_edit_page_renders` (PostPageRenderTest): página `/admin/posts/{id}/editar` renderiza 200 com `saved-tile` e `reorderImages`. Requer roles seedadas no `setUp` (super admin, admin, editor, lider, pastor, member) + `assignRole('editor')` (senão `EnsureStaff` bloqueia).
+   - **Cuidado em testes Livewire**: `.set('category', ...)` ANTES de `.set('type', ...)` faz `updatedType()` zerar a categoria (validação falha) — setar `type` antes de `category`.
+   - **Cuidado com `Post::create(['publish_at' => ...])`**: o mutator `setPublishAtAttribute`/`convertStringToDate` espera `d/m/Y` (explode `/`); passar `Y-m-d` estoura `Undefined array key 1`.
+
+4. **Diagnóstico headless** (reaproveitável): Chromium headless + CDP (Node 26 WebSocket global) em `/tmp/opencode/repro2.mjs` — login (`mario.santiago@example.com` / `password`), abre `/admin/posts/3/editar`, clica em "Atualizar e Publicar", captura a requisição `/livewire/update` com `"method":"save"` e confere na resposta `effects` se há `"dispatches":[{"name":"swal",...}]` (swal) / `"errors"`. Serve para validar qualquer fluxo Livewire do admin sem Swal visível.
+
+5. **Menu admin + cabeçalhos de listagem** (na mesma rodada): ícone Famílias corrigido (`fa-house-user`, FA5), sublinks de Slides/Ministérios/Eventos/Doações/Avisos viraram links diretos com badge de contagem; cabeçalhos das listagens (posts, cat-posts, ministérios, slides, eventos, doações, avisos, famílias, usuários) unificados num só `card-header` com busca `flex-1 min-w-40` + botões `shrink-0` (`ml-auto` em posts).
+
+## Para continuar
+
+- [ ] Conferir visual em `/admin/posts/{id}/editar`: arrastar/reordenar imagens salvas, salvar sem erro, swal "Post atualizado com sucesso!". Reprovado o fluxo no navegador (publish_at do post 3 = `2026-08-14 00:00:00`).
+- [ ] Suíte completa: **26 testes passando**.

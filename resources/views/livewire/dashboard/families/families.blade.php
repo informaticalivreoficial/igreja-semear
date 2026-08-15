@@ -11,16 +11,14 @@
 
     <div class="card mt-6">
         <div class="card-header">
-            <div class="flex flex-wrap items-center justify-between gap-3">
-                <input type="text"
-                    wire:model.live.debounce.500ms="search"
-                    class="form-control form-control-sm w-64"
-                    placeholder="Pesquisar família">
+            <input type="text"
+                wire:model.live.debounce.500ms="search"
+                class="form-control form-control-sm min-w-40 flex-1"
+                placeholder="Pesquisar família">
 
-                <button wire:click="openCreate" class="btn btn-sm btn-primary">
-                    <i class="fas fa-plus"></i> Cadastrar Família
-                </button>
-            </div>
+            <button wire:click="openCreate" class="btn btn-sm btn-primary shrink-0">
+                <i class="fas fa-plus"></i> Cadastrar Família
+            </button>
         </div>
 
         <div class="card-body p-0 sm:p-5">

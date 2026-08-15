@@ -11,16 +11,14 @@
 
     <div class="card">
         <div class="card-header">
-            <div class="flex flex-wrap items-center justify-between gap-3">
-                <input type="text"
-                    wire:model.live.debounce.500ms="search"
-                    class="form-control form-control-sm w-48"
-                    placeholder="Pesquisar slide">
+            <input type="text"
+                wire:model.live.debounce.500ms="search"
+                class="form-control form-control-sm min-w-40 flex-1"
+                placeholder="Pesquisar slide">
 
-                <a wire:navigate href="{{ route('admin.slides.create') }}" class="btn btn-sm btn-primary">
-                    <i class="fas fa-plus"></i> Cadastrar Novo
-                </a>
-            </div>
+            <a wire:navigate href="{{ route('admin.slides.create') }}" class="btn btn-sm btn-primary shrink-0">
+                <i class="fas fa-plus"></i> Cadastrar Novo
+            </a>
         </div>
 
         <div class="card-body p-0 sm:p-5">

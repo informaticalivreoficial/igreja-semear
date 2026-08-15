@@ -41,52 +41,51 @@
 
     <div class="card mt-6">
         <div class="card-header">
-            <div class="flex flex-wrap items-center justify-between gap-3">
-                <div class="flex flex-wrap items-center gap-2">
-                    <input type="text"
-                        wire:model.live.debounce.500ms="search"
-                        class="form-control form-control-sm w-44"
-                        placeholder="Pesquisar contribuinte">
+            <div class="flex flex-1 flex-wrap items-center gap-2">
+                <input type="text"
+                    wire:model.live.debounce.500ms="search"
+                    class="form-control form-control-sm min-w-36 flex-1"
+                    placeholder="Pesquisar contribuinte">
 
-                    <select wire:model.live="typeFilter" class="form-control form-control-sm w-32">
-                        <option value="">Tipo</option>
-                        @foreach ($types as $key => $label)
-                            <option value="{{ $key }}">{{ $label }}</option>
-                        @endforeach
-                    </select>
+                <select wire:model.live="typeFilter" class="form-control form-control-sm w-28">
+                    <option value="">Tipo</option>
+                    @foreach ($types as $key => $label)
+                        <option value="{{ $key }}">{{ $label }}</option>
+                    @endforeach
+                </select>
 
-                    <select wire:model.live="statusFilter" class="form-control form-control-sm w-32">
-                        <option value="">Status</option>
-                        @foreach ($statuses as $key => $label)
-                            <option value="{{ $key }}">{{ $label }}</option>
-                        @endforeach
-                    </select>
+                <select wire:model.live="statusFilter" class="form-control form-control-sm w-28">
+                    <option value="">Status</option>
+                    @foreach ($statuses as $key => $label)
+                        <option value="{{ $key }}">{{ $label }}</option>
+                    @endforeach
+                </select>
 
-                    <select wire:model.live="methodFilter" class="form-control form-control-sm w-32">
-                        <option value="">Pagamento</option>
-                        @foreach ($methods as $key => $label)
-                            <option value="{{ $key }}">{{ $label }}</option>
-                        @endforeach
-                    </select>
+                <select wire:model.live="methodFilter" class="form-control form-control-sm w-28">
+                    <option value="">Pagamento</option>
+                    @foreach ($methods as $key => $label)
+                        <option value="{{ $key }}">{{ $label }}</option>
+                    @endforeach
+                </select>
 
-                    <input type="date" wire:model.live="startDate" class="form-control form-control-sm w-36">
-                    <input type="date" wire:model.live="endDate" class="form-control form-control-sm w-36">
+                <input type="date" wire:model.live="startDate" class="form-control form-control-sm w-36">
+                <input type="date" wire:model.live="endDate" class="form-control form-control-sm w-36">
 
-                    <button type="button" wire:click="clearFilters" class="btn btn-xs btn-default">
-                        <i class="fas fa-times"></i> Limpar
-                    </button>
-                </div>
-
-                <div class="flex items-center gap-2">
-                    <span class="badge badge-info">{{ $donations->total() }} registros</span>
-                    <a wire:navigate href="{{ route('admin.donations.create') }}" class="btn btn-sm btn-default">
-                        <i class="fas fa-plus"></i> Cadastrar Manual
-                    </a>
-                    <a wire:navigate href="{{ route('web.doacoes') }}" target="_blank" class="btn btn-sm btn-primary">
-                        <i class="fas fa-plus"></i> Nova Doação
-                    </a>
-                </div>
+                <button type="button" wire:click="clearFilters" class="btn btn-xs btn-default">
+                    <i class="fas fa-times"></i> Limpar
+                </button>
             </div>
+
+            <div class="flex shrink-0 flex-wrap items-center gap-2">
+                <span class="badge badge-info">{{ $donations->total() }} registros</span>
+                <a wire:navigate href="{{ route('admin.donations.create') }}" class="btn btn-sm btn-default">
+                    <i class="fas fa-plus"></i> Cadastrar Manual
+                </a>
+                <a wire:navigate href="{{ route('web.doacoes') }}" target="_blank" class="btn btn-sm btn-primary">
+                    <i class="fas fa-plus"></i> Nova Doação
+                </a>
+            </div>
+        </div>
         </div>
 
         <div class="card-body p-0 sm:p-5">

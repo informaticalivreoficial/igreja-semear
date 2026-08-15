@@ -111,9 +111,12 @@
                         <label class="labelforms"><b>Data da Publicação</b></label>
                         <div class="relative">
                             <i class="far fa-calendar-alt pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                            <input type="text" class="form-control pl-9" wire:model="publish_at" id="datepicker"
+                            <input type="text" class="form-control pl-9 @error('publish_at') is-invalid @enderror" wire:model="publish_at" id="datepicker"
                                 x-data="{ value: @entangle('publish_at').defer }" x-init="initFlatpickr()" x-ref="datepicker" />
                         </div>
+                        @error('publish_at')
+                            <small class="text-danger">{{ $message }}</small>
+                        @enderror
                     </div>
                 </div>
 
@@ -148,9 +151,45 @@
                 @enderror
 
                 <div x-data="{ showModal: false, imageUrl: null }">
-                    <div class="mt-4 flex flex-wrap gap-4">
+                    @if ($post->exists && $post->images->count())
+                        <div class="mb-3 flex items-start gap-2.5 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700 mt-3">
+                            <i class="fas fa-arrows-alt mt-0.5"></i>
+                            <span><strong>Dica:</strong> arraste e solte as imagens para reordenar.</span>
+                        </div>
+                    @endif
+
+                    <div class="mt-4 flex flex-wrap gap-4 rounded-lg border-2 border-transparent p-2 transition-colors duration-150"
+                        x-data="{ dragged: null, dragging: false, over: null }"
+                        :class="dragging ? 'border-dashed border-blue-400 bg-blue-50/50' : ''"
+                        @dragover.prevent
+                        @dragenter.prevent="dragging = true"
+                        @drop.prevent="dragging = false; over = null; dragged = null"
+                        @dragend="dragging = false; over = null; dragged = null">
                         @foreach ($post->images ?? [] as $savedImage)
-                            <div class="relative">
+                            <div class="saved-tile relative cursor-grab active:cursor-grabbing transition duration-150"
+                                draggable="true"
+                                data-id="{{ $savedImage->id }}"
+                                wire:key="saved-{{ $savedImage->id }}"
+                                :class="dragged === $el ? 'scale-95 opacity-40' : (over === $el ? 'ring-4 ring-blue-500 ring-offset-2 opacity-90' : '')"
+                                @dragstart="dragged = $el; dragging = true"
+                                @dragover.prevent
+                                @dragenter.prevent="over = $el"
+                                @drop.prevent="
+                                    dragging = false; over = null;
+                                    const target = $event.target.closest('.saved-tile');
+                                    if (dragged && target && dragged !== target) {
+                                        const tiles = Array.from(dragged.parentElement.querySelectorAll('.saved-tile'));
+                                        const fromIdx = tiles.indexOf(dragged);
+                                        const toIdx = tiles.indexOf(target);
+                                        if (fromIdx > -1 && toIdx > -1) {
+                                            const ids = tiles.map(t => Number(t.dataset.id));
+                                            const [moved] = ids.splice(fromIdx, 1);
+                                            ids.splice(toIdx, 0, moved);
+                                            @this.call('reorderImages', ids);
+                                        }
+                                        dragged = null;
+                                    }
+                                ">
                                 <img src="{{ Storage::url($savedImage->path) }}"
                                     class="h-32 w-32 cursor-pointer rounded-lg border object-cover
                                             {{ $savedImage->cover ? 'ring-4 ring-forest-500' : '' }}"

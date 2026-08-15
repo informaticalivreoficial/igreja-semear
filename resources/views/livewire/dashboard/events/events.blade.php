@@ -11,24 +11,22 @@
 
     <div class="card">
         <div class="card-header">
-            <div class="flex flex-wrap items-center justify-between gap-3">
-                <div class="flex flex-wrap items-center gap-2">
-                    <input type="text"
-                        wire:model.live.debounce.500ms="search"
-                        class="form-control form-control-sm w-44"
-                        placeholder="Pesquisar">
+            <div class="flex flex-1 flex-wrap items-center gap-2">
+                <input type="text"
+                    wire:model.live.debounce.500ms="search"
+                    class="form-control form-control-sm min-w-40 flex-1"
+                    placeholder="Pesquisar">
 
-                    <select wire:model.live="statusFilter" class="form-control form-control-sm w-36">
-                        <option value="">Status</option>
-                        <option value="1">Ativos</option>
-                        <option value="0">Inativos</option>
-                    </select>
-                </div>
-
-                <a wire:navigate href="{{ route('admin.events.create') }}" class="btn btn-sm btn-primary">
-                    <i class="fas fa-plus"></i> Cadastrar Novo
-                </a>
+                <select wire:model.live="statusFilter" class="form-control form-control-sm w-36">
+                    <option value="">Status</option>
+                    <option value="1">Ativos</option>
+                    <option value="0">Inativos</option>
+                </select>
             </div>
+
+            <a wire:navigate href="{{ route('admin.events.create') }}" class="btn btn-sm btn-primary shrink-0">
+                <i class="fas fa-plus"></i> Cadastrar Novo
+            </a>
         </div>
 
         <div class="card-body p-0 sm:p-5">
