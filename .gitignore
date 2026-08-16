@@ -19,3 +19,5 @@ yarn-error.log
 opencode.json
 /.opencode
 AGENTS.md
+/public/error_log
+/public/sitemap.xml

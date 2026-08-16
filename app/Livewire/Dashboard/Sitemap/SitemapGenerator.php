@@ -2,14 +2,15 @@
 
 namespace App\Livewire\Dashboard\Sitemap;
 
-use Illuminate\Support\Facades\Artisan;
 use Livewire\Component;
-use Spatie\Sitemap\Sitemap;
+use App\Services\Sitemap\SitemapService;
+use App\Traits\WithToastr;
 
 class SitemapGenerator extends Component
 {
+    use WithToastr;
+    
     public $totalUrls = 0;
-
     public $lastGenerated = null;
 
     public function mount()
@@ -21,7 +22,7 @@ class SitemapGenerator extends Component
     {
         if (file_exists(public_path('sitemap.xml'))) {
             $this->lastGenerated = date('d/m/Y H:i:s', filemtime(public_path('sitemap.xml')));
-
+            
             // Conta URLs no sitemap
             $xml = simplexml_load_file(public_path('sitemap.xml'));
             $this->totalUrls = count($xml->url);
@@ -31,19 +32,11 @@ class SitemapGenerator extends Component
     public function generate()
     {
         try {
-            Artisan::call('sitemap:generate');
-
+            app(SitemapService::class)->generateFile();
             $this->loadInfo();
-
-            $this->dispatch('toast', [
-                'type' => 'success',
-                'message' => 'Sitemap gerado com sucesso!',
-            ]);
+            $this->toastSuccess('Sitemap gerado com sucesso!');
         } catch (\Exception $e) {
-            $this->dispatch('toast', [
-                'type' => 'error',
-                'message' => 'Erro ao gerar sitemap: '.$e->getMessage(),
-            ]);
+            $this->toastError('Erro ao gerar sitemap: ' . $e->getMessage());
         }
     }
 
