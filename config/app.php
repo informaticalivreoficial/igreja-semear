@@ -297,4 +297,6 @@ return [
 
     ],
 
+    'desenvolvedor_email' => env('DESENVOLVEDOR_EMAIL'),
+
 ];

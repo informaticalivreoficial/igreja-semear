@@ -2,7 +2,8 @@
 
 namespace App\Livewire\Components;
 
-use App\Mail\SupportRequestMail;
+use App\Mail\Admin\SupportRequestMail;
+use App\Models\Config;
 use App\Traits\WithToastr;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Attributes\On;
@@ -28,12 +29,25 @@ class SupportModal extends Component
             'message' => 'required|min:10',
         ]);
 
-        Mail::to(config('app.desenvolvedor_email'))
-            ->send(new SupportRequestMail($this->message));
+        $user = auth()->user();
+        $config = Config::find(1);
 
-        $this->reset('message', 'showSupport');
+        $data = [
+            'mensagem' => $this->message,
+            'user_name' => $user?->name ?: 'Administrador',
+            'user_email' => $user?->email ?: config('app.desenvolvedor_email'),
+            'sitename' => $config?->app_name ?: config('app.name'),
+        ];
 
-        $this->toastSuccess('Suporte enviado com sucesso');
+        try {
+            Mail::to(config('app.desenvolvedor_email'))
+                ->send(new SupportRequestMail($data));
+
+            $this->reset('message', 'showSupport');
+            $this->toastSuccess('Suporte enviado com sucesso');
+        } catch (\Throwable $e) {
+            $this->toastError('Não foi possível enviar o suporte. Tente novamente mais tarde.');
+        }
     }
 
     public function render()

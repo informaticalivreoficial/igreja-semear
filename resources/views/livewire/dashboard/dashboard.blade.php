@@ -141,6 +141,51 @@
 
     </div>
 
+    {{-- Gráficos Google Analytics --}}
+    <div class="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-2">
+
+        <div class="card flex flex-col overflow-hidden">
+            <div class="card-header flex flex-wrap items-center justify-between gap-2">
+                <h3 class="card-title"><i class="fas fa-chart-line text-forest-600"></i> Visitas nos últimos 6 meses</h3>
+                <span class="text-xs font-medium text-slate-400">
+                    <i class="fas fa-chart-pie mr-1"></i>Google Analytics
+                </span>
+            </div>
+            <div class="card-body flex flex-1 flex-col">
+                @if (array_sum($analyticsMonthly['visitors']) === 0)
+                    <p class="mb-3 text-sm text-slate-500">
+                        <i class="fas fa-info-circle mr-1 text-slate-400"></i>
+                        Sem dados de visitas ainda. Verifique se a propriedade do Google Analytics está configurada.
+                    </p>
+                @endif
+                <div class="relative min-h-72 flex-1">
+                    <canvas id="visitsChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="card flex flex-col overflow-hidden">
+            <div class="card-header flex flex-wrap items-center justify-between gap-2">
+                <h3 class="card-title"><i class="fas fa-mobile-alt text-forest-600"></i> Acessos por dispositivo</h3>
+                <span class="text-xs font-medium text-slate-400">
+                    <i class="fas fa-chart-pie mr-1"></i>Google Analytics
+                </span>
+            </div>
+            <div class="card-body flex flex-1 flex-col">
+                @if (array_sum($analyticsDevices['values']) === 0)
+                    <p class="mb-3 text-sm text-slate-500">
+                        <i class="fas fa-info-circle mr-1 text-slate-400"></i>
+                        Sem dados de dispositivos ainda. Verifique se a propriedade do Google Analytics está configurada.
+                    </p>
+                @endif
+                <div class="relative min-h-72 flex-1">
+                    <canvas id="devicesChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
     {{-- Tabelas --}}
     <div class="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-2">
 
@@ -232,6 +277,94 @@
 </div>
 
 @push('scripts')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => window.initDashboardCharts && window.initDashboardCharts());
+        document.addEventListener('livewire:navigated', () => window.initDashboardCharts && window.initDashboardCharts());
+
+        window.initDashboardCharts = function () {
+            if (typeof Chart === 'undefined') return;
+            if (!document.getElementById('visitsChart') && !document.getElementById('devicesChart')) return;
+
+            if (window._visitsChart) { window._visitsChart.destroy(); window._visitsChart = null; }
+            if (window._devicesChart) { window._devicesChart.destroy(); window._devicesChart = null; }
+
+            const monthly = @json($analyticsMonthly);
+            const devices = @json($analyticsDevices);
+
+            const visitsEl = document.getElementById('visitsChart');
+            if (visitsEl) {
+                window._visitsChart = new Chart(visitsEl, {
+                    type: 'line',
+                    data: {
+                        labels: monthly.labels,
+                        datasets: [
+                            {
+                                label: 'Visitantes',
+                                data: monthly.visitors,
+                                borderColor: '#2e6028',
+                                backgroundColor: 'rgba(46,96,40,0.10)',
+                                fill: true,
+                                tension: 0.3,
+                                borderWidth: 2,
+                                pointRadius: 3,
+                                pointHoverRadius: 5,
+                            },
+                            {
+                                label: 'Visualizações',
+                                data: monthly.pageviews,
+                                borderColor: '#8bc835',
+                                backgroundColor: 'rgba(139,200,53,0.10)',
+                                fill: true,
+                                tension: 0.3,
+                                borderWidth: 2,
+                                pointRadius: 3,
+                                pointHoverRadius: 5,
+                            },
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: { mode: 'index', intersect: false },
+                        plugins: {
+                            legend: { position: 'top', labels: { usePointStyle: true, boxWidth: 8 } },
+                        },
+                        scales: {
+                            y: { beginAtZero: true, ticks: { precision: 0 } },
+                            x: { grid: { display: false } },
+                        }
+                    }
+                });
+            }
+
+            const devicesEl = document.getElementById('devicesChart');
+            if (devicesEl) {
+                window._devicesChart = new Chart(devicesEl, {
+                    type: 'doughnut',
+                    data: {
+                        labels: devices.labels,
+                        datasets: [{
+                            data: devices.values,
+                            backgroundColor: ['#3a94c0', '#2e6028', '#8bc835'],
+                            borderWidth: 2,
+                            borderColor: '#ffffff',
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '65%',
+                        plugins: {
+                            legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8 } },
+                            tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.parsed.toLocaleString('pt-BR')}` } },
+                        }
+                    }
+                });
+            }
+        };
+    </script>
+
     @if (session('toast'))
         <script>
             document.addEventListener('DOMContentLoaded', () => {

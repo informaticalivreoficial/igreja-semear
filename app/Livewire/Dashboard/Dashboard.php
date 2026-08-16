@@ -10,6 +10,7 @@ use App\Models\Ministry;
 use App\Models\Post;
 use App\Models\Slide;
 use App\Models\User;
+use App\Services\Analytics\AnalyticsService;
 use Livewire\Component;
 
 class Dashboard extends Component
@@ -40,13 +41,17 @@ class Dashboard extends Component
             ->take(5)
             ->get();
 
+        $analytics = new AnalyticsService;
+        $analyticsMonthly = $analytics->monthlyVisits(6);
+        $analyticsDevices = $analytics->devices(6);
+
         $title = 'Painel de Controle';
 
         return view('livewire.dashboard.dashboard', compact(
             'postsCount', 'postsYearCount', 'newsCount', 'articlesCount',
             'slidesCount', 'ministriesCount', 'eventsCount', 'membersCount',
             'donationsTotal', 'donationsYear', 'dizimosTotal',
-            'topposts', 'upcomingEvents', 'title'
+            'topposts', 'upcomingEvents', 'analyticsMonthly', 'analyticsDevices', 'title'
         ));
     }
 }
