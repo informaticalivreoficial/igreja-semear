@@ -46,6 +46,7 @@ class Config extends Model
 
         // Social
         'facebook', 'twitter', 'instagram', 'youtube', 'linkedin',
+        'youtube_channel_name', 'next_transmission_at',
 
         // Seo
         'information', 
@@ -70,6 +71,7 @@ class Config extends Model
         'init_date' => 'date',
         'rss_data' => 'date',
         'sitemap_data' => 'date',
+        'next_transmission_at' => 'datetime',
     ];
 
     /**

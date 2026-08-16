@@ -4,6 +4,7 @@ namespace App\Livewire\Dashboard\Ministries;
 
 use App\Models\Ministry;
 use App\Models\User;
+use App\Support\ImageService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -50,7 +51,7 @@ class MinistryForm extends Component
             'status' => 'required|boolean',
             'memberIds' => 'nullable|array',
             'memberIds.*' => 'exists:users,id',
-            'cover' => 'nullable|image|max:2048',
+            'cover' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048|dimensions:min_width=800,min_height=400',
         ];
     }
 
@@ -58,6 +59,10 @@ class MinistryForm extends Component
         'name.required' => 'O nome do ministério é obrigatório.',
         'slug.unique' => 'Já existe um ministério com esse endereço (slug).',
         'leader_id.exists' => 'O líder selecionado é inválido.',
+        'cover.image' => 'O arquivo deve ser uma imagem.',
+        'cover.mimes' => 'A imagem deve ser JPG, PNG ou WebP.',
+        'cover.max' => 'A imagem não pode ultrapassar 2MB.',
+        'cover.dimensions' => 'A imagem deve ter no mínimo 800x400 pixels.',
     ];
 
     public function render()
@@ -113,7 +118,7 @@ class MinistryForm extends Component
             if (! empty($this->ministry->cover) && Storage::disk('public')->exists($this->ministry->cover)) {
                 Storage::disk('public')->delete($this->ministry->cover);
             }
-            $data['cover'] = $this->cover->store('ministries', 'public');
+            $data['cover'] = ImageService::storeWebp($this->cover, 'ministries');
         }
 
         if ($this->ministry->exists) {

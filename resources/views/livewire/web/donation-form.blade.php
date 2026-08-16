@@ -166,7 +166,7 @@
                     </div>
                     <div>
                         <label class="mb-1.5 block text-sm font-semibold text-slate-700">CPF <span class="font-normal text-slate-400">(opcional)</span></label>
-                        <input type="text" wire:model="cpf" class="input-site" placeholder="000.000.000-00" maxlength="14" {{ $isAnonymous ? 'disabled' : '' }}>
+                        <input type="text" wire:model="cpf" x-data x-init="if (window.IMask && !$el._imask) { $el._imask = IMask($el, { mask: '000.000.000-00' }); }" class="input-site" placeholder="000.000.000-00" maxlength="14" inputmode="numeric" {{ $isAnonymous ? 'disabled' : '' }}>
                     </div>
                 </div>
 

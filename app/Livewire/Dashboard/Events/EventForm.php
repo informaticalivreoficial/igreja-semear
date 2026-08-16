@@ -3,11 +3,10 @@
 namespace App\Livewire\Dashboard\Events;
 
 use App\Models\Event;
+use App\Support\ImageService;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Intervention\Image\Drivers\Gd\Driver;
-use Intervention\Image\ImageManager;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
@@ -99,15 +98,7 @@ class EventForm extends Component
 
     protected function storeCoverWebp(TemporaryUploadedFile $cover): string
     {
-        $manager = new ImageManager(new Driver);
-        $image = $manager->read($cover->getRealPath())
-            ->scale(width: 1600);
-
-        $filename = 'events/'.Str::uuid().'.webp';
-
-        Storage::disk('public')->put($filename, (string) $image->toWebp(82));
-
-        return $filename;
+        return ImageService::storeWebp($cover, 'events');
     }
 
     public function updatedTitle($value)

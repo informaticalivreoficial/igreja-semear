@@ -23,7 +23,7 @@
                                 $cover = asset('backend/assets/images/avatar3.png');
                             }
                         @endphp
-                        <input type="file" id="foto" wire:model="foto" style="display: none;">
+                        <input type="file" id="foto" wire:model="foto" accept="image/jpeg,image/jpg,image/png,image/webp" style="display: none;">
                         @error('foto')
                             <span class="erro-feedback">{{ $message }}</span>
                         @enderror

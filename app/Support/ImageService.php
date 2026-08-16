@@ -3,8 +3,10 @@
 namespace App\Support;
 
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class ImageService
 {
@@ -45,5 +47,18 @@ class ImageService
 
         // Retorna a URL pública (funciona se bucket for público ou tiver domain)
         return $disk->url($fileName);
+    }
+
+    public static function storeWebp(TemporaryUploadedFile $file, string $folder, int $maxWidth = 1600, int $quality = 82): string
+    {
+        $manager = new ImageManager(new Driver);
+        $image = $manager->read($file->getRealPath())
+            ->scale(width: $maxWidth);
+
+        $filename = $folder.'/'.Str::uuid().'.webp';
+
+        Storage::disk('public')->put($filename, (string) $image->toWebp($quality));
+
+        return $filename;
     }
 }

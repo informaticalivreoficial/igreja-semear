@@ -41,6 +41,8 @@ class ConfigTableSeeder extends Seeder
                 'facebook' => 'https://facebook.com/'.env('CLIENT_SOCIAL_FACEBOOK_PAGE', 'semear'),
                 'instagram' => 'https://instagram.com/'.env('CLIENT_SOCIAL_INSTAGRAM_PAGE', 'semear'),
                 'youtube' => 'https://youtube.com/'.env('CLIENT_SOCIAL_YOUTUBE_PAGE', 'SemearUbatuba'),
+                'youtube_channel_name' => 'Comunidade Cristã Semear',
+                'next_transmission_at' => null,
 
                 'information' => 'Comunidade Cristã Semear.',
                 'privacy_policy' => 'Política de Privacidade da Comunidade Cristã Semear.',

@@ -31,6 +31,7 @@ use App\Livewire\Dashboard\Users\Form;
 use App\Livewire\Dashboard\Users\Time;
 use App\Livewire\Dashboard\Users\Users;
 use App\Livewire\Dashboard\Users\ViewUser;
+use App\Livewire\Dashboard\Youtube\YoutubeManager;
 use Illuminate\Support\Facades\Route;
 
 require __DIR__.'/auth.php';
@@ -57,6 +58,8 @@ Route::group(['as' => 'web.'], function () {
     Route::get('/eventos', [WebController::class, 'eventos'])->name('eventos');
     Route::get('/pedido-de-oracao', [WebController::class, 'pedidoOracao'])->name('pedido-oracao');
     Route::get('/transmissao-ao-vivo', [WebController::class, 'transmissao'])->name('transmissao');
+    Route::get('/cultos-online', [WebController::class, 'cultosOnline'])->name('cultos');
+    Route::get('/pregacoes', [WebController::class, 'pregacoes'])->name('pregacoes');
     Route::get('/pagina/{slug}', [WebController::class, 'pagina'])->name('pagina');
     Route::get('/noticia/{slug}', [WebController::class, 'noticia'])->name('noticia');
     Route::get('/noticias', [WebController::class, 'noticias'])->name('noticias');
@@ -152,6 +155,9 @@ Route::group(['middleware' => ['auth', 'staff'], 'prefix' => 'admin', 'as' => 'a
     Route::get('avisos/{announcement}/editar', AnnouncementForm::class)->name('announcements.edit');
     Route::get('avisos/cadastrar', AnnouncementForm::class)->name('announcements.create');
     Route::get('avisos', Announcements::class)->name('announcements.index');
+
+    // *********************** YouTube ********************************************/
+    Route::get('youtube', YoutubeManager::class)->name('youtube.index');
 });
 
 /** Webhooks de pagamento (fora do grupo web -> sem CSRF) */

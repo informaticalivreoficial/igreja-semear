@@ -5,6 +5,7 @@ namespace App\Livewire\Dashboard\Users;
 use App\Models\Family;
 use App\Models\Ministry;
 use App\Models\User;
+use App\Support\ImageService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
@@ -104,6 +105,7 @@ class Form extends Component
             'postcode' => 'nullable|string|max:10',
             'role' => 'required|exists:roles,name',
             'password' => 'nullable|min:6|confirmed',
+            'foto' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
             'ministries' => 'nullable|array',
             'ministries.*' => 'exists:ministries,id',
         ];
@@ -120,6 +122,9 @@ class Form extends Component
         'role.exists' => 'O cargo selecionado é inválido.',
         'password.min' => 'A senha deve ter no mínimo :min caracteres.',
         'password.confirmed' => 'As senhas não coincidem.',
+        'foto.image' => 'O arquivo deve ser uma imagem.',
+        'foto.mimes' => 'A imagem deve ser JPG, PNG ou WebP.',
+        'foto.max' => 'A imagem não pode ultrapassar 2MB.',
     ];
 
     public function mount(?User $user = null)
@@ -209,7 +214,7 @@ class Form extends Component
                 Storage::disk('public')->delete($this->user->avatar);
             }
 
-            $data['avatar'] = $this->foto->store('users', 'public');
+            $data['avatar'] = ImageService::storeWebp($this->foto, 'users');
         }
 
         if ($this->password) {

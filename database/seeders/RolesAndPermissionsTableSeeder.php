@@ -21,6 +21,7 @@ class RolesAndPermissionsTableSeeder extends Seeder
             'manage ministries',
             'manage events',
             'manage donations',
+            'manage youtube',
             'manage settings',
             'manage users',
         ];
@@ -43,11 +44,13 @@ class RolesAndPermissionsTableSeeder extends Seeder
             'manage ministries',
             'manage events',
             'manage donations',
+            'manage youtube',
         ]);
         $editor->syncPermissions([
             'view dashboard',
             'manage posts',
             'manage slides',
+            'manage youtube',
         ]);
         $member->syncPermissions([]);
     }

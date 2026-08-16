@@ -85,9 +85,9 @@
                     @php
                         $paginasNav = collect($viewPaginas ?? [])->keyBy('slug');
                         $slugAtivo = request()->routeIs('web.pagina') ? request()->route('slug') : null;
-                        $igrejaAtiva = request()->routeIs('web.ministerios') || in_array($slugAtivo, ['cultos-e-horarios', 'pregacoes', 'galeria-de-fotos']);
+                        $igrejaAtiva = request()->routeIs('web.ministerios', 'web.pregacoes') || in_array($slugAtivo, ['cultos-e-horarios', 'galeria-de-fotos']);
                         $blogAtivo = request()->routeIs('web.blog.*', 'web.noticia*');
-                        $maisAtiva = request()->routeIs('web.atendimento', 'web.pedido-oracao', 'web.transmissao', 'web.doacoes') || in_array($slugAtivo, ['localizacao', 'doacoes']);
+                        $maisAtiva = request()->routeIs('web.atendimento', 'web.pedido-oracao', 'web.doacoes', 'web.pregacoes') || in_array($slugAtivo, ['localizacao', 'doacoes']);
                     @endphp
 
                     <a href="{{ route('web.home') }}"
@@ -101,6 +101,7 @@
                     </a>
 
                     {{-- A IGREJA --}}
+                    {{-- A IGREJA --}}
                     <div class="relative" @mouseenter="menu = 'igreja'" @mouseleave="menu = null">
                         <button class="flex items-center gap-1 rounded-lg px-3.5 py-2 text-[13px] font-semibold transition {{ $igrejaAtiva ? 'bg-brand-600/10 text-brand-700' : 'text-brand-700 hover:bg-brand-50 hover:text-brand-900' }}">
                             A Igreja
@@ -112,7 +113,13 @@
                                 <a href="{{ route('web.pagina', ['slug' => 'cultos-e-horarios']) }}" class="block rounded-lg px-3 py-2 text-[13px] font-semibold text-brand-700 transition hover:bg-brand-50 hover:text-brand-900">Cultos e horários</a>
                             </div>
                         </div>
-                    </div>                    
+                    </div>
+
+                    {{-- CULTOS ONLINE --}}
+                    <a href="{{ route('web.cultos') }}"
+                        class="rounded-lg px-3.5 py-2 text-[13px] font-semibold transition {{ request()->routeIs('web.cultos', 'web.transmissao') ? 'bg-brand-600/10 text-brand-700' : 'text-brand-700 hover:bg-brand-50 hover:text-brand-900' }}">
+                        Cultos Online
+                    </a>
 
                     {{-- MAIS --}}
                     <div class="relative" @mouseenter="menu = 'mais'" @mouseleave="menu = null">
@@ -126,7 +133,7 @@
                                 <a href="{{ route('web.pagina', ['slug' => 'localizacao']) }}" class="block rounded-lg px-3 py-2 text-[13px] font-semibold text-brand-700 transition hover:bg-brand-50 hover:text-brand-900">Localização</a>
                                 <a href="{{ route('web.pedido-oracao') }}" class="block rounded-lg px-3 py-2 text-[13px] font-semibold text-brand-700 transition hover:bg-brand-50 hover:text-brand-900">Pedido de oração</a>
                                 <a href="{{ route('web.doacoes') }}" class="block rounded-lg px-3 py-2 text-[13px] font-semibold text-brand-700 transition hover:bg-brand-50 hover:text-brand-900">Doações</a>
-                                <a href="{{ route('web.transmissao') }}" class="block rounded-lg px-3 py-2 text-[13px] font-semibold text-brand-700 transition hover:bg-brand-50 hover:text-brand-900">Ao vivo</a>
+                                <a href="{{ route('web.pregacoes') }}" class="block rounded-lg px-3 py-2 text-[13px] font-semibold text-brand-700 transition hover:bg-brand-50 hover:text-brand-900">Pregações</a>
                             </div>
                         </div>
                     </div>
@@ -195,7 +202,7 @@
                         <div x-show="sub === 'igreja'" x-cloak class="flex flex-col border-l-2 border-brand-100 pl-3">
                             <a href="{{ route('web.ministerios') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-[13px] font-medium text-brand-600 transition hover:bg-brand-50">Ministérios</a>
                             <a href="{{ route('web.pagina', ['slug' => 'cultos-e-horarios']) }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-[13px] font-medium text-brand-600 transition hover:bg-brand-50">Cultos e horários</a>
-                            <a href="{{ route('web.pagina', ['slug' => 'pregacoes']) }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-[13px] font-medium text-brand-600 transition hover:bg-brand-50">Pregações</a>
+                            <a href="{{ route('web.pregacoes') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-[13px] font-medium text-brand-600 transition hover:bg-brand-50">Pregações</a>
                             <a href="{{ route('web.pagina', ['slug' => 'galeria-de-fotos']) }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-[13px] font-medium text-brand-600 transition hover:bg-brand-50">Galeria de fotos</a>
                         </div>
 
@@ -210,6 +217,8 @@
 
                         <a href="{{ route('web.eventos') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2.5 text-[13px] font-semibold text-brand-700 transition hover:bg-brand-50">Eventos</a>
 
+                        <a href="{{ route('web.cultos') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2.5 text-[13px] font-semibold text-brand-700 transition hover:bg-brand-50">Cultos Online</a>
+
                         <button @click="sub = sub === 'mais' ? null : 'mais'" class="flex items-center justify-between rounded-lg px-3 py-2.5 text-[13px] font-semibold text-brand-700 transition hover:bg-brand-50">
                             Mais
                             <svg class="h-4 w-4 transition" :class="sub === 'mais' ? 'rotate-180' : ''" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
@@ -219,7 +228,6 @@
                             <a href="{{ route('web.pagina', ['slug' => 'localizacao']) }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-[13px] font-medium text-brand-600 transition hover:bg-brand-50">Localização</a>
                             <a href="{{ route('web.pedido-oracao') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-[13px] font-medium text-brand-600 transition hover:bg-brand-50">Pedido de oração</a>
                             <a href="{{ route('web.doacoes') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-[13px] font-medium text-brand-600 transition hover:bg-brand-50">Doações</a>
-                            <a href="{{ route('web.transmissao') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-[13px] font-medium text-brand-600 transition hover:bg-brand-50">Ao vivo</a>
                         </div>
 
                         <a href="{{ route('web.politica') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2.5 text-[13px] font-semibold text-brand-700 transition hover:bg-brand-50">Política de Privacidade</a>
@@ -267,7 +275,7 @@
                     <ul class="mt-4 space-y-2 text-sm">
                         <li><a href="{{ route('web.ministerios') }}" class="transition hover:text-white">Ministérios</a></li>
                         <li><a href="{{ route('web.pagina', ['slug' => 'cultos-e-horarios']) }}" class="transition hover:text-white">Cultos e horários</a></li>
-                        <li><a href="{{ route('web.transmissao') }}" class="transition hover:text-white">Ao vivo</a></li>
+                        <li><a href="{{ route('web.cultos') }}" class="transition hover:text-white">Cultos Online</a></li>
                     </ul>
                 </div>
 
@@ -304,6 +312,7 @@
                         <a href="{{ route('web.doacoes') }}" class="transition hover:text-white">Doações</a>
                         <a href="{{ route('web.pedido-oracao') }}" class="transition hover:text-white">Pedido de oração</a>
                         <a href="{{ route('web.pagina', ['slug' => 'localizacao']) }}" class="transition hover:text-white">Localização</a>
+                        <button type="button" onclick="window.dispatchEvent(new CustomEvent('open-cookie-modal'))" class="cursor-pointer transition hover:text-white">Configurar cookies</button>
                         <a href="{{ route('web.politica') }}" class="transition hover:text-white">Política de Privacidade</a>
                     </div>
                     <span>&copy; {{ date('Y') }} {{ optional($configuracoes)->app_name ?: 'Semear' }}. Todos os direitos reservados.</span>
@@ -312,24 +321,72 @@
         </footer>
 
         {{-- COOKIE CONSENT --}}
-        <div x-data="cookieConsent" x-cloak x-show="!accepted" class="fixed inset-x-0 bottom-0 z-50 p-4">
-            <div class="mx-auto max-w-3xl rounded-2xl border border-brand-100 bg-brand-900 p-5 shadow-lg">
-                <p class="text-sm text-brand-600">
-                    {{ optional($configuracoes)->cookies_preference ?: 'Este site utiliza cookies para melhorar a sua experiência de navegação.' }}
-                    <a href="{{ route('web.politica') }}" class="font-semibold text-brand-600 hover:text-brand-700">Saiba mais</a>.
-                </p>
-                <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <label class="flex items-center gap-2 text-xs text-brand-500">
-                        <input type="checkbox" x-model="stats" class="h-4 w-4 rounded border-brand-300 text-brand-400 focus:ring-brand-500">
-                        Cookies de estatística
-                    </label>
-                    <label class="flex items-center gap-2 text-xs text-brand-500">
-                        <input type="checkbox" x-model="marketing" class="h-4 w-4 rounded border-brand-300 text-brand-400 focus:ring-brand-500">
-                        Cookies de marketing
-                    </label>
-                    <div class="flex items-center gap-2">
-                        <button @click="acceptAll" class="btn-primary btn-sm">Aceitar todos</button>
-                        <button @click="save" class="btn-secondary btn-sm">Salvar</button>
+        <div x-data="cookieConsent" x-cloak>
+            <div x-show="!accepted" class="fixed inset-x-0 bottom-0 z-50 p-4">
+                <div class="mx-auto max-w-3xl rounded-2xl border border-brand-100 bg-brand-900 p-5 shadow-lg">
+                    <p class="text-sm text-brand-600">
+                        {{ optional($configuracoes)->cookies_preference ?: 'Este site utiliza cookies para melhorar a sua experiência de navegação.' }}
+                        <a href="{{ route('web.politica') }}" class="font-semibold text-brand-600 hover:text-brand-700">Saiba mais</a>.
+                    </p>
+                    <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                        <label class="flex items-center gap-2 text-xs text-brand-500">
+                            <input type="checkbox" x-model="stats" class="h-4 w-4 rounded border-brand-300 text-brand-400 focus:ring-brand-500">
+                            Cookies de estatística
+                        </label>
+                        <label class="flex items-center gap-2 text-xs text-brand-500">
+                            <input type="checkbox" x-model="marketing" class="h-4 w-4 rounded border-brand-300 text-brand-400 focus:ring-brand-500">
+                            Cookies de marketing
+                        </label>
+                        <div class="flex items-center gap-2">
+                            <button @click="acceptAll" class="btn-primary btn-sm">Aceitar todos</button>
+                            <button @click="save" class="btn-secondary btn-sm">Salvar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- COOKIE SETTINGS MODAL --}}
+            <div x-show="open" x-cloak x-transition.opacity
+                class="fixed inset-0 z-[70] flex items-center justify-center bg-brand-900/60 p-4"
+                @click.self="closeModal()">
+                <div class="w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl">
+                    <div class="flex items-center justify-between border-b border-brand-100 px-6 py-4">
+                        <h3 class="font-display text-lg font-bold text-brand-900">Preferências de cookies</h3>
+                        <button type="button" @click="closeModal()" class="text-slate-400 transition hover:text-slate-600" aria-label="Fechar">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-sm leading-6 text-slate-600">
+                            Gerencie suas preferências de cookies. Os cookies necessários são essenciais para o funcionamento do site e permanecem sempre ativos.
+                        </p>
+                        <div class="mt-5 space-y-3">
+                            <div class="flex items-center justify-between rounded-xl border border-brand-100 bg-brand-50/50 px-4 py-3">
+                                <div>
+                                    <p class="text-sm font-semibold text-brand-900">Cookies necessários</p>
+                                    <p class="text-xs text-slate-500">Essenciais para o funcionamento do site.</p>
+                                </div>
+                                <span class="badge-cat">Sempre ativos</span>
+                            </div>
+                            <label class="flex cursor-pointer items-center justify-between gap-4 rounded-xl border border-brand-100 px-4 py-3">
+                                <div>
+                                    <p class="text-sm font-semibold text-brand-900">Cookies de estatística</p>
+                                    <p class="text-xs text-slate-500">Nos ajudam a entender como o site é utilizado.</p>
+                                </div>
+                                <input type="checkbox" x-model="stats" class="h-5 w-5 shrink-0 rounded border-brand-300 text-brand-600 focus:ring-brand-500">
+                            </label>
+                            <label class="flex cursor-pointer items-center justify-between gap-4 rounded-xl border border-brand-100 px-4 py-3">
+                                <div>
+                                    <p class="text-sm font-semibold text-brand-900">Cookies de marketing</p>
+                                    <p class="text-xs text-slate-500">Usados para exibir conteúdo e anúncios relevantes.</p>
+                                </div>
+                                <input type="checkbox" x-model="marketing" class="h-5 w-5 shrink-0 rounded border-brand-300 text-brand-600 focus:ring-brand-500">
+                            </label>
+                        </div>
+                    </div>
+                    <div class="flex flex-col-reverse gap-2 border-t border-brand-100 px-6 py-4 sm:flex-row sm:justify-end">
+                        <button @click="save" class="btn-secondary">Salvar preferências</button>
+                        <button @click="acceptAll" class="btn-primary">Aceitar todos</button>
                     </div>
                 </div>
             </div>

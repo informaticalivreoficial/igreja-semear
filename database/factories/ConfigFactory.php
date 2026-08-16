@@ -61,6 +61,8 @@ class ConfigFactory extends Factory
             'youtube' => 'https://youtube.com/@'.fake()->userName(),
             'instagram' => 'https://instagram.com/'.fake()->userName(),
             'linkedin' => 'https://linkedin.com/in/'.fake()->userName(),
+            'youtube_channel_name' => 'Canal '.$name,
+            'next_transmission_at' => null,
 
             'information' => fake()->paragraph(),
             'privacy_policy' => fake()->paragraphs(3, true),

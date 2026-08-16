@@ -22,6 +22,8 @@ class DatabaseSeeder extends Seeder
             SitePagesSeeder::class,
             FamiliesTableSeeder::class,
             AnnouncementsTableSeeder::class,
+            YoutubeVideosTableSeeder::class,
+            YoutubePlaylistsTableSeeder::class,
         ]);
     }
 }

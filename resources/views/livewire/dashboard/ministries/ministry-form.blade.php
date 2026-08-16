@@ -121,7 +121,7 @@
                             </div>
                             <div class="form-group">
                                 <label class="labelforms"><b>Imagem de capa</b></label>
-                                <input type="file" class="block w-full text-sm text-slate-500
+                                <input type="file" accept="image/jpeg,image/jpg,image/png,image/webp" class="block w-full text-sm text-slate-500
                                     file:mr-4 file:rounded-lg file:border-0 file:bg-forest-50 file:px-4 file:py-2
                                     file:text-sm file:font-semibold file:text-forest-700 hover:file:bg-forest-100"
                                     wire:model="cover">

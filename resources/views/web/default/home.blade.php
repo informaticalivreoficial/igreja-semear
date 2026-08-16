@@ -6,7 +6,7 @@
         <section
             x-data="{ active: 0, total: {{ $slides->count() }}, timer: null, start() { this.timer = setInterval(() => { this.active = (this.active + 1) % this.total }, 6000) }, stop() { clearInterval(this.timer) } }"
             x-init="start()"
-            class="relative h-[480px] overflow-hidden bg-sky-900 sm:h-[560px]"
+            class="relative h-[480px] overflow-hidden bg-brand-900 sm:h-[560px]"
             @mouseenter="stop()"
             @mouseleave="start()"
         >
@@ -23,9 +23,9 @@
                             class="h-full w-full object-cover opacity-50"
                         >
                     @else
-                        <div class="h-full w-full bg-gradient-to-br from-sky-900 via-sky-800 to-sky-700"></div>
+                        <div class="h-full w-full bg-gradient-to-br from-brand-800 via-brand-700 to-brand-600"></div>
                     @endif
-                    <div class="absolute inset-0 bg-gradient-to-t from-sky-950/90 via-sky-900/40 to-transparent"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-brand-900/90 via-brand-800/40 to-transparent"></div>
                 </div>
             @endforeach
 
@@ -33,10 +33,10 @@
                 <div class="max-w-2xl text-white">
                     @foreach($slides as $i => $slide)
                         <div x-show="active === {{ $i }}" x-transition:enter.delay.200ms>
-                            <span class="badge-cat !bg-white/10 !text-amber-300">Bem-vindo à {{ optional($configuracoes)->app_name ?: 'Comunidade Cristã Semear' }}</span>
+                            <span class="badge-cat !bg-white/10 !text-accent-300">Bem-vindo à {{ optional($configuracoes)->app_name ?: 'Comunidade Cristã Semear' }}</span>
                             <h1 class="font-display mt-4 text-4xl font-bold leading-tight sm:text-5xl">{{ $slide->title }}</h1>
                             @if($slide->subtitle)
-                                <p class="mt-4 text-lg text-sky-100/90">{{ $slide->subtitle }}</p>
+                                <p class="mt-4 text-lg text-brand-100/90">{{ $slide->subtitle }}</p>
                             @endif
                             @if($slide->button_label && $slide->link)
                                 <a href="{{ $slide->link }}" target="{{ $slide->target ?: '_self' }}" class="btn-secondary mt-6">
@@ -54,54 +54,88 @@
                         <button
                             @click="active = {{ $i }}"
                             class="h-2.5 rounded-full transition-all {{-- active via class toggling --}}"
-                            :class="active === {{ $i }} ? 'w-8 bg-amber-400' : 'w-2.5 bg-white/50 hover:bg-white'"
+                            :class="active === {{ $i }} ? 'w-8 bg-accent-400' : 'w-2.5 bg-white/50 hover:bg-white'"
                             aria-label="Slide {{ $i + 1 }}"
                         ></button>
                     @endforeach
                 </div>
             @endif
         </section>
+    @endif    
+
+    {{-- AO VIVO / ÚLTIMO CULTO --}}
+    @if(isset($youtubeAoVivo) || isset($youtubeUltimoCulto))
+        <section class="bg-brand-900 py-20">
+            <div class="container-site">
+                <div class="flex flex-wrap items-end justify-between gap-4">
+                    <div>
+                        <span class="badge-cat">Cultos Online</span>
+                        <h2 class="font-display mt-4 text-3xl font-bold text-white">
+                            @if(isset($youtubeAoVivo) && $youtubeAoVivo)
+                                <span class="inline-flex items-center gap-2">
+                                    <span class="h-2.5 w-2.5 animate-pulse rounded-full bg-red-500"></span>
+                                    Ao vivo agora
+                                </span>
+                            @else
+                                Último culto
+                            @endif
+                        </h2>
+                    </div>
+                    <a href="{{ route('web.cultos') }}" class="btn-secondary">Ver todos os cultos &rarr;</a>
+                </div>
+
+                <div class="mt-10 grid items-center gap-10 lg:grid-cols-2">
+                    <div class="relative aspect-video w-full overflow-hidden rounded-3xl bg-black shadow-2xl">
+                        @if(isset($youtubeAoVivo) && $youtubeAoVivo)
+                            <iframe class="absolute inset-0 h-full w-full"
+                                src="{{ $youtubeAoVivo->embedUrl() }}?autoplay=1&rel=0"
+                                title="{{ $youtubeAoVivo->title }}"
+                                frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen></iframe>
+                        @else
+                            <a href="{{ route('web.cultos') }}" class="absolute inset-0 group">
+                                <img src="{{ $youtubeUltimoCulto->thumbnail() }}" alt="{{ $youtubeUltimoCulto->title }}"
+                                    class="h-full w-full object-cover transition duration-300 group-hover:scale-105">
+                                <span class="absolute inset-0 flex items-center justify-center bg-black/30">
+                                    <span class="flex h-16 w-16 items-center justify-center rounded-full bg-red-600 text-white shadow-lg">
+                                        <i class="fas fa-play ml-1 text-2xl"></i>
+                                    </span>
+                                </span>
+                            </a>
+                        @endif
+                    </div>
+
+                    <div>
+                        @php
+                            $videoDestaque = $youtubeAoVivo ?? $youtubeUltimoCulto;
+                        @endphp
+                        @if(isset($videoDestaque))
+                            @if(isset($youtubeAoVivo) && $youtubeAoVivo)
+                                <span class="inline-flex items-center gap-2 rounded-full bg-red-600 px-3 py-1 text-xs font-bold uppercase tracking-wide text-white">
+                                    <span class="h-2 w-2 animate-pulse rounded-full bg-white"></span>
+                                    Transmissão ao vivo
+                                </span>
+                            @endif
+                            <h3 class="font-display mt-4 text-2xl font-bold leading-snug text-white">{{ $videoDestaque->title }}</h3>
+                            @if($videoDestaque->publish_at)
+                                <p class="mt-2 text-sm text-brand-200">{{ $videoDestaque->publish_at->translatedFormat('l, d \de F \de Y') }}</p>
+                            @endif
+                            @if($videoDestaque->description)
+                                <p class="mt-4 text-sm leading-6 text-brand-200/90">{{ \Illuminate\Support\Str::limit($videoDestaque->description, 160) }}</p>
+                            @endif
+                            <div class="mt-6 flex flex-wrap gap-3">
+                                <a target="_blank" rel="noopener" href="{{ $videoDestaque->watchUrl() }}" class="btn-primary">
+                                    <i class="fab fa-youtube mr-2"></i> Assistir no YouTube
+                                </a>
+                                <a href="{{ route('web.pregacoes') }}" class="btn-white">Pregações</a>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </section>
     @endif
-
-    {{-- BOAS-VINDAS --}}
-    <section class="bg-white py-20">
-        <div class="container-site grid items-center gap-12 lg:grid-cols-2">
-            <div>
-                <span class="badge-cat">Nossa Comunidade</span>
-                <h2 class="section-title mt-4">Um lugar para crescer, servir e adorar</h2>
-                <p class="mt-5 leading-7 text-slate-600">
-                    {{ optional($configuracoes)->information ?: 'A Comunidade Cristã Semear é um lugar de acolhimento, fé e comunhão. Venha fazer parte da nossa família!' }}
-                </p>
-                <div class="mt-8 flex flex-wrap gap-3">
-                    <a href="{{ route('web.blog.artigos') }}" class="btn-primary">Conheça o Blog</a>
-                    <a href="{{ route('web.atendimento') }}" class="btn-secondary">Fale Conosco</a>
-                </div>
-            </div>
-
-            <div class="grid gap-4 sm:grid-cols-2">
-                <div class="rounded-2xl border border-slate-100 bg-slate-50 p-6">
-                    <svg class="h-8 w-8 text-sky-600" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21s-6.716-3.89-9.428-6.623C.336 11.61-.342 7.512 2.172 4.997a5.247 5.247 0 017.42 0L12 7.404l2.407-2.407a5.247 5.247 0 017.42 0c2.515 2.515 1.836 6.613-.399 9.38C18.716 17.11 12 21 12 21z"/></svg>
-                    <h3 class="mt-4 font-display text-lg font-bold text-slate-900">Família</h3>
-                    <p class="mt-2 text-sm leading-6 text-slate-600">Comunhão e acolhimento para todas as idades.</p>
-                </div>
-                <div class="rounded-2xl border border-slate-100 bg-slate-50 p-6">
-                    <svg class="h-8 w-8 text-sky-600" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                    <h3 class="mt-4 font-display text-lg font-bold text-slate-900">Adoração</h3>
-                    <p class="mt-2 text-sm leading-6 text-slate-600">Cultos de celebração e comunhão com Deus.</p>
-                </div>
-                <div class="rounded-2xl border border-slate-100 bg-slate-50 p-6">
-                    <svg class="h-8 w-8 text-sky-600" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-                    <h3 class="mt-4 font-display text-lg font-bold text-slate-900">Palavra</h3>
-                    <p class="mt-2 text-sm leading-6 text-slate-600">Ensino bíblico sólido e devocionais diários.</p>
-                </div>
-                <div class="rounded-2xl border border-slate-100 bg-slate-50 p-6">
-                    <svg class="h-8 w-8 text-sky-600" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                    <h3 class="mt-4 font-display text-lg font-bold text-slate-900">Serviço</h3>
-                    <p class="mt-2 text-sm leading-6 text-slate-600">Ministérios e projetos que transformam vidas.</p>
-                </div>
-            </div>
-        </div>
-    </section>
 
     {{-- ÚLTIMOS ARTIGOS --}}
     @if(isset($artigos) && $artigos->count())

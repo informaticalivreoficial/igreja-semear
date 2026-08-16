@@ -142,7 +142,7 @@
                 <hr class="my-5 border-slate-200">
 
                 <label class="mb-2 mt-2 block font-semibold text-slate-500">📁 Upload de Imagens:</label>
-                <input type="file" wire:model="images" class="block w-full text-sm text-slate-500
+                <input type="file" wire:model="images" accept="image/jpeg,image/jpg,image/png,image/webp" class="block w-full text-sm text-slate-500
                     file:mr-4 file:rounded-full file:border-0 file:bg-forest-50 file:px-4 file:py-2
                     file:text-sm file:font-semibold file:text-forest-700 hover:file:bg-forest-100" multiple/>
 

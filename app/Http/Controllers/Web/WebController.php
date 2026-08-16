@@ -11,6 +11,7 @@ use App\Models\Ministry;
 use App\Models\Post;
 use App\Models\Slide;
 use App\Models\User;
+use App\Models\YoutubeVideo;
 use App\Notifications\NewMemberRegistered;
 use App\Support\Seo;
 use Carbon\Carbon;
@@ -53,6 +54,12 @@ class WebController extends Controller
                 ->with(['categoriaObject'])
                 ->orderByDesc('publish_at')->limit(3)->get(),
             'eventos' => Event::where('status', 1)->orderBy('start_at')->limit(3)->get(),
+            'youtubeAoVivo' => YoutubeVideo::where('status', true)->where('is_live', true)->orderByDesc('id')->first(),
+            'youtubeUltimoCulto' => YoutubeVideo::where('status', true)
+                ->where('type', YoutubeVideo::TYPE_CULTO)
+                ->orderByDesc('publish_at')
+                ->orderByDesc('id')
+                ->first(),
         ]);
     }
 
@@ -205,11 +212,41 @@ class WebController extends Controller
         $head = $this->seo->render(
             'Transmissão ao Vivo - '.$config->app_name,
             'Acompanhe as transmissões ao vivo da '.$config->app_name,
-            route('web.transmissao'),
+            route('web.cultos'),
             $config?->getmetaimg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
         );
 
-        return view('web.'.$config->template.'.transmissao', [
+        return redirect()->route('web.cultos');
+    }
+
+    public function cultosOnline()
+    {
+        $config = $this->config();
+
+        $head = $this->seo->render(
+            'Cultos Online - '.$config->app_name,
+            'Acompanhe as transmissões ao vivo e os últimos cultos da '.$config->app_name,
+            route('web.cultos'),
+            $config?->getmetaimg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
+        );
+
+        return view('web.'.$config->template.'.cultos-online', [
+            'head' => $head,
+        ]);
+    }
+
+    public function pregacoes()
+    {
+        $config = $this->config();
+
+        $head = $this->seo->render(
+            'Pregações - '.$config->app_name,
+            'Assista as pregações e mensagens da '.$config->app_name,
+            route('web.pregacoes'),
+            $config?->getmetaimg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
+        );
+
+        return view('web.'.$config->template.'.pregacoes', [
             'head' => $head,
         ]);
     }
@@ -247,7 +284,8 @@ class WebController extends Controller
             [$base.'/blog', null, 'daily', '0.9'],
             [$base.'/noticias', null, 'daily', '0.9'],
             [$base.'/pedido-de-oracao', null, 'monthly', '0.6'],
-            [$base.'/transmissao-ao-vivo', null, 'weekly', '0.7'],
+            [$base.'/cultos-online', null, 'daily', '0.7'],
+            [$base.'/pregacoes', null, 'daily', '0.7'],
             [$base.'/atendimento', null, 'monthly', '0.5'],
             [$base.'/politica-de-privacidade', null, 'yearly', '0.3'],
         ];

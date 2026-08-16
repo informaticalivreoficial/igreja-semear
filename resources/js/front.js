@@ -71,12 +71,26 @@ document.addEventListener('alpine:init', () => {
         marketing: false,
 
         init() {
-            const saved = localStorage.getItem('cookie_consent');
+            window.addEventListener('open-cookie-modal', () => {
+                this.open = true;
+            });
+
+            let saved = null;
+            try {
+                saved = localStorage.getItem('cookie_consent');
+            } catch (e) {
+                saved = null;
+            }
+
             if (saved) {
-                const prefs = JSON.parse(saved);
-                this.stats = prefs.stats ?? false;
-                this.marketing = prefs.marketing ?? false;
-                this.accepted = true;
+                try {
+                    const prefs = JSON.parse(saved);
+                    this.stats = prefs.stats ?? false;
+                    this.marketing = prefs.marketing ?? false;
+                    this.accepted = true;
+                } catch (e) {
+                    // prefêrencias inválidas: mantém o banner visível
+                }
             }
         },
 
