@@ -5,13 +5,13 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Mail\Web\CreateMember;
 use App\Models\CatPost;
+use App\Models\Config;
 use App\Models\Event;
 use App\Models\Ministry;
 use App\Models\Post;
 use App\Models\Slide;
 use App\Models\User;
 use App\Notifications\NewMemberRegistered;
-use App\Services\ConfigService;
 use App\Support\Seo;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -22,23 +22,25 @@ class WebController extends Controller
 {
     protected $seo;
 
-    protected $configService;
-
-    public function __construct(ConfigService $configService)
+    public function __construct()
     {
-        $this->configService = $configService;
         $this->seo = new Seo;
+    }
+
+    private function config(): ?Config
+    {
+        return Config::where('id', 1)->first();
     }
 
     public function home()
     {
-        $config = $this->configService->getConfig();
+        $config = $this->config();
 
         $head = $this->seo->render(
             $config->app_name ?? 'Semear',
             $config->information ?? 'Comunidade Cristã Semear',
             route('web.home'),
-            $this->configService->getMetaImg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
+            $config?->getmetaimg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
         );
 
         return view('web.'.$config->template.'.home', [
@@ -56,14 +58,14 @@ class WebController extends Controller
 
     public function quemsomos()
     {
-        $config = $this->configService->getConfig();
+        $config = $this->config();
 
         $paginaQuemSomos = Post::where('type', 'pagina')->postson()->where('id', 5)->first();
         $head = $this->seo->render(
             'Quem Somos - '.$config->app_name,
             $config->information ?? 'Semear',
             route('web.home'),
-            $this->configService->getMetaImg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
+            $config?->getmetaimg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
         );
 
         return view('web.'.$config->template.'.quem-somos', [
@@ -74,13 +76,13 @@ class WebController extends Controller
 
     public function politica()
     {
-        $config = $this->configService->getConfig();
+        $config = $this->config();
 
         $head = $this->seo->render(
             'Política de Privacidade - '.$config->app_name,
             'Política de Privacidade - '.$config->app_name,
             route('web.politica'),
-            $this->configService->getMetaImg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
+            $config?->getmetaimg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
         );
 
         return view('web.'.$config->template.'.politica', [
@@ -90,7 +92,7 @@ class WebController extends Controller
 
     public function pesquisa(Request $request)
     {
-        $config = $this->configService->getConfig();
+        $config = $this->config();
 
         $search = $request->search ?? '';
 
@@ -112,7 +114,7 @@ class WebController extends Controller
             'Pesquisa por '.($search ?: $config->app_name),
             'Pesquisa - '.$config->app_name,
             route('web.blog.artigos'),
-            $this->configService->getMetaImg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
+            $config?->getmetaimg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
         );
 
         return view('web.'.$config->template.'.pesquisa', [
@@ -125,7 +127,7 @@ class WebController extends Controller
 
     public function pagina($slug)
     {
-        $config = $this->configService->getConfig();
+        $config = $this->config();
 
         $post = Post::where('slug', $slug)->where('type', 'pagina')->postson()->first();
         abort_unless($post, 404);
@@ -136,7 +138,7 @@ class WebController extends Controller
             $post->title ?? $config->app_name,
             $post->title,
             route('web.pagina', ['slug' => $post->slug]),
-            $post->cover() ?? $this->configService->getMetaImg()
+            $post->cover() ?? $config?->getmetaimg()
         );
 
         return view('web.'.$config->template.'.pagina', [
@@ -147,7 +149,7 @@ class WebController extends Controller
 
     public function ministerios()
     {
-        $config = $this->configService->getConfig();
+        $config = $this->config();
 
         $ministerios = Ministry::where('status', 1)->orderBy('name')->get();
 
@@ -155,7 +157,7 @@ class WebController extends Controller
             'Ministérios - '.$config->app_name,
             'Conheça os ministérios da '.$config->app_name,
             route('web.ministerios'),
-            $this->configService->getMetaImg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
+            $config?->getmetaimg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
         );
 
         return view('web.'.$config->template.'.ministerios', [
@@ -166,32 +168,29 @@ class WebController extends Controller
 
     public function eventos()
     {
-        $config = $this->configService->getConfig();
-
-        $eventos = Event::where('status', 1)->orderBy('start_at')->paginate(9);
+        $config = $this->config();
 
         $head = $this->seo->render(
             'Eventos - '.$config->app_name,
             'Agenda de eventos da '.$config->app_name,
             route('web.eventos'),
-            $this->configService->getMetaImg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
+            $config?->getmetaimg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
         );
 
         return view('web.'.$config->template.'.eventos', [
             'head' => $head,
-            'eventos' => $eventos,
         ]);
     }
 
     public function pedidoOracao()
     {
-        $config = $this->configService->getConfig();
+        $config = $this->config();
 
         $head = $this->seo->render(
             'Pedido de Oração - '.$config->app_name,
             'Envie seu pedido de oração para a '.$config->app_name,
             route('web.pedido-oracao'),
-            $this->configService->getMetaImg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
+            $config?->getmetaimg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
         );
 
         return view('web.'.$config->template.'.pedido-oracao', [
@@ -201,30 +200,29 @@ class WebController extends Controller
 
     public function transmissao()
     {
-        $config = $this->configService->getConfig();
+        $config = $this->config();
 
         $head = $this->seo->render(
             'Transmissão ao Vivo - '.$config->app_name,
             'Acompanhe as transmissões ao vivo da '.$config->app_name,
             route('web.transmissao'),
-            $this->configService->getMetaImg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
+            $config?->getmetaimg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
         );
 
         return view('web.'.$config->template.'.transmissao', [
             'head' => $head,
-            'live_url' => $config->live_url,
         ]);
     }
 
     public function atendimento()
     {
-        $config = $this->configService->getConfig();
+        $config = $this->config();
 
         $head = $this->seo->render(
             'Atendimento - '.$config->app_name,
             'Nossa equipe está pronta para melhor atender as suas demandas!',
             route('web.atendimento'),
-            $this->configService->getMetaImg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
+            $config?->getmetaimg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
         );
 
         return view('web.'.$config->template.'.atendimento', [
@@ -291,7 +289,7 @@ class WebController extends Controller
 
     public function artigos(Request $request)
     {
-        $config = $this->configService->getConfig();
+        $config = $this->config();
 
         $search = $request->query('search', '');
         $query = Post::where('type', 'artigo')->postson()->with(['categoriaObject', 'userObject']);
@@ -307,7 +305,7 @@ class WebController extends Controller
             ($search ? 'Resultados para "'.$search.'" - ' : '').'Blog - '.$config->app_name,
             'Blog - '.$config->app_name,
             route('web.blog.artigos'),
-            $this->configService->getMetaImg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
+            $config?->getmetaimg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
         );
 
         return view('web.'.$config->template.'.blog.artigos', [
@@ -322,7 +320,7 @@ class WebController extends Controller
 
     public function artigo($slug)
     {
-        $config = $this->configService->getConfig();
+        $config = $this->config();
 
         $post = Post::where('slug', $slug)->where('type', 'artigo')->postson()->with(['categoriaObject', 'userObject'])->first();
         abort_unless($post, 404);
@@ -338,7 +336,7 @@ class WebController extends Controller
             $post->title.' - '.$config->app_name,
             $post->metaDescription ?: $post->title,
             route('web.blog.artigo', ['slug' => $post->slug]),
-            $post->cover() ?? $this->configService->getMetaImg()
+            $post->cover() ?? $config?->getmetaimg()
         );
 
         return view('web.'.$config->template.'.blog.artigo', [
@@ -352,7 +350,7 @@ class WebController extends Controller
 
     public function categoria($slug)
     {
-        $config = $this->configService->getConfig();
+        $config = $this->config();
 
         $categoria = CatPost::where('slug', $slug)->available()->first();
         abort_unless($categoria, 404);
@@ -365,7 +363,7 @@ class WebController extends Controller
             $categoria->title.' - '.$config->app_name,
             'Publicações na categoria '.$categoria->title,
             route(($categoria->type === 'noticia' ? 'web.noticia.categoria' : 'web.blog.categoria'), ['slug' => $categoria->slug]),
-            $this->configService->getMetaImg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
+            $config?->getmetaimg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
         );
 
         return view('web.'.$config->template.'.blog.categoria', [
@@ -388,7 +386,7 @@ class WebController extends Controller
 
     public function noticias()
     {
-        $config = $this->configService->getConfig();
+        $config = $this->config();
 
         $posts = Post::where('type', 'noticia')->postson()->with(['categoriaObject', 'userObject'])
             ->orderByDesc('publish_at')->paginate(9);
@@ -397,7 +395,7 @@ class WebController extends Controller
             'Notícias - '.$config->app_name,
             'Notícias - '.$config->app_name,
             route('web.noticias'),
-            $this->configService->getMetaImg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
+            $config?->getmetaimg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
         );
 
         return view('web.'.$config->template.'.blog.artigos', [
@@ -412,7 +410,7 @@ class WebController extends Controller
 
     public function noticia($slug)
     {
-        $config = $this->configService->getConfig();
+        $config = $this->config();
 
         $post = Post::where('slug', $slug)->where('type', 'noticia')->postson()->with(['categoriaObject', 'userObject'])->first();
         abort_unless($post, 404);
@@ -427,7 +425,7 @@ class WebController extends Controller
             $post->title.' - '.$config->app_name,
             $post->metaDescription ?: $post->title,
             route('web.noticia', ['slug' => $post->slug]),
-            $post->cover() ?? $this->configService->getMetaImg()
+            $post->cover() ?? $config?->getmetaimg()
         );
 
         return view('web.'.$config->template.'.blog.artigo', [
@@ -443,13 +441,13 @@ class WebController extends Controller
 
     public function createMember()
     {
-        $config = $this->configService->getConfig();
+        $config = $this->config();
 
         $head = $this->seo->render(
             'Cadastro de Membros - '.$config->app_name,
             'Comunidade Cristã Semear, cadastro de Membros',
             route('web.create.member'),
-            $this->configService->getMetaImg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
+            $config?->getmetaimg() ?? 'https://informaticalivre.com/media/metaimg.jpg'
         );
 
         return view('web.'.$config->template.'.member.cadastro', [

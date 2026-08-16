@@ -43,6 +43,7 @@ class ConfigFactory extends Factory
             'phone' => '('.fake()->areaCode().') '.fake()->phone(),
             'cell_phone' => '('.fake()->areaCode().') '.fake()->cellphone(),
             'whatsapp' => '('.fake()->areaCode().') '.fake()->cellphone(),
+            'telegram' => 'https://t.me/'.fake()->userName(),
             'email' => fake()->unique()->safeEmail(),
             'additional_email' => fake()->unique()->safeEmail(),
 
@@ -53,6 +54,7 @@ class ConfigFactory extends Factory
             'neighborhood' => fake()->citySuffix(),
             'state' => fake()->stateAbbr(),
             'city' => fake()->city(),
+            'display_address' => fake()->streetAddress().', '.fake()->city().' - '.fake()->stateAbbr(),
 
             'facebook' => 'https://facebook.com/'.fake()->userName(),
             'twitter' => 'https://twitter.com/'.fake()->userName(),
@@ -62,6 +64,8 @@ class ConfigFactory extends Factory
 
             'information' => fake()->paragraph(),
             'privacy_policy' => fake()->paragraphs(3, true),
+            'terms_conditions' => fake()->paragraphs(3, true),
+            'cookies_preference' => 'Utilizamos cookies para melhorar a sua experiência de navegação.',
             'maps_google' => fake()->optional()->url(),
             'metatags' => implode(',', fake()->words(5)),
             'analytics_id' => 'G-'.strtoupper(Str::random(6)),

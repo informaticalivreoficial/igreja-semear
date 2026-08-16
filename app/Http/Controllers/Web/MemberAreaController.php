@@ -4,12 +4,12 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Announcement;
+use App\Models\Config;
 use App\Models\Donation;
 use App\Models\Event;
 use App\Models\EventRegistration;
 use App\Models\Member;
 use App\Models\PrayerRequest;
-use App\Services\ConfigService;
 use App\Support\Seo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,13 +17,10 @@ use Illuminate\Support\Facades\Hash;
 
 class MemberAreaController extends Controller
 {
-    protected $configService;
-
     protected $seo;
 
-    public function __construct(ConfigService $configService)
+    public function __construct()
     {
-        $this->configService = $configService;
         $this->seo = new Seo;
     }
 
@@ -32,20 +29,25 @@ class MemberAreaController extends Controller
         return Auth::user()->member;
     }
 
+    private function config(): ?Config
+    {
+        return Config::where('id', 1)->first();
+    }
+
     private function template(): string
     {
-        return $this->configService->getConfig()->template;
+        return $this->config()->template;
     }
 
     private function layoutData(string $title, string $active): array
     {
-        $config = $this->configService->getConfig();
+        $config = $this->config();
 
         $head = $this->seo->render(
             $title.' - '.$config->app_name,
             $title,
             url()->current(),
-            $this->configService->getMetaImg()
+            $config->getmetaimg()
         );
 
         return [

@@ -21,7 +21,7 @@
                         <div class="card-post group overflow-hidden">
                             <div class="aspect-[16/9] overflow-hidden">
                                 <img
-                                    src="{{ $ministerio->cover ? \Illuminate\Support\Facades\Storage::url($ministerio->cover) : asset('backend/assets/images/image.jpg') }}"
+                                    src="{{ $ministerio->cover ? \Illuminate\Support\Facades\Storage::url($ministerio->cover) : asset('theme/images/image.jpg') }}"
                                     alt="{{ $ministerio->name }}"
                                     class="h-full w-full object-cover"
                                 >

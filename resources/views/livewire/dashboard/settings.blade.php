@@ -35,25 +35,25 @@
                 class="border-b-2 px-4 py-3 text-sm font-semibold transition-colors duration-200 focus:outline-none"
                 :class="tab === 'dados' ? '-mb-0.5 border-forest-600 text-forest-700' : 'border-transparent text-slate-500 hover:text-forest-600'"
                 @click="tab = 'dados'">
-                📝 Dados
+                <i class="fas fa-database mr-1.5"></i> Dados
             </button>
             <button type="button"
                 class="border-b-2 px-4 py-3 text-sm font-semibold transition-colors duration-200 focus:outline-none"
                 :class="tab === 'seo' ? '-mb-0.5 border-forest-600 text-forest-700' : 'border-transparent text-slate-500 hover:text-forest-600'"
                 @click="tab = 'seo'">
-                📷 Seo
+                <i class="fas fa-globe mr-1.5"></i> SEO &amp; Redes Sociais
             </button>
             <button type="button"
                 class="border-b-2 px-4 py-3 text-sm font-semibold transition-colors duration-200 focus:outline-none"
                 :class="tab === 'contato' ? '-mb-0.5 border-forest-600 text-forest-700' : 'border-transparent text-slate-500 hover:text-forest-600'"
                 @click="tab = 'contato'">
-                📷 Informações de Contato
+                <i class="fas fa-phone mr-1.5"></i> Contato
             </button>
             <button type="button"
                 class="border-b-2 px-4 py-3 text-sm font-semibold transition-colors duration-200 focus:outline-none"
                 :class="tab === 'imagens' ? '-mb-0.5 border-forest-600 text-forest-700' : 'border-transparent text-slate-500 hover:text-forest-600'"
                 @click="tab = 'imagens'">
-                📷 Imagens
+                <i class="fas fa-image mr-1.5"></i> Imagens
             </button>
         </div>
 
@@ -114,6 +114,14 @@
                                     <div class="form-group lg:col-span-2">
                                         <label class="labelforms"><b>Complemento:</b></label>
                                         <input type="text" class="form-control" id="complement" wire:model="configData.complement">
+                                    </div>
+                                    <div class="form-group lg:col-span-3">
+                                        <label class="labelforms"><b>Endereço de exibição:</b></label>
+                                        <input type="text" class="form-control @error('configData.display_address') is-invalid @enderror" placeholder="Ex.: Rua da Igreja, 100 - Centro, Ubatuba/SP" wire:model="configData.display_address" id="display_address">
+                                        <small class="text-muted">Endereço formatado exibido no rodapé do site (opcional).</small>
+                                        @error('configData.display_address')
+                                            <span class="error erro-feedback">{{ $message }}</span>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>
@@ -224,10 +232,22 @@
                         </div>
 
                         <hr class="my-6 border-slate-200">
-                        <h5 class="mb-3 text-lg font-semibold text-slate-600">Transmissão ao Vivo:</h5>
+                        <div class="mt-6" wire:ignore>
+                            <label class="labelforms"><b>Termos e Condições</b></label>
+                            <x-editor-quill
+                                :value="$configData['terms_conditions']"
+                                model="configData.terms_conditions"
+                            />
+                        </div>
+
+                        <hr class="my-6 border-slate-200">
+                        <h5 class="mb-3 text-lg font-semibold text-slate-600">Cookies</h5>
                         <div class="form-group">
-                            <label class="labelforms"><b>Link da Transmissão</b> <small class="text-sky-600">(URL do YouTube usada na página de transmissão ao vivo do site)</small></label>
-                            <input type="text" class="form-control" placeholder="https://www.youtube.com/watch?v=..." wire:model="configData.live_url" id="live_url">
+                            <label class="labelforms"><b>Mensagem de cookies</b></label>
+                            <textarea class="form-control @error('configData.cookies_preference') is-invalid @enderror" rows="3" wire:model="configData.cookies_preference" placeholder="Texto exibido no aviso de cookies do site">{{ $configData['cookies_preference'] ?? '' }}</textarea>
+                            @error('configData.cookies_preference')
+                                <span class="error erro-feedback">{{ $message }}</span>
+                            @enderror
                         </div>
                     </div>
 
@@ -250,6 +270,14 @@
                                 <input type="text" class="form-control" placeholder="(00) 00000-0000"
                                     x-mask="(99) 99999-9999" wire:model="configData.whatsapp"
                                     id="whatsapp">
+                            </div>
+                            <div class="form-group">
+                                <label class="labelforms"><b>Telegram:</b></label>
+                                <input type="text" class="form-control @error('configData.telegram') is-invalid @enderror" placeholder="https://t.me/usuario"
+                                    wire:model="configData.telegram" id="telegram">
+                                @error('configData.telegram')
+                                    <span class="error erro-feedback">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div class="form-group">
                                 <label class="labelforms"><b>Email:</b></label>

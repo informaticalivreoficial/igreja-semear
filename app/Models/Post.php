@@ -112,7 +112,7 @@ class Post extends Model
         }
 
         if (empty($cover['path']) || ! Storage::disk()->exists($cover['path'])) {
-            return url(asset('backend/assets/images/image.jpg'));
+            return url(asset('theme/images/image.jpg'));
         }
 
         // return Storage::url(Cropper::thumb($cover['path'], 720, 480));
@@ -130,7 +130,7 @@ class Post extends Model
         }
 
         if (empty($cover['path']) || ! Storage::disk()->exists($cover['path'])) {
-            return url(asset('backend/assets/images/image.jpg'));
+            return url(asset('theme/images/image.jpg'));
         }
 
         return Storage::url($cover['path']);

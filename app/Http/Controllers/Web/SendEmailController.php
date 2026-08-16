@@ -5,22 +5,15 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Mail\Web\Atendimento;
 use App\Mail\Web\AtendimentoRetorno;
+use App\Models\Config;
 use App\Models\User;
 use App\Notifications\NewAtendimento;
-use App\Services\ConfigService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 
 class SendEmailController extends Controller
 {
-    protected $configService;
-
-    public function __construct(ConfigService $configService)
-    {
-        $this->configService = $configService;
-    }
-
     public function sendEmail(Request $request)
     {
         if (! empty($request->bairro) || ! empty($request->cidade)) {
@@ -53,7 +46,7 @@ class SendEmailController extends Controller
             return response()->json(['error' => 'É necessário concordar com a <strong>Política de Privacidade</strong>.']);
         }
 
-        $config = $this->configService->getConfig();
+        $config = Config::where('id', 1)->first();
 
         $data = [
             'sitename' => $config?->app_name ?? 'Semear',

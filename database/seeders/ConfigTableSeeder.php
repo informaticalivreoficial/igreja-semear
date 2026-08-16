@@ -31,14 +31,21 @@ class ConfigTableSeeder extends Seeder
                 'state' => 'SP',
                 'street' => 'Rua da Igreja',
                 'number' => '100',
+                'display_address' => 'Rua da Igreja, 100 - Ubatuba/SP',
 
                 'phone' => '(11) 1111-1111',
                 'cell_phone' => '(11) 11111-1111',
                 'whatsapp' => '(11) 11111-1111',
+                'telegram' => 'https://t.me/semear',
 
                 'facebook' => 'https://facebook.com/'.env('CLIENT_SOCIAL_FACEBOOK_PAGE', 'semear'),
                 'instagram' => 'https://instagram.com/'.env('CLIENT_SOCIAL_INSTAGRAM_PAGE', 'semear'),
                 'youtube' => 'https://youtube.com/'.env('CLIENT_SOCIAL_YOUTUBE_PAGE', 'SemearUbatuba'),
+
+                'information' => 'Comunidade Cristã Semear.',
+                'privacy_policy' => 'Política de Privacidade da Comunidade Cristã Semear.',
+                'terms_conditions' => 'Termos e Condições de Uso da Comunidade Cristã Semear.',
+                'cookies_preference' => 'Utilizamos cookies para melhorar a sua experiência de navegação.',
 
                 'rss' => '/rss',
                 'sitemap' => '/sitemap.xml',

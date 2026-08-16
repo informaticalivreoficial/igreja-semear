@@ -31,15 +31,9 @@
     <body class="flex min-h-screen flex-col">
         {{-- TOPBAR --}}
         @if($configuracoes)
-            <div class="bg-sky-950 text-sky-100">
-                <div class="container-site flex items-center justify-between gap-4 py-2 text-xs">
+            <div class="bg-brand-900 text-brand-100">
+                <div class="container-site flex items-center justify-between gap-4 py-2 text-[11px]">
                     <div class="flex items-center gap-5">
-                        @if($configuracoes->phone || $configuracoes->cell_phone)
-                            <a href="tel:{{ $configuracoes->cell_phone ?: $configuracoes->phone }}" class="flex items-center gap-1.5 transition hover:text-white">
-                                <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
-                                {{ $configuracoes->cell_phone ?: $configuracoes->phone }}
-                            </a>
-                        @endif
                         @if($configuracoes->email)
                             <a href="mailto:{{ $configuracoes->email }}" class="flex items-center gap-1.5 transition hover:text-white">
                                 <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
@@ -74,14 +68,14 @@
         {{-- HEADER --}}
         <header
             x-data="{ mobileOpen: false }"
-            class="sticky top-0 z-40 border-b border-slate-100 bg-white/95 backdrop-blur"
+            class="sticky top-0 z-40 border-b border-brand-100 bg-white/95 backdrop-blur"
         >
-            <div class="container-site flex h-20 items-center justify-between gap-6">
+            <div class="container-site flex h-16 items-center justify-between gap-6">
                 <a href="{{ route('web.home') }}" class="flex shrink-0 items-center gap-3">
                     @if($configuracoes && $configuracoes->logo)
-                        <img src="{{ $configuracoes->getlogo() }}" alt="{{ $configuracoes->app_name }}" class="h-12 w-auto">
+                        <img src="{{ $configuracoes->getlogo() }}" alt="{{ $configuracoes->app_name }}" class="h-10 w-auto">
                     @else
-                        <span class="font-display text-2xl font-bold text-sky-800">
+                        <span class="font-display text-xl font-bold text-brand-800">
                             {{ optional($configuracoes)->app_name ?: 'Semear' }}
                         </span>
                     @endif
@@ -97,63 +91,42 @@
                     @endphp
 
                     <a href="{{ route('web.home') }}"
-                        class="rounded-lg px-3.5 py-2 text-sm font-semibold transition {{ request()->routeIs('web.home') ? 'bg-sky-600/10 text-sky-700' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' }}">
+                        class="rounded-lg px-3.5 py-2 text-[13px] font-semibold transition {{ request()->routeIs('web.home') ? 'bg-brand-600/10 text-brand-700' : 'text-brand-700 hover:bg-brand-50 hover:text-brand-900' }}">
                         Início
                     </a>
 
                     <a href="{{ route('web.pagina', ['slug' => 'sobre-a-igreja']) }}"
-                        class="rounded-lg px-3.5 py-2 text-sm font-semibold transition {{ $slugAtivo === 'sobre-a-igreja' ? 'bg-sky-600/10 text-sky-700' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' }}">
+                        class="rounded-lg px-3.5 py-2 text-[13px] font-semibold transition {{ $slugAtivo === 'sobre-a-igreja' ? 'bg-brand-600/10 text-brand-700' : 'text-brand-700 hover:bg-brand-50 hover:text-brand-900' }}">
                         {{ $paginasNav['sobre-a-igreja']->title ?? 'Sobre' }}
                     </a>
 
                     {{-- A IGREJA --}}
                     <div class="relative" @mouseenter="menu = 'igreja'" @mouseleave="menu = null">
-                        <button class="flex items-center gap-1 rounded-lg px-3.5 py-2 text-sm font-semibold transition {{ $igrejaAtiva ? 'bg-sky-600/10 text-sky-700' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' }}">
+                        <button class="flex items-center gap-1 rounded-lg px-3.5 py-2 text-[13px] font-semibold transition {{ $igrejaAtiva ? 'bg-brand-600/10 text-brand-700' : 'text-brand-700 hover:bg-brand-50 hover:text-brand-900' }}">
                             A Igreja
                             <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
                         </button>
                         <div x-show="menu === 'igreja'" x-cloak x-transition class="absolute left-0 top-full z-40 pt-2">
-                            <div class="w-60 rounded-2xl border border-slate-100 bg-white p-2 shadow-xl">
-                                <a href="{{ route('web.ministerios') }}" class="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-sky-700">Ministérios</a>
-                                <a href="{{ route('web.pagina', ['slug' => 'cultos-e-horarios']) }}" class="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-sky-700">Cultos e horários</a>
-                                <a href="{{ route('web.pagina', ['slug' => 'pregacoes']) }}" class="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-sky-700">Pregações</a>
-                                <a href="{{ route('web.pagina', ['slug' => 'galeria-de-fotos']) }}" class="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-sky-700">Galeria de fotos</a>
+                            <div class="w-60 rounded-2xl border border-brand-100 bg-white p-2 shadow-xl">
+                                <a href="{{ route('web.ministerios') }}" class="block rounded-lg px-3 py-2 text-[13px] font-semibold text-brand-700 transition hover:bg-brand-50 hover:text-brand-900">Ministérios</a>
+                                <a href="{{ route('web.pagina', ['slug' => 'cultos-e-horarios']) }}" class="block rounded-lg px-3 py-2 text-[13px] font-semibold text-brand-700 transition hover:bg-brand-50 hover:text-brand-900">Cultos e horários</a>
                             </div>
                         </div>
-                    </div>
-
-                    {{-- BLOG --}}
-                    <div class="relative" @mouseenter="menu = 'blog'" @mouseleave="menu = null">
-                        <button class="flex items-center gap-1 rounded-lg px-3.5 py-2 text-sm font-semibold transition {{ $blogAtivo ? 'bg-sky-600/10 text-sky-700' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' }}">
-                            Blog
-                            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-                        </button>
-                        <div x-show="menu === 'blog'" x-cloak x-transition class="absolute left-0 top-full z-40 pt-2">
-                            <div class="w-60 rounded-2xl border border-slate-100 bg-white p-2 shadow-xl">
-                                <a href="{{ route('web.blog.artigos') }}" class="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-sky-700">Artigos e devocionais</a>
-                                <a href="{{ route('web.noticias') }}" class="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-sky-700">Notícias</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <a href="{{ route('web.eventos') }}"
-                        class="rounded-lg px-3.5 py-2 text-sm font-semibold transition {{ request()->routeIs('web.eventos') ? 'bg-sky-600/10 text-sky-700' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' }}">
-                        Eventos
-                    </a>
+                    </div>                    
 
                     {{-- MAIS --}}
                     <div class="relative" @mouseenter="menu = 'mais'" @mouseleave="menu = null">
-                        <button class="flex items-center gap-1 rounded-lg px-3.5 py-2 text-sm font-semibold transition {{ $maisAtiva ? 'bg-sky-600/10 text-sky-700' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900' }}">
+                        <button class="flex items-center gap-1 rounded-lg px-3.5 py-2 text-[13px] font-semibold transition {{ $maisAtiva ? 'bg-brand-600/10 text-brand-700' : 'text-brand-700 hover:bg-brand-50 hover:text-brand-900' }}">
                             Mais
                             <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
                         </button>
                         <div x-show="menu === 'mais'" x-cloak x-transition class="absolute left-0 top-full z-40 pt-2">
-                            <div class="w-60 rounded-2xl border border-slate-100 bg-white p-2 shadow-xl">
-                                <a href="{{ route('web.atendimento') }}" class="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-sky-700">Contato</a>
-                                <a href="{{ route('web.pagina', ['slug' => 'localizacao']) }}" class="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-sky-700">Localização</a>
-                                <a href="{{ route('web.pedido-oracao') }}" class="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-sky-700">Pedido de oração</a>
-                                <a href="{{ route('web.doacoes') }}" class="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-sky-700">Doações</a>
-                                <a href="{{ route('web.transmissao') }}" class="block rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 hover:text-sky-700">Ao vivo</a>
+                            <div class="w-60 rounded-2xl border border-brand-100 bg-white p-2 shadow-xl">
+                                <a href="{{ route('web.atendimento') }}" class="block rounded-lg px-3 py-2 text-[13px] font-semibold text-brand-700 transition hover:bg-brand-50 hover:text-brand-900">Contato</a>
+                                <a href="{{ route('web.pagina', ['slug' => 'localizacao']) }}" class="block rounded-lg px-3 py-2 text-[13px] font-semibold text-brand-700 transition hover:bg-brand-50 hover:text-brand-900">Localização</a>
+                                <a href="{{ route('web.pedido-oracao') }}" class="block rounded-lg px-3 py-2 text-[13px] font-semibold text-brand-700 transition hover:bg-brand-50 hover:text-brand-900">Pedido de oração</a>
+                                <a href="{{ route('web.doacoes') }}" class="block rounded-lg px-3 py-2 text-[13px] font-semibold text-brand-700 transition hover:bg-brand-50 hover:text-brand-900">Doações</a>
+                                <a href="{{ route('web.transmissao') }}" class="block rounded-lg px-3 py-2 text-[13px] font-semibold text-brand-700 transition hover:bg-brand-50 hover:text-brand-900">Ao vivo</a>
                             </div>
                         </div>
                     </div>
@@ -174,20 +147,20 @@
 
                     @auth
                         @if(auth()->user()->member)
-                            <a href="{{ route('member.dashboard') }}" class="hidden items-center gap-2 rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-sky-300 hover:text-sky-700 md:inline-flex">
+                            <a href="{{ route('member.dashboard') }}" class="hidden items-center gap-2 rounded-lg border border-brand-200 px-4 py-2 text-[13px] font-semibold text-brand-700 transition hover:border-brand-300 hover:text-brand-700 md:inline-flex">
                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                                 Minha conta
                             </a>
                         @endif
                     @else
-                        <a href="{{ route('login') }}" class="hidden items-center gap-2 rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-sky-300 hover:text-sky-700 md:inline-flex">
+                        <a href="{{ route('login') }}" class="hidden items-center gap-2 rounded-lg border border-brand-200 px-4 py-2 text-[13px] font-semibold text-brand-700 transition hover:border-brand-300 hover:text-brand-700 md:inline-flex">
                             <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 7v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
                             Entrar
                         </a>
                     @endauth
 
                     <button
-                        class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition hover:bg-slate-100 lg:hidden"
+                        class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-brand-200 text-brand-700 transition hover:bg-brand-50 lg:hidden"
                         @click="mobileOpen = true"
                         aria-label="Abrir menu"
                     >
@@ -198,11 +171,11 @@
 
             {{-- DRAWER MOBILE --}}
             <template x-teleport="body">
-                <div x-show="mobileOpen" x-cloak x-transition.opacity class="fixed inset-0 z-50 bg-slate-900/50" @click="mobileOpen = false"></div>
+                <div x-show="mobileOpen" x-cloak x-transition.opacity class="fixed inset-0 z-50 bg-brand-900/50" @click="mobileOpen = false"></div>
                 <div x-show="mobileOpen" x-cloak x-transition class="fixed inset-y-0 right-0 z-50 flex w-80 max-w-[85vw] flex-col overflow-y-auto bg-white shadow-2xl">
-                    <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4">
-                        <span class="font-display text-xl font-bold text-sky-800">{{ optional($configuracoes)->app_name ?: 'Semear' }}</span>
-                        <button class="inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100" @click="mobileOpen = false" aria-label="Fechar menu">
+                    <div class="flex items-center justify-between border-b border-brand-100 px-5 py-4">
+                        <span class="font-display text-lg font-bold text-brand-800">{{ optional($configuracoes)->app_name ?: 'Semear' }}</span>
+                        <button class="inline-flex h-9 w-9 items-center justify-center rounded-lg text-brand-500 hover:bg-brand-50" @click="mobileOpen = false" aria-label="Fechar menu">
                             <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
                         </button>
                     </div>
@@ -212,44 +185,44 @@
                     </div>
 
                     <nav class="flex flex-col px-3 py-2" x-data="{ sub: null }">
-                        <a href="{{ route('web.home') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Início</a>
-                        <a href="{{ route('web.pagina', ['slug' => 'sobre-a-igreja']) }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">{{ $paginasNav['sobre-a-igreja']->title ?? 'Sobre' }}</a>
+                        <a href="{{ route('web.home') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2.5 text-[13px] font-semibold text-brand-700 transition hover:bg-brand-50">Início</a>
+                        <a href="{{ route('web.pagina', ['slug' => 'sobre-a-igreja']) }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2.5 text-[13px] font-semibold text-brand-700 transition hover:bg-brand-50">{{ $paginasNav['sobre-a-igreja']->title ?? 'Sobre' }}</a>
 
-                        <button @click="sub = sub === 'igreja' ? null : 'igreja'" class="flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">
+                        <button @click="sub = sub === 'igreja' ? null : 'igreja'" class="flex items-center justify-between rounded-lg px-3 py-2.5 text-[13px] font-semibold text-brand-700 transition hover:bg-brand-50">
                             A Igreja
                             <svg class="h-4 w-4 transition" :class="sub === 'igreja' ? 'rotate-180' : ''" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
                         </button>
-                        <div x-show="sub === 'igreja'" x-cloak class="flex flex-col border-l-2 border-sky-100 pl-3">
-                            <a href="{{ route('web.ministerios') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-100">Ministérios</a>
-                            <a href="{{ route('web.pagina', ['slug' => 'cultos-e-horarios']) }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-100">Cultos e horários</a>
-                            <a href="{{ route('web.pagina', ['slug' => 'pregacoes']) }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-100">Pregações</a>
-                            <a href="{{ route('web.pagina', ['slug' => 'galeria-de-fotos']) }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-100">Galeria de fotos</a>
+                        <div x-show="sub === 'igreja'" x-cloak class="flex flex-col border-l-2 border-brand-100 pl-3">
+                            <a href="{{ route('web.ministerios') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-[13px] font-medium text-brand-600 transition hover:bg-brand-50">Ministérios</a>
+                            <a href="{{ route('web.pagina', ['slug' => 'cultos-e-horarios']) }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-[13px] font-medium text-brand-600 transition hover:bg-brand-50">Cultos e horários</a>
+                            <a href="{{ route('web.pagina', ['slug' => 'pregacoes']) }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-[13px] font-medium text-brand-600 transition hover:bg-brand-50">Pregações</a>
+                            <a href="{{ route('web.pagina', ['slug' => 'galeria-de-fotos']) }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-[13px] font-medium text-brand-600 transition hover:bg-brand-50">Galeria de fotos</a>
                         </div>
 
-                        <button @click="sub = sub === 'blog' ? null : 'blog'" class="flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">
+                        <button @click="sub = sub === 'blog' ? null : 'blog'" class="flex items-center justify-between rounded-lg px-3 py-2.5 text-[13px] font-semibold text-brand-700 transition hover:bg-brand-50">
                             Blog
                             <svg class="h-4 w-4 transition" :class="sub === 'blog' ? 'rotate-180' : ''" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
                         </button>
-                        <div x-show="sub === 'blog'" x-cloak class="flex flex-col border-l-2 border-sky-100 pl-3">
-                            <a href="{{ route('web.blog.artigos') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-100">Artigos e devocionais</a>
-                            <a href="{{ route('web.noticias') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-100">Notícias</a>
+                        <div x-show="sub === 'blog'" x-cloak class="flex flex-col border-l-2 border-brand-100 pl-3">
+                            <a href="{{ route('web.blog.artigos') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-[13px] font-medium text-brand-600 transition hover:bg-brand-50">Artigos e devocionais</a>
+                            <a href="{{ route('web.noticias') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-[13px] font-medium text-brand-600 transition hover:bg-brand-50">Notícias</a>
                         </div>
 
-                        <a href="{{ route('web.eventos') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Eventos</a>
+                        <a href="{{ route('web.eventos') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2.5 text-[13px] font-semibold text-brand-700 transition hover:bg-brand-50">Eventos</a>
 
-                        <button @click="sub = sub === 'mais' ? null : 'mais'" class="flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">
+                        <button @click="sub = sub === 'mais' ? null : 'mais'" class="flex items-center justify-between rounded-lg px-3 py-2.5 text-[13px] font-semibold text-brand-700 transition hover:bg-brand-50">
                             Mais
                             <svg class="h-4 w-4 transition" :class="sub === 'mais' ? 'rotate-180' : ''" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
                         </button>
-                        <div x-show="sub === 'mais'" x-cloak class="flex flex-col border-l-2 border-sky-100 pl-3">
-                            <a href="{{ route('web.atendimento') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-100">Contato</a>
-                            <a href="{{ route('web.pagina', ['slug' => 'localizacao']) }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-100">Localização</a>
-                            <a href="{{ route('web.pedido-oracao') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-100">Pedido de oração</a>
-                            <a href="{{ route('web.doacoes') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-100">Doações</a>
-                            <a href="{{ route('web.transmissao') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-100">Ao vivo</a>
+                        <div x-show="sub === 'mais'" x-cloak class="flex flex-col border-l-2 border-brand-100 pl-3">
+                            <a href="{{ route('web.atendimento') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-[13px] font-medium text-brand-600 transition hover:bg-brand-50">Contato</a>
+                            <a href="{{ route('web.pagina', ['slug' => 'localizacao']) }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-[13px] font-medium text-brand-600 transition hover:bg-brand-50">Localização</a>
+                            <a href="{{ route('web.pedido-oracao') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-[13px] font-medium text-brand-600 transition hover:bg-brand-50">Pedido de oração</a>
+                            <a href="{{ route('web.doacoes') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-[13px] font-medium text-brand-600 transition hover:bg-brand-50">Doações</a>
+                            <a href="{{ route('web.transmissao') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-[13px] font-medium text-brand-600 transition hover:bg-brand-50">Ao vivo</a>
                         </div>
 
-                        <a href="{{ route('web.politica') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">Política de Privacidade</a>
+                        <a href="{{ route('web.politica') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2.5 text-[13px] font-semibold text-brand-700 transition hover:bg-brand-50">Política de Privacidade</a>
                     </nav>
                 </div>
             </template>
@@ -268,7 +241,7 @@
                         @if($configuracoes && $configuracoes->watermark)
                             <img src="{{ $configuracoes->getwatermark() }}" alt="{{ $configuracoes->app_name }}" class="h-12 w-auto">
                         @else
-                            <span class="font-display text-2xl font-bold text-sky-800">
+                            <span class="font-display text-xl font-bold text-brand-100">
                                 {{ optional($configuracoes)->app_name ?: 'Semear' }}
                             </span>
                         @endif
@@ -294,8 +267,6 @@
                     <ul class="mt-4 space-y-2 text-sm">
                         <li><a href="{{ route('web.ministerios') }}" class="transition hover:text-white">Ministérios</a></li>
                         <li><a href="{{ route('web.pagina', ['slug' => 'cultos-e-horarios']) }}" class="transition hover:text-white">Cultos e horários</a></li>
-                        <li><a href="{{ route('web.pagina', ['slug' => 'pregacoes']) }}" class="transition hover:text-white">Pregações</a></li>
-                        <li><a href="{{ route('web.pagina', ['slug' => 'galeria-de-fotos']) }}" class="transition hover:text-white">Galeria de fotos</a></li>
                         <li><a href="{{ route('web.transmissao') }}" class="transition hover:text-white">Ao vivo</a></li>
                     </ul>
                 </div>
@@ -344,7 +315,7 @@
         <div x-data="cookieConsent" x-cloak x-show="!accepted" class="fixed inset-x-0 bottom-0 z-50 p-4">
             <div class="mx-auto max-w-3xl rounded-2xl border border-brand-100 bg-brand-900 p-5 shadow-lg">
                 <p class="text-sm text-brand-600">
-                    Este site utiliza cookies para melhorar a sua experiência de navegação.
+                    {{ optional($configuracoes)->cookies_preference ?: 'Este site utiliza cookies para melhorar a sua experiência de navegação.' }}
                     <a href="{{ route('web.politica') }}" class="font-semibold text-brand-600 hover:text-brand-700">Saiba mais</a>.
                 </p>
                 <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

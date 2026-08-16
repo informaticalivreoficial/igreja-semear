@@ -17,7 +17,7 @@
     "isDynamicEntry": true
   },
   "resources/css/app.css": {
-    "file": "assets/app-B7tEpEcD.css",
+    "file": "assets/app-DD8VraV_.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -26,7 +26,7 @@
     ]
   },
   "resources/css/front.css": {
-    "file": "assets/front-slcwmo1I.css",
+    "file": "assets/front-DNq_4Fcv.css",
     "src": "resources/css/front.css",
     "isEntry": true,
     "name": "front",
@@ -44,7 +44,7 @@
     ]
   },
   "resources/js/front.js": {
-    "file": "assets/front-CJgk9NtB.js",
+    "file": "assets/front-BZL9qPu0.js",
     "name": "front",
     "src": "resources/js/front.js",
     "isEntry": true,

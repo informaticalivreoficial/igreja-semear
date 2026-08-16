@@ -3,8 +3,11 @@
 namespace App\Livewire\Dashboard\Events;
 
 use App\Models\Event;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
@@ -25,9 +28,9 @@ class EventForm extends Component
 
     public string $location = '';
 
-    public string $start_at = '';
+    public ?string $start_at = '';
 
-    public string $end_at = '';
+    public ?string $end_at = '';
 
     public bool $status = true;
 
@@ -41,10 +44,10 @@ class EventForm extends Component
             'type' => 'required|string|max:60',
             'description' => 'nullable|string',
             'location' => 'nullable|string|max:191',
-            'start_at' => 'required|date',
-            'end_at' => 'nullable|date|after_or_equal:start_at',
+            'start_at' => 'required|date_format:d/m/Y H:i',
+            'end_at' => 'nullable|date_format:d/m/Y H:i|after_or_equal:start_at',
             'status' => 'required|boolean',
-            'cover' => 'nullable|image|max:2048',
+            'cover' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:4096|dimensions:min_width=800,min_height=400',
         ];
     }
 
@@ -53,7 +56,13 @@ class EventForm extends Component
         'title.min' => 'O título deve ter no mínimo :min caracteres.',
         'slug.unique' => 'Já existe um evento com esse endereço (slug).',
         'start_at.required' => 'Informe a data e hora de início.',
+        'start_at.date_format' => 'Informe a data de início no formato dd/mm/aaaa hh:mm.',
+        'end_at.date_format' => 'Informe a data de término no formato dd/mm/aaaa hh:mm.',
         'end_at.after_or_equal' => 'O término deve ser depois do início.',
+        'cover.image' => 'O arquivo deve ser uma imagem.',
+        'cover.mimes' => 'A imagem deve ser JPG, PNG ou WebP.',
+        'cover.max' => 'A imagem não pode ultrapassar 4MB.',
+        'cover.dimensions' => 'A imagem deve ter no mínimo 800x400 pixels.',
     ];
 
     public function render()
@@ -74,13 +83,31 @@ class EventForm extends Component
             $this->type = $event->type ?? 'evento';
             $this->description = $event->description ?? '';
             $this->location = $event->location ?? '';
-            $this->start_at = $event->start_at?->format('Y-m-d\TH:i') ?? '';
-            $this->end_at = $event->end_at?->format('Y-m-d\TH:i') ?? '';
+            $this->start_at = $event->start_at?->format('d/m/Y H:i') ?? '';
+            $this->end_at = $event->end_at?->format('d/m/Y H:i') ?? '';
             $this->status = (bool) $event->status;
         } else {
             $this->event = new Event;
-            $this->start_at = now()->format('Y-m-d\TH:i');
+            $this->start_at = now()->format('d/m/Y H:i');
         }
+    }
+
+    protected function normalizeDate(?string $value): ?string
+    {
+        return ($value === null || trim($value) === '') ? null : trim($value);
+    }
+
+    protected function storeCoverWebp(TemporaryUploadedFile $cover): string
+    {
+        $manager = new ImageManager(new Driver);
+        $image = $manager->read($cover->getRealPath())
+            ->scale(width: 1600);
+
+        $filename = 'events/'.Str::uuid().'.webp';
+
+        Storage::disk('public')->put($filename, (string) $image->toWebp(82));
+
+        return $filename;
     }
 
     public function updatedTitle($value)
@@ -92,6 +119,9 @@ class EventForm extends Component
 
     public function save()
     {
+        $this->start_at = $this->normalizeDate($this->start_at);
+        $this->end_at = $this->normalizeDate($this->end_at);
+
         $validated = $this->validate();
 
         $data = [
@@ -100,8 +130,8 @@ class EventForm extends Component
             'type' => $validated['type'],
             'description' => $validated['description'] ?? null,
             'location' => $validated['location'] ?? null,
-            'start_at' => $validated['start_at'],
-            'end_at' => $validated['end_at'] ?? null,
+            'start_at' => Carbon::createFromFormat('d/m/Y H:i', $validated['start_at']),
+            'end_at' => $validated['end_at'] ? Carbon::createFromFormat('d/m/Y H:i', $validated['end_at']) : null,
             'status' => $validated['status'],
             'created_by' => auth()->id(),
         ];
@@ -110,7 +140,7 @@ class EventForm extends Component
             if (! empty($this->event->cover) && Storage::disk('public')->exists($this->event->cover)) {
                 Storage::disk('public')->delete($this->event->cover);
             }
-            $data['cover'] = $this->cover->store('events', 'public');
+            $data['cover'] = $this->storeCoverWebp($this->cover);
         }
 
         if ($this->event->exists) {
@@ -128,6 +158,6 @@ class EventForm extends Component
             'showConfirmButton' => false,
         ]);
 
-        return redirect()->route('admin.events.index');
+        $this->reset('cover');
     }
 }

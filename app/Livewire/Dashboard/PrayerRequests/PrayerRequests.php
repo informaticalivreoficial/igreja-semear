@@ -3,8 +3,8 @@
 namespace App\Livewire\Dashboard\PrayerRequests;
 
 use App\Mail\Web\PrayerRequestAnswer;
+use App\Models\Config;
 use App\Models\PrayerRequest;
-use App\Services\ConfigService;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -35,7 +35,7 @@ class PrayerRequests extends Component
         $this->reset('answeringId', 'answer');
     }
 
-    public function saveAnswer(ConfigService $configService): void
+    public function saveAnswer(): void
     {
         $this->validate([
             'answer' => 'required|string',
@@ -55,7 +55,7 @@ class PrayerRequests extends Component
             return;
         }
 
-        $config = $configService->getConfig();
+        $config = Config::where('id', 1)->first();
 
         Mail::send(new PrayerRequestAnswer([
             'sitename' => $config->app_name ?? 'Semear',

@@ -6,7 +6,10 @@ use App\Models\Config;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
@@ -82,12 +85,8 @@ class Settings extends Component
                 Storage::disk('public')->delete($this->configData[$key]);
             }
 
-            // Salva sempre com o mesmo nome (sobrescrevendo)
-            $path = $file->storeAs(
-                'config',
-                "{$key}.".$file->getClientOriginalExtension(),
-                'public'
-            );
+            // Converte e salva como .webp
+            $path = $this->storeImageWebp($key, $file);
 
             // Atualiza no array
             $this->configData[$key] = $path;
@@ -98,6 +97,35 @@ class Settings extends Component
             // Atualiza o preview
             $this->loadLogos();
         }
+    }
+
+    /**
+     * Converte a imagem para .webp e grava em storage/public/config
+     */
+    protected function storeImageWebp(string $key, TemporaryUploadedFile $file): string
+    {
+        $maxWidths = [
+            'logo' => 400,
+            'logo_admin' => 400,
+            'logo_footer' => 400,
+            'favicon' => 256,
+            'watermark' => 400,
+            'metaimg' => 1200,
+            'imgheader' => 1920,
+        ];
+
+        $manager = new ImageManager(new Driver);
+        $image = $manager->read($file->getRealPath());
+
+        if ($width = $maxWidths[$key] ?? null) {
+            $image->scale(width: $width);
+        }
+
+        $filename = 'config/'.$key.'-'.Str::uuid().'.webp';
+
+        Storage::disk('public')->put($filename, (string) $image->toWebp(82));
+
+        return $filename;
     }
 
     public function updated($field, $value)
@@ -133,7 +161,23 @@ class Settings extends Component
     {
         return array_merge([
             'configData.app_name' => 'required|min:3',
-            // 'configData.email' => 'required|email',
+            'configData.domain' => 'nullable|url',
+            'configData.cnpj' => 'nullable|string|max:18',
+            'configData.zipcode' => 'nullable|string|max:9',
+            'configData.display_address' => 'nullable|string|max:255',
+            'configData.phone' => 'nullable|string|max:20',
+            'configData.cell_phone' => 'nullable|string|max:20',
+            'configData.whatsapp' => 'nullable|string|max:20',
+            'configData.telegram' => 'nullable|url|max:255',
+            'configData.email' => 'nullable|email|max:255',
+            'configData.additional_email' => 'nullable|email|max:255',
+            'configData.facebook' => 'nullable|url|max:255',
+            'configData.twitter' => 'nullable|url|max:255',
+            'configData.youtube' => 'nullable|url|max:255',
+            'configData.instagram' => 'nullable|url|max:255',
+            'configData.linkedin' => 'nullable|url|max:255',
+            'configData.terms_conditions' => 'nullable|string',
+            'configData.cookies_preference' => 'nullable|string|max:500',
         ], $this->imageValidationRules());
     }
 
@@ -202,11 +246,34 @@ class Settings extends Component
             $firstErrorKey = array_key_first($e->validator->errors()->messages());
 
             $this->currentTab = match (true) {
-                str_starts_with($firstErrorKey, 'configData.app_name') => 'dados',
-                str_starts_with($firstErrorKey, 'configData.meta_') => 'seo',
-                str_starts_with($firstErrorKey, 'configData.contact_') => 'contato',
-                default => 'dados',
-            };
+            str_starts_with($firstErrorKey, 'configData.logo'),
+            str_starts_with($firstErrorKey, 'configData.logo_admin'),
+            str_starts_with($firstErrorKey, 'configData.logo_footer'),
+            str_starts_with($firstErrorKey, 'configData.favicon'),
+            str_starts_with($firstErrorKey, 'configData.watermark'),
+            str_starts_with($firstErrorKey, 'configData.metaimg'),
+            str_starts_with($firstErrorKey, 'configData.imgheader') => 'imagens',
+
+            str_starts_with($firstErrorKey, 'configData.phone'),
+            str_starts_with($firstErrorKey, 'configData.cell_phone'),
+            str_starts_with($firstErrorKey, 'configData.whatsapp'),
+            str_starts_with($firstErrorKey, 'configData.telegram'),
+            str_starts_with($firstErrorKey, 'configData.email'),
+            str_starts_with($firstErrorKey, 'configData.additional_email') => 'contato',
+
+            str_starts_with($firstErrorKey, 'configData.information'),
+            str_starts_with($firstErrorKey, 'configData.metatags'),
+            str_starts_with($firstErrorKey, 'configData.terms_conditions'),
+            str_starts_with($firstErrorKey, 'configData.cookies_preference'),
+            str_starts_with($firstErrorKey, 'configData.facebook'),
+            str_starts_with($firstErrorKey, 'configData.twitter'),
+            str_starts_with($firstErrorKey, 'configData.youtube'),
+            str_starts_with($firstErrorKey, 'configData.instagram'),
+            str_starts_with($firstErrorKey, 'configData.linkedin'),
+            str_starts_with($firstErrorKey, 'configData.maps_google') => 'seo',
+
+            default => 'dados',
+        };
 
             throw $e;
         }
@@ -325,11 +392,11 @@ class Settings extends Component
         $columns = [
             'app_name', 'social_name', 'alias_name', 'slug', 'status', 'init_date', 'cnpj', 'domain',
             'subdomain', 'template', 'logo', 'logo_admin', 'logo_footer', 'favicon', 'metaimg',
-            'imgheader', 'watermark', 'phone', 'cell_phone', 'whatsapp', 'email', 'additional_email',
-            'zipcode', 'street', 'number', 'complement', 'neighborhood', 'state', 'city',
-            'facebook', 'twitter', 'youtube', 'instagram', 'linkedin', 'information',
-            'privacy_policy', 'maps_google', 'metatags', 'analytics_id', 'rss', 'rss_data',
-            'sitemap', 'sitemap_data', 'live_url',
+            'imgheader', 'watermark', 'phone', 'cell_phone', 'whatsapp', 'telegram', 'email',
+            'additional_email', 'zipcode', 'display_address', 'street', 'number', 'complement',
+            'neighborhood', 'state', 'city', 'facebook', 'twitter', 'youtube', 'instagram', 'linkedin',
+            'information', 'privacy_policy', 'terms_conditions', 'cookies_preference', 'maps_google',
+            'metatags', 'analytics_id', 'rss', 'rss_data', 'sitemap', 'sitemap_data',
         ];
 
         return array_intersect_key($this->configData, array_flip($columns));
@@ -359,14 +426,8 @@ class Settings extends Component
                     Storage::disk('public')->delete($this->configData[$key]);
                 }
 
-                // Salva a nova
-                $path = $file->storeAs(
-                    'config',
-                    "{$key}.".$file->getClientOriginalExtension(), // força o mesmo nome
-                    'public'
-                );
-
-                $this->configData[$key] = $path;
+                // Converte e salva como .webp
+                $this->configData[$key] = $this->storeImageWebp($key, $file);
             }
         }
     }

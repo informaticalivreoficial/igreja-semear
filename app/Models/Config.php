@@ -37,25 +37,27 @@ class Config extends Model
         'phone',
         'cell_phone',
         'whatsapp',
+        'telegram',
         'email',
         'additional_email',
 
         // Address
-        'zipcode', 'street', 'number', 'complement', 'neighborhood', 'state', 'city',
+        'display_address', 'zipcode', 'street', 'number', 'complement', 'neighborhood', 'state', 'city',
 
         // Social
         'facebook', 'twitter', 'instagram', 'youtube', 'linkedin',
 
         // Seo
-        'information',
+        'information', 
         'privacy_policy',
-        'maps_google',
-        'live_url',
-        'metatags', 'rss',
-        'rss_data',
-        'sitemap',
+        'terms_conditions',
+        'cookies_preference',
+        'maps_google', 
+        'metatags', 'rss', 
+        'rss_data', 
+        'sitemap', 
         'sitemap_data',
-        'analytics_id',
+        'analytics_id'
     ];
 
     /**

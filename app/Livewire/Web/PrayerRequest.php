@@ -3,10 +3,10 @@
 namespace App\Livewire\Web;
 
 use App\Mail\Web\PrayerRequest as PrayerRequestMail;
+use App\Models\Config;
 use App\Models\PrayerRequest as PrayerRequestModel;
 use App\Models\User;
 use App\Notifications\NewPrayerRequest;
-use App\Services\ConfigService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
@@ -43,11 +43,11 @@ class PrayerRequest extends Component
         'privacy.accepted' => 'É necessário concordar com a política de privacidade.',
     ];
 
-    public function send(ConfigService $configService)
+    public function send()
     {
         $this->validate();
 
-        $config = $configService->getConfig();
+        $config = Config::where('id', 1)->first();
 
         Mail::send(new PrayerRequestMail([
             'sitename' => $config->app_name ?? 'Semear',

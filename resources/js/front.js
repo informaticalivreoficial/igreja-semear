@@ -100,15 +100,27 @@ document.addEventListener('alpine:init', () => {
     }));
 })
 
-// Aguarda o DOM carregar para verificar se o Livewire subiu
-document.addEventListener('DOMContentLoaded', () => {
-    if (!window.Alpine) {
-        import('alpinejs').then(({ default: Alpine }) => {
-            window.Alpine = Alpine
-            Alpine.start()
-        })
+// Carrega o Alpine apenas se o Livewire ainda não o tiver disponibilizado.
+// O Livewire 3 já embute e inicia o Alpine; este fallback cobre páginas sem ele,
+// tentando de novo após o livewire:init (evita corrida com o DOMContentLoaded).
+const loadAlpineFallback = () => {
+    if (window.Alpine) {
+        return;
     }
-})
+
+    import('alpinejs').then(({ default: Alpine }) => {
+        if (window.Alpine) {
+            return;
+        }
+
+        window.Alpine = Alpine;
+        Alpine.start();
+    });
+};
+
+document.addEventListener('DOMContentLoaded', loadAlpineFallback);
+window.addEventListener('livewire:init', loadAlpineFallback);
+setTimeout(loadAlpineFallback, 2500);
 
 
 
