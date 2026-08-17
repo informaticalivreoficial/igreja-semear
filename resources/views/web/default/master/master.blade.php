@@ -183,7 +183,9 @@
             {{-- DRAWER MOBILE --}}
             <template x-teleport="body">
                 <div x-show="mobileOpen" x-cloak x-transition.opacity class="fixed inset-0 z-50 bg-brand-900/50" @click="mobileOpen = false"></div>
-                <div x-show="mobileOpen" x-cloak x-transition class="fixed inset-y-0 right-0 z-50 flex w-80 max-w-[85vw] flex-col overflow-y-auto bg-white shadow-2xl">
+            </template>
+            <template x-teleport="body">
+                <div x-show="mobileOpen" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full" class="fixed inset-y-0 right-0 z-50 flex w-80 max-w-[85vw] flex-col overflow-y-auto bg-white shadow-2xl">
                     <div class="flex items-center justify-between border-b border-brand-100 px-5 py-4">
                         <span class="font-display text-lg font-bold text-brand-800">{{ optional($configuracoes)->app_name ?: 'Semear' }}</span>
                         <button class="inline-flex h-9 w-9 items-center justify-center rounded-lg text-brand-500 hover:bg-brand-50" @click="mobileOpen = false" aria-label="Fechar menu">
@@ -194,6 +196,17 @@
                     <div class="px-5 py-4">
                         <livewire:web.site-search />
                     </div>
+
+                    @auth
+                        @if(auth()->user()->member)
+                            <div class="border-b border-brand-100 px-5 py-3">
+                                <a href="{{ route('member.dashboard') }}" @click="mobileOpen = false" class="flex items-center gap-2 rounded-lg bg-brand-600/10 px-3 py-2.5 text-[13px] font-semibold text-brand-700 transition hover:bg-brand-50">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                                    Minha conta
+                                </a>
+                            </div>
+                        @endif
+                    @endauth
 
                     <nav class="flex flex-col px-3 py-2" x-data="{ sub: null }">
                         <a href="{{ route('web.home') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2.5 text-[13px] font-semibold text-brand-700 transition hover:bg-brand-50">Início</a>
@@ -208,16 +221,7 @@
                             <a href="{{ route('web.pagina', ['slug' => 'cultos-e-horarios']) }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-[13px] font-medium text-brand-600 transition hover:bg-brand-50">Cultos e horários</a>
                             <a href="{{ route('web.pregacoes') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-[13px] font-medium text-brand-600 transition hover:bg-brand-50">Pregações</a>
                             <a href="{{ route('web.pagina', ['slug' => 'galeria-de-fotos']) }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-[13px] font-medium text-brand-600 transition hover:bg-brand-50">Galeria de fotos</a>
-                        </div>
-
-                        <button @click="sub = sub === 'blog' ? null : 'blog'" class="flex items-center justify-between rounded-lg px-3 py-2.5 text-[13px] font-semibold text-brand-700 transition hover:bg-brand-50">
-                            Blog
-                            <svg class="h-4 w-4 transition" :class="sub === 'blog' ? 'rotate-180' : ''" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-                        </button>
-                        <div x-show="sub === 'blog'" x-cloak class="flex flex-col border-l-2 border-brand-100 pl-3">
-                            <a href="{{ route('web.blog.artigos') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-[13px] font-medium text-brand-600 transition hover:bg-brand-50">Artigos e devocionais</a>
-                            <a href="{{ route('web.noticias') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-[13px] font-medium text-brand-600 transition hover:bg-brand-50">Notícias</a>
-                        </div>
+                        </div>                        
 
                         <a href="{{ route('web.eventos') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2.5 text-[13px] font-semibold text-brand-700 transition hover:bg-brand-50">Eventos</a>
 
@@ -324,6 +328,7 @@
                         <a href="{{ route('web.politica') }}" class="transition hover:text-white">Política de Privacidade</a>
                     </div>
                     <span>&copy; {{ date('Y') }} {{ optional($configuracoes)->app_name ?: 'Semear' }}. Todos os direitos reservados.</span>
+                    <a href="{{ env('DESENVOLVEDOR_URL', 'https://informaticalivre.com.br') }}" target="_blank" rel="noopener" class="transition hover:text-white">Feito com &#128153; por {{ env('DESENVOLVEDOR', 'Informática Livre') }}</a>
                 </div>
             </div>
         </footer>

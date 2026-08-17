@@ -77,6 +77,15 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
+    'desenvolvedor' => env('DESENVOLVEDOR', 'Informática Livre'),
+    'desenvolvedor_url' => env('DESENVOLVEDOR_URL', 'https://informaticalivre.com.br'),
+    'desenvolvedor_logo' => env('DESENVOLVEDOR_LOGO', 'https://informaticalivre.com.br/media/logo.png'),
+    'desenvolvedor_email' => env('DESENVOLVEDOR_EMAIL', 'suporte@informaticalivre.com.br'),
+    'desenvolvedor_telefone' => env('DESENVOLVEDOR_TELEFONE', '(12) 99138-5030'),
+    'versao_sistema' => env('VERSAO_SISTEMA', '3.0'),
+
+    'max_images' => env('MAX_PROPERTY_IMAGES', 20),
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment

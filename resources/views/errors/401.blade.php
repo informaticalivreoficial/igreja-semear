@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página não encontrada</title>
+    <title>Não autenticado</title>
     <style>
         * { box-sizing: border-box; margin: 0; }
         body {
@@ -49,14 +49,14 @@
 <body>
     <div class="box">
         <div class="icon">
-            <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 7v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
         </div>
-        <div class="code">404</div>
-        <h1>Página não encontrada</h1>
-        <p>{{ $exception->getMessage() ?: 'O conteúdo que você procura não existe ou foi movido.' }}</p>
+        <div class="code">401</div>
+        <h1>Não autenticado</h1>
+        <p>Você precisa estar conectado para acessar esta página.</p>
         <div class="actions">
-            <a class="btn" href="{{ url('/') }}">Voltar para o início</a>
-            <a class="btn btn-secondary" href="{{ route('web.home') }}">Ir para o site</a>
+            <a class="btn" href="{{ route('login') }}">Fazer login</a>
+            <a class="btn btn-secondary" href="{{ url('/') }}">Voltar para o início</a>
         </div>
     </div>
 </body>

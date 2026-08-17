@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class ImageService
 {
@@ -49,7 +50,7 @@ class ImageService
         return $disk->url($fileName);
     }
 
-    public static function storeWebp(TemporaryUploadedFile $file, string $folder, int $maxWidth = 1600, int $quality = 82): string
+    public static function storeWebp(UploadedFile|TemporaryUploadedFile $file, string $folder, int $maxWidth = 1600, int $quality = 82): string
     {
         $manager = new ImageManager(new Driver);
         $image = $manager->read($file->getRealPath())

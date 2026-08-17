@@ -20,6 +20,21 @@
     }
 }
 
+@keyframes menu-drop {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.menu-drop-anim {
+    animation: menu-drop 0.25s ease-out;
+}
+
 .flatpickr-calendar * {
     box-sizing: border-box;
 }

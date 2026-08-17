@@ -1,3 +1,31 @@
+# Igreja Semear - Menu Mobile (Minha conta) + Páginas de Erro Refatoradas - Status: Concluído ✅
+
+## O que foi feito
+
+1. **Menu mobile com "Minha conta"** (`resources/views/web/default/master/master.blade.php`): adicionado bloco `@auth @if(auth()->user()->member)` no drawer mobile (logo após o site-search) com link estilizado `bg-brand-600/10 text-brand-700` para `route('member.dashboard')`, `@click="mobileOpen = false"`. Validado em Chrome headless: logado, o link aparece no drawer com href `/minha-conta` (links do drawer: Ver todos, Minha conta, Início, Sobre a Igreja, Ministérios, Cultos e horários, Pregações, Galeria de fotos, Eventos, Cultos Online, Contato, Localização, Pedido de oração, Política de Privacidade).
+
+2. **Páginas de erro refatoradas** (`resources/views/errors/`): as 2 existentes (403, 404) foram refatoradas e as 6 faltantes criadas (401, 402, 419, 429, 500, 503). Todas com a paleta do tema (inline CSS, sem depender de Tailwind/layouts): fundo `linear-gradient(#f0f7f0 → #e6f0e6)`, código gigante com gradiente `brand` (#076134→#2e6028, `background-clip: text`), ícone SVG em tile `bg brand/8%`, h1 `#1f471e`, texto `#557c21`, botões arredondados `#076134` (hover `#2e6028`) + variante outline. Ícones/mensagens por status:
+   - 401: lupa com seta (Não autenticado) → botões "Fazer login" (`route('login')`) + "Voltar para o início".
+   - 402: cartão (Pagamento necessário) → "Voltar para o início".
+   - 403: cadeado (Acesso negado) → "Voltar para o início" + "Fazer login" (`route('login')`).
+   - 404: lupa (Página não encontrada) → "Voltar para o início" + "Ir para o site" (`route('web.home')`).
+   - 419: relógio (Sessão expirada) → "Voltar para o início".
+   - 429: círculo de alerta (Muitas solicitações) → "Voltar para o início".
+   - 500: triângulo de alerta (Algo deu errado) → "Tentar novamente" (`onclick="location.reload()"`) + "Voltar para o início".
+   - 503: engrenagem (Em manutenção) → "Tentar novamente".
+   - `$exception->getMessage()` preservado em 403/404 (default pt-BR quando vazio).
+
+3. **Crédito no footer** (mesma sessão): `Feito com 🖤 por {{ env('DESENVOLVEDOR', 'Informática Livre') }}` com `href="{{ env('DESENVOLVEDOR_URL', 'https://informaticalivre.com.br') }}"`, `target="_blank" rel="noopener"` — **sem coluna no banco e sem campo no admin** (decisão do usuário: "não na tabela no config/app"). Revertidos: migration `desenvolvedor_url`, `Config.php` fillable, `ConfigTableSeeder` e regra de `Settings.php`.
+
+4. **Nota**: a senha do membro de teste `serra.caio@example.org` no dev DB estava inválida (hash não conferia com `password` — re-seed anterior mudou o hash); redefinida via tinker (`bcrypt('password')`) para validar o login.
+
+## Para continuar
+
+- [ ] Conferir visual em `/` (mobile) → hambúrguer → item "Minha conta" logado como membro; e em qualquer rota inexistente (404) / área restrita (403).
+- [ ] Suíte completa: **83 testes passando (258 assertions)**; assets compilados (`npm run build` OK).
+
+---
+
 # Igreja Semear - Área do Membro Refatorada para o Tema - Status: Concluído ✅
 
 ## O que foi feito

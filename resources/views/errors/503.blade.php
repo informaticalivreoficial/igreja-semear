@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página não encontrada</title>
+    <title>Manutenção</title>
     <style>
         * { box-sizing: border-box; margin: 0; }
         body {
@@ -32,7 +32,6 @@
         }
         h1 { font-size: 24px; margin: 8px 0 10px; color: #1f471e; }
         p { color: #557c21; font-size: 15px; line-height: 1.6; margin-bottom: 28px; }
-        .actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
         a.btn {
             display: inline-flex; align-items: center; justify-content: center;
             background: #076134; color: #fff; text-decoration: none;
@@ -40,24 +39,17 @@
             transition: background 0.2s;
         }
         a.btn:hover { background: #2e6028; }
-        a.btn-secondary {
-            background: transparent; color: #076134; border: 1px solid rgba(7, 97, 52, 0.35);
-        }
-        a.btn-secondary:hover { background: rgba(7, 97, 52, 0.06); }
     </style>
 </head>
 <body>
     <div class="box">
         <div class="icon">
-            <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
         </div>
-        <div class="code">404</div>
-        <h1>Página não encontrada</h1>
-        <p>{{ $exception->getMessage() ?: 'O conteúdo que você procura não existe ou foi movido.' }}</p>
-        <div class="actions">
-            <a class="btn" href="{{ url('/') }}">Voltar para o início</a>
-            <a class="btn btn-secondary" href="{{ route('web.home') }}">Ir para o site</a>
-        </div>
+        <div class="code">503</div>
+        <h1>Em manutenção</h1>
+        <p>Estamos realizando uma manutenção no site. Voltaremos em breve!</p>
+        <a class="btn" href="{{ url('/') }}">Tentar novamente</a>
     </div>
 </body>
 </html>

@@ -12,32 +12,44 @@
     ];
 @endphp
 
-<aside class="shrink-0 lg:w-64">
+<aside x-data="{ open: false }" class="shrink-0 lg:w-64">
     <div class="flex items-center gap-3 rounded-2xl border border-brand-100 bg-white p-4 shadow-sm">
-        <div class="flex h-12 w-12 items-center justify-center rounded-full bg-brand-600 text-lg font-bold text-white">
-            {{ strtoupper(substr($member->name, 0, 1)) }}
-        </div>
-        <div class="min-w-0">
+        @if($member->avatar && \Illuminate\Support\Facades\Storage::disk('public')->exists($member->avatar))
+            <img src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($member->avatar) }}" alt="{{ $member->name }}" class="h-12 w-12 rounded-full object-cover ring-2 ring-brand-200">
+        @else
+            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-brand-600 text-lg font-bold text-white">
+                {{ strtoupper(substr($member->name, 0, 1)) }}
+            </div>
+        @endif
+        <div class="min-w-0 flex-1">
             <p class="truncate font-display font-bold text-brand-900">{{ $member->name }}</p>
             <p class="text-xs text-slate-500">{{ $member->family?->name ?? 'Sem família' }} · {{ $member->family_role_label }}</p>
         </div>
+
+        <button type="button" @click="open = !open" aria-label="Abrir menu" aria-expanded="open"
+            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-brand-700 transition hover:bg-brand-50 lg:hidden">
+            <svg x-show="!open" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            <svg x-show="open" x-cloak class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
     </div>
 
-    <nav class="mt-5 space-y-1">
-        @foreach($links as $key => [$url, $label, $icon])
-            <a href="{{ $url }}"
-                class="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold transition {{ $active === $key ? 'bg-brand-600 text-white shadow-sm' : 'text-slate-600 hover:bg-brand-50 hover:text-brand-700' }}">
-                <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $icon }}"/></svg>
-                {{ $label }}
-            </a>
-        @endforeach
-    </nav>
+    <div :class="open ? 'block menu-drop-anim' : 'hidden lg:block'">
+        <nav class="mt-5 space-y-1">
+            @foreach($links as $key => [$url, $label, $icon])
+                <a href="{{ $url }}"
+                    class="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold transition {{ $active === $key ? 'bg-brand-600 text-white shadow-sm' : 'text-slate-600 hover:bg-brand-50 hover:text-brand-700' }}">
+                    <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $icon }}"/></svg>
+                    {{ $label }}
+                </a>
+            @endforeach
+        </nav>
 
-    <form method="POST" action="{{ route('logout') }}" class="mt-5">
-        @csrf
-        <button type="submit" class="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-rose-600 transition hover:bg-rose-50">
-            <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-            Sair
-        </button>
-    </form>
+        <form method="POST" action="{{ route('logout') }}" class="mt-5">
+            @csrf
+            <button type="submit" class="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-rose-600 transition hover:bg-rose-50">
+                <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                Sair
+            </button>
+        </form>
+    </div>
 </aside>

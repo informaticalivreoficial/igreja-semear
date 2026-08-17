@@ -10,10 +10,12 @@ use App\Models\Event;
 use App\Models\EventRegistration;
 use App\Models\Member;
 use App\Models\PrayerRequest;
+use App\Support\ImageService;
 use App\Support\Seo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class MemberAreaController extends Controller
 {
@@ -102,12 +104,35 @@ class MemberAreaController extends Controller
         $user = Auth::user();
 
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|min:3|max:255',
             'email' => 'required|email|max:255|unique:users,email,'.$user->id,
-            'cell_phone' => 'nullable|string|max:20',
-            'birthday' => 'nullable|date_format:d/m/Y',
+            'cell_phone' => 'nullable|string|regex:/^\(\d{2}\)\s?\d{4,5}-\d{4}$/',
+            'birthday' => 'nullable|date_format:d/m/Y|before:today',
+            'foto' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:2048',
+            'postcode' => 'nullable|string|max:10',
+            'street' => 'nullable|string|max:255',
+            'number' => 'nullable|string|max:20',
+            'complement' => 'nullable|string|max:255',
+            'neighborhood' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:255',
+            'state' => 'nullable|string|max:2',
             'current_password' => 'nullable|required_with:password|string',
             'password' => 'nullable|min:6|confirmed',
+        ], [
+            'name.required' => 'O nome é obrigatório.',
+            'name.min' => 'O nome deve ter no mínimo :min caracteres.',
+            'email.required' => 'O e-mail é obrigatório.',
+            'email.email' => 'Informe um e-mail válido.',
+            'email.unique' => 'Este e-mail já está em uso.',
+            'cell_phone.regex' => 'O telefone deve estar no formato (00) 00000-0000.',
+            'birthday.date_format' => 'A data de nascimento deve estar no formato dd/mm/aaaa.',
+            'birthday.before' => 'A data de nascimento deve ser anterior a hoje.',
+            'foto.image' => 'O arquivo deve ser uma imagem.',
+            'foto.mimes' => 'A imagem deve ser JPG, PNG ou WebP.',
+            'foto.max' => 'A imagem não pode ultrapassar 2MB.',
+            'current_password.required_with' => 'Informe a senha atual para alterar a senha.',
+            'password.min' => 'A senha deve ter no mínimo :min caracteres.',
+            'password.confirmed' => 'As senhas não coincidem.',
         ]);
 
         if ($request->password && ! Hash::check($request->current_password, $user->password)) {
@@ -121,6 +146,17 @@ class MemberAreaController extends Controller
         if ($request->password) {
             $user->password = Hash::make($request->password);
         }
+
+        if ($request->hasFile('foto')) {
+            if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
+                Storage::disk('public')->delete($user->avatar);
+            }
+
+            $avatar = ImageService::storeWebp($request->file('foto'), 'users');
+            $user->avatar = $avatar;
+            $member->avatar = $avatar;
+        }
+
         $user->save();
 
         $member->update([

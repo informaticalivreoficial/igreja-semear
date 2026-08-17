@@ -28,10 +28,31 @@
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('member.perfil.update') }}" class="rounded-2xl border border-brand-100 bg-white p-6 shadow-sm">
+                <form method="POST" action="{{ route('member.perfil.update') }}" enctype="multipart/form-data" class="rounded-2xl border border-brand-100 bg-white p-6 shadow-sm">
                     @csrf
 
-                    <h2 class="font-display text-lg font-bold text-brand-900">Dados pessoais</h2>
+                    <h2 class="font-display text-lg font-bold text-brand-900">Foto do perfil</h2>
+                    <div class="mt-4 flex items-center gap-5">
+                        <div class="relative">
+                            @if($member->avatar && \Illuminate\Support\Facades\Storage::disk('public')->exists($member->avatar))
+                                <img id="avatar-preview" src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($member->avatar) }}" alt="Foto do perfil" class="h-20 w-20 rounded-full object-cover ring-2 ring-brand-200">
+                            @else
+                                <div id="avatar-preview" class="flex h-20 w-20 items-center justify-center rounded-full bg-brand-600 text-2xl font-bold text-white ring-2 ring-brand-200">
+                                    {{ strtoupper(substr($member->name, 0, 1)) }}
+                                </div>
+                            @endif
+                        </div>
+                        <div class="min-w-0">
+                            <label for="foto" class="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-brand-50 px-4 py-2 text-sm font-semibold text-brand-700 transition hover:bg-brand-100">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                Alterar foto
+                            </label>
+                            <input type="file" id="foto" name="foto" accept="image/jpeg,image/jpg,image/png,image/webp" class="hidden">
+                            <p class="mt-1.5 text-xs text-slate-500">Formatos: JPG, PNG ou WebP · máx. 2MB</p>
+                        </div>
+                    </div>
+
+                    <h2 class="font-display mt-8 text-lg font-bold text-brand-900">Dados pessoais</h2>
                     <div class="mt-4 grid gap-4 sm:grid-cols-2">
                         <div>
                             <label class="mb-1 block text-sm font-semibold text-brand-700">Nome completo *</label>
@@ -43,11 +64,28 @@
                         </div>
                         <div>
                             <label class="mb-1 block text-sm font-semibold text-brand-700">Telefone / WhatsApp</label>
-                            <input type="text" name="cell_phone" value="{{ old('cell_phone', $member->cell_phone) }}" class="form-control" placeholder="(00) 00000-0000">
+                            <input
+                                type="text"
+                                name="cell_phone"
+                                value="{{ old('cell_phone', $member->cell_phone) }}"
+                                x-data
+                                x-init="if (window.IMask && !$el._imask) { $el._imask = IMask($el, { mask: '(00) 00000-0000' }); }"
+                                class="form-control"
+                                placeholder="(00) 00000-0000"
+                                inputmode="tel"
+                            >
                         </div>
                         <div>
                             <label class="mb-1 block text-sm font-semibold text-brand-700">Data de nascimento</label>
-                            <input type="text" name="birthday" value="{{ old('birthday', $member->birthday?->format('d/m/Y')) }}" class="form-control" placeholder="dd/mm/aaaa">
+                            <input
+                                type="text"
+                                name="birthday"
+                                id="birthday"
+                                value="{{ old('birthday', $member->birthday?->format('d/m/Y')) }}"
+                                class="form-control"
+                                placeholder="dd/mm/aaaa"
+                                inputmode="numeric"
+                            >
                         </div>
                     </div>
 
@@ -110,3 +148,38 @@
         </div>
     </section>
 @endsection
+
+@push('js')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (window.flatpickr) {
+                flatpickr('#birthday', { dateFormat: 'd/m/Y', maxDate: 'today', locale: FlatpickrPortuguese, disableMobile: true });
+            }
+
+            var foto = document.getElementById('foto');
+            var previewWrapper = document.getElementById('avatar-preview');
+
+            foto.addEventListener('change', function () {
+                if (!foto.files || !foto.files[0]) {
+                    return;
+                }
+
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    if (previewWrapper.tagName === 'IMG') {
+                        previewWrapper.src = e.target.result;
+                    } else {
+                        var img = document.createElement('img');
+                        img.id = 'avatar-preview';
+                        img.src = e.target.result;
+                        img.alt = 'Foto do perfil';
+                        img.className = 'h-20 w-20 rounded-full object-cover ring-2 ring-brand-200';
+                        previewWrapper.replaceWith(img);
+                        previewWrapper = img;
+                    }
+                };
+                reader.readAsDataURL(foto.files[0]);
+            });
+        });
+    </script>
+@endpush
