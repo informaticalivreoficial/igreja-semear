@@ -51,6 +51,8 @@ class DonationFormTest extends TestCase
 
     public function test_gateway_failure_marks_donation_failed(): void
     {
+        config()->set('services.pagbank.token', '');
+
         Livewire::test(DonationForm::class)
             ->call('selectType', 'offering')
             ->call('selectAmount', '50,00')
@@ -58,7 +60,8 @@ class DonationFormTest extends TestCase
             ->set('name', 'Maria Teste')
             ->set('email', 'maria@teste.com')
             ->call('nextStep')
-            ->assertSet('step', 4);
+            ->assertSet('step', 4)
+            ->call('createDonation');
 
         $donation = Donation::latest('id')->first();
 

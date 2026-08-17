@@ -24,13 +24,15 @@ class PaymentService
     public function processDonation(Donation $donation, PaymentMethodEnum $method, array $payer, array $options = []): Payment
     {
         return DB::transaction(function () use ($donation, $method, $payer, $options) {
+            $gatewayName = $this->factory->for($method)->name();
+
             $payment = Payment::create([
                 'payable_type' => Donation::class,
                 'payable_id' => $donation->id,
                 'amount' => $donation->amount,
                 'method' => $method->value,
                 'status' => PaymentStatusEnum::Pending->value,
-                'gateway' => 'mercadopago_'.$method->value,
+                'gateway' => $gatewayName.'_'.$method->value,
             ]);
 
             $this->donationService->attachPayment($donation, $payment);
@@ -63,6 +65,7 @@ class PaymentService
             payerEmail: $payer['email'] ?? null,
             payerCpf: $payer['cpf'] ?? null,
             token: $options['token'] ?? null,
+            paymentMethodId: $options['paymentMethodId'] ?? null,
             installments: $options['installments'] ?? 1,
             metadata: ['payment_uuid' => $payment->uuid],
         );
@@ -82,7 +85,7 @@ class PaymentService
 
     public function handleWebhook(string $gatewayName, string $event, array $payload): void
     {
-        $gateway = $this->factory->byName($gatewayName);
+        $gateway = $this->factory->byWebhook($gatewayName);
         $webhook = $gateway->handleWebhook($event, $payload);
 
         if (! $webhook->gatewayId) {
@@ -104,7 +107,7 @@ class PaymentService
         }
 
         try {
-            $result = $gateway->find($webhook->gatewayId);
+            $result = $this->factory->byName($payment->gateway)->find($webhook->gatewayId);
         } catch (PaymentGatewayException $e) {
             Log::error('Falha ao consultar pagamento no webhook', ['gateway_id' => $webhook->gatewayId]);
 

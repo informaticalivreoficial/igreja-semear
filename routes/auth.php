@@ -34,7 +34,7 @@ Route::middleware('auth')->group(function () {
     ) {
         $request->fulfill();
 
-        return redirect()->route('company.dashboard');
+        return redirect()->route('admin.dashboard');
     })->middleware(['signed', 'throttle:6,1'])->name('verification.verify');
 
     Route::post('/email/verification-notification', function (

@@ -37,4 +37,12 @@ return [
         'currency' => 'BRL',
     ],
 
+    'pagbank' => [
+        'token' => env('PAGBANK_TOKEN'),
+        'public_key' => env('PAGBANK_PUBLIC_KEY'),
+        'webhook_secret' => env('PAGBANK_WEBHOOK_SECRET'),
+        'sandbox' => (bool) env('PAGBANK_SANDBOX', true),
+        'currency' => 'BRL',
+    ],
+
 ];

@@ -64,8 +64,9 @@
             </div>
         @else
             @if ($errorMessage)
-                <div class="mb-6 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700" x-data x-cloak x-show="true">
-                    {{ $errorMessage }}
+                <div class="mb-6 flex items-start gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+                    <span class="mt-0.5 text-lg leading-none">⚠️</span>
+                    <span>{{ $errorMessage }}</span>
                 </div>
             @endif
 
@@ -78,10 +79,16 @@
                     @foreach ($types as $key => $label)
                         <button type="button"
                             wire:click="selectType('{{ $key }}')"
+                            wire:loading.attr="disabled"
                             class="group flex items-center gap-4 rounded-2xl border-2 bg-white p-5 text-left transition
                                    {{ $type === $key ? 'border-brand-600 bg-brand-50' : 'border-slate-200 hover:border-brand-300' }}">
-                            <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand-100 text-xl text-brand-700">
+                            <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand-100 text-xl text-brand-700"
+                                wire:loading.remove>
                                 {!! $key === 'tithe' ? '⛪' : ($key === 'offering' ? '🤝' : ($key === 'donation' ? '❤️' : '✝️')) !!}
+                            </span>
+                            <span class="hidden h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand-100"
+                                wire:loading>
+                                <span class="h-5 w-5 animate-spin rounded-full border-2 border-brand-600 border-t-transparent"></span>
                             </span>
                             <span>
                                 <span class="block font-semibold text-slate-800">{{ $label }}</span>
@@ -106,6 +113,7 @@
                     @foreach ([50, 100, 150, 250, 500] as $quick)
                         <button type="button"
                             wire:click="selectAmount('{{ number_format($quick, 2, ',', '.') }}')"
+                            wire:loading.attr="disabled"
                             class="rounded-2xl border-2 bg-white py-4 text-sm font-semibold transition
                                    {{ $amount == $quick ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-slate-200 text-slate-600 hover:border-brand-300' }}">
                             R$ {{ $quick }}
@@ -132,11 +140,21 @@
                 </div>
 
                 <div class="mt-8 flex gap-3">
-                    <button type="button" wire:click="previousStep" class="btn-secondary flex-1 sm:flex-none">
-                        Voltar
+                    <button type="button" wire:click="previousStep" class="btn-secondary flex-1 sm:flex-none"
+                        wire:loading.attr="disabled" wire:target="previousStep">
+                        <span wire:loading.remove wire:target="previousStep">Voltar</span>
+                        <span wire:loading wire:target="previousStep" class="inline-flex items-center gap-2">
+                            <span class="h-4 w-4 animate-spin rounded-full border-2 border-brand-600 border-t-transparent"></span>
+                            Aguarde...
+                        </span>
                     </button>
-                    <button type="button" wire:click="nextStep" class="btn-primary flex-[2] sm:flex-none sm:px-10">
-                        Continuar
+                    <button type="button" wire:click="nextStep" class="btn-primary flex-[2] sm:flex-none sm:px-10"
+                        wire:loading.attr="disabled" wire:target="nextStep">
+                        <span wire:loading.remove wire:target="nextStep">Continuar</span>
+                        <span wire:loading wire:target="nextStep" class="inline-flex items-center gap-2">
+                            <span class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+                            Aguarde...
+                        </span>
                     </button>
                 </div>
             </div>
@@ -171,11 +189,21 @@
                 </div>
 
                 <div class="mt-8 flex gap-3">
-                    <button type="button" wire:click="previousStep" class="btn-secondary flex-1 sm:flex-none">
-                        Voltar
+                    <button type="button" wire:click="previousStep" class="btn-secondary flex-1 sm:flex-none"
+                        wire:loading.attr="disabled" wire:target="previousStep">
+                        <span wire:loading.remove wire:target="previousStep">Voltar</span>
+                        <span wire:loading wire:target="previousStep" class="inline-flex items-center gap-2">
+                            <span class="h-4 w-4 animate-spin rounded-full border-2 border-brand-600 border-t-transparent"></span>
+                            Aguarde...
+                        </span>
                     </button>
-                    <button type="button" wire:click="nextStep" class="btn-primary flex-[2] sm:flex-none sm:px-10">
-                        Continuar
+                    <button type="button" wire:click="nextStep" class="btn-primary flex-[2] sm:flex-none sm:px-10"
+                        wire:loading.attr="disabled" wire:target="nextStep">
+                        <span wire:loading.remove wire:target="nextStep">Continuar</span>
+                        <span wire:loading wire:target="nextStep" class="inline-flex items-center gap-2">
+                            <span class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+                            Aguarde...
+                        </span>
                     </button>
                 </div>
             </div>
@@ -209,9 +237,9 @@
                         <div class="flex items-center justify-center rounded-2xl border border-brand-100 bg-brand-50 p-10">
                             <span class="text-brand-700">Gerando cobrança PIX...</span>
                         </div>
-                    @elseif ($qrCodeBase64)
+                    @elseif ($qrCodeImage)
                         <div class="mx-auto max-w-sm text-center">
-                            <img src="data:image/png;base64,{{ $qrCodeBase64 }}"
+                            <img src="{{ $qrCodeImage }}"
                                 class="mx-auto rounded-2xl border-2 border-brand-100 bg-white p-3"
                                 alt="QR Code PIX">
                             <p class="mt-4 text-sm font-medium text-slate-600">Escaneie o QR Code no app do seu banco</p>
@@ -231,64 +259,117 @@
                     @else
                         <div class="rounded-2xl border border-slate-200 bg-white p-8 text-center text-sm text-slate-500">
                             <p>Para gerar o pagamento PIX, clique no botão abaixo.</p>
-                            <button type="button" wire:click="createDonation" class="btn-primary mt-4">
-                                Gerar pagamento PIX
+                            <button type="button" wire:click="createDonation" class="btn-primary mt-4"
+                                wire:loading.attr="disabled" wire:target="createDonation">
+                                <span wire:loading.remove wire:target="createDonation">Gerar pagamento PIX</span>
+                                <span wire:loading wire:target="createDonation" class="inline-flex items-center gap-2">
+                                    <span class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+                                    Gerando...
+                                </span>
                             </button>
                         </div>
                     @endif
                 @else
                     {{-- Cartão --}}
-                    <div wire:ignore x-data x-init="window.__initMpCard()">
-                        <div id="mp-card-form" class="space-y-4"></div>
+                    @if ($donationId && ! $paid && ! $errorMessage)
+                        <div class="rounded-2xl border border-amber-200 bg-amber-50 p-8 text-center">
+                            <p class="text-base font-semibold text-amber-800">Pagamento em processamento</p>
+                            <p class="mt-2 text-sm text-amber-700">
+                                Sua contribuição será confirmada assim que o pagamento for aprovado.
+                            </p>
+                            <button type="button" wire:click="restart" class="btn-secondary mt-4">
+                                Fazer outra doação
+                            </button>
+                        </div>
+                    @else
+                    <div wire:ignore x-data x-effect="$wire.paymentMethod === 'card' && window.__initPbCard()">
+                        <form id="pb-card-form" class="space-y-4" x-on:submit.prevent="window.__pbPayWithCard()">
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-1">Número do cartão</label>
+                                <input type="text" id="pbCardNumber" inputmode="numeric" autocomplete="cc-number"
+                                    placeholder="0000 0000 0000 0000"
+                                    class="h-10 w-full rounded-xl border-2 border-slate-200 px-3 outline-none focus:border-brand-500">
+                            </div>
+                            <div class="grid grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-1">Mês</label>
+                                    <input type="text" id="pbExpMonth" inputmode="numeric" maxlength="2"
+                                        placeholder="MM" autocomplete="cc-exp-month"
+                                        class="h-10 w-full rounded-xl border-2 border-slate-200 px-3 outline-none focus:border-brand-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-1">Ano</label>
+                                    <input type="text" id="pbExpYear" inputmode="numeric" maxlength="4"
+                                        placeholder="AAAA" autocomplete="cc-exp-year"
+                                        class="h-10 w-full rounded-xl border-2 border-slate-200 px-3 outline-none focus:border-brand-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-1">CVV</label>
+                                    <input type="text" id="pbSecurityCode" inputmode="numeric" maxlength="4"
+                                        placeholder="123" autocomplete="cc-csc"
+                                        class="h-10 w-full rounded-xl border-2 border-slate-200 px-3 outline-none focus:border-brand-500">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-1">Nome no cartão</label>
+                                <input type="text" id="pbHolder" placeholder="Nome como está no cartão"
+                                    autocomplete="cc-name"
+                                    class="h-10 w-full rounded-xl border-2 border-slate-200 px-3 outline-none focus:border-brand-500">
+                            </div>
+                            <button type="submit" id="pb-card-submit"
+                                class="w-full rounded-xl bg-brand-600 py-3 text-sm font-bold text-white transition hover:bg-brand-700">
+                                Confirmar pagamento
+                            </button>
+                        </form>
                         <p class="mt-3 text-center text-xs text-slate-400">
-                            Pagamento processado pelo Mercado Pago com criptografia de ponta a ponta.
+                            Pagamento processado pelo PagBank com criptografia de ponta a ponta.
                         </p>
                     </div>
+                    @endif
                 @endif
             </div>
         @endif
     </section>
 
-    <script src="https://sdk.mercadopago.com/js/v2"></script>
+    <script src="https://assets.pagseguro.com.br/checkout-sdk-js/rc/dist/browser/pagseguro.min.js"></script>
 
     <script>
-        window.__initMpCard = function () {
-            const publicKey = @js(config('services.mercadopago.public_key'));
-            const amount = @js($amount);
+        window.__initPbCard = function () {
+            if (!window.PagSeguro || !window.Livewire) return;
+            window.__pbCardReady = true;
+        };
+
+        window.__pbPayWithCard = function () {
+            const publicKey = @js(config('services.pagbank.public_key'));
             const componentId = @js($this->getId());
 
-            if (!publicKey || !window.MercadoPago || !window.Livewire) return;
+            if (!publicKey || !window.PagSeguro || !window.Livewire) return;
 
-            const mp = new MercadoPago(publicKey);
+            const $wire = window.Livewire.find(componentId);
+            if (! $wire) return;
 
-            const cardForm = mp.cardForm({
-                amount: amount,
-                autoMount: true,
-                form: {
-                    id: 'mp-card-form',
-                    cardholderName: { placeholder: 'Nome impresso no cartão', fieldStyle: { 'font-size': '15px' } },
-                    cardNumber: { placeholder: 'Número do cartão' },
-                    expirationDate: { placeholder: 'MM/AA' },
-                    securityCode: { placeholder: 'CVC' },
-                    installments: { placeholder: 'Parcelas' },
-                    identificationType: {},
-                    identificationNumber: {},
-                },
-                callbacks: {
-                    onFormMounted: () => {},
-                    onSubmit: () => { cardForm.createCardToken(); },
-                    onFetching: () => {},
-                    onError: (error) => {
-                        window.Livewire.find(componentId).dispatch('toast', {
-                            message: 'Erro no cartão: ' + (error?.message || 'tente novamente'),
-                            type: 'error',
-                        });
-                    },
-                    onTokenized: (data) => {
-                        window.Livewire.find(componentId).call('payWithCard', data.token);
-                    },
-                },
+            const btn = document.getElementById('pb-card-submit');
+            if (btn) { btn.disabled = true; btn.textContent = 'Processando...'; }
+
+            const card = PagSeguro.encryptCard({
+                publicKey,
+                holder: document.getElementById('pbHolder')?.value?.trim(),
+                number: (document.getElementById('pbCardNumber')?.value || '').replace(/\D/g, ''),
+                expMonth: document.getElementById('pbExpMonth')?.value?.trim(),
+                expYear: document.getElementById('pbExpYear')?.value?.trim(),
+                securityCode: document.getElementById('pbSecurityCode')?.value?.trim(),
             });
+
+            if (card?.hasErrors || !card?.encryptedCard) {
+                if (btn) { btn.disabled = false; btn.textContent = 'Confirmar pagamento'; }
+                window.Livewire.find(componentId).dispatch('toast', {
+                    message: 'Verifique os dados do cartão e tente novamente.',
+                    type: 'error',
+                });
+                return;
+            }
+
+            window.Livewire.find(componentId).call('payWithCard', card.encryptedCard);
         };
     </script>
 </div>

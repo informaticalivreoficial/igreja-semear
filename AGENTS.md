@@ -311,3 +311,140 @@
 
 - [ ] Conferir visual em `/admin/posts/{id}/editar`: arrastar/reordenar imagens salvas, salvar sem erro, swal "Post atualizado com sucesso!". Reprovado o fluxo no navegador (publish_at do post 3 = `2026-08-14 00:00:00`).
 - [ ] Suíte completa: **26 testes passando**.
+---
+
+# Sitemap Generator (admin) + Toasts - Bug corrigido ✅
+
+## O que foi feito
+
+1. **Gerador de sitemap não gerava nada**: o componente `App\Livewire\Dashboard\Sitemap\SitemapGenerator::generate()` chamava `Artisan::call('sitemap:generate')`, mas **o comando não existe** (não havia `app/Console/Commands/`, e `artisan list` não mostrava nada). O sitemap era servido dinamicamente por `WebController::sitemap()` na rota `/sitemap`, e nenhum arquivo era gravado em `public/sitemap.xml`.
+   - **Correção**: lógica extraída para `app/Services/Sitemap/SitemapService.php` com `build()` (gera o XML) e `generateFile()` (grava em `public/sitemap.xml`). `WebController::sitemap()` agora usa `app(SitemapService::class)->build()` (mesma saída); `SitemapGenerator::generate()` chama `generateFile()`, depois `loadInfo()` e dispara o toast de sucesso. `public/sitemap.xml` agora é criado (28 URLs), "Total de URLs"/"Última Geração" atualizam e o botão "Visualizar Sitemap" aparece.
+
+2. **Toast nunca aparecia (qualquer tela)**: causa raiz no handler JS de `toast`. O Livewire v3.8.4 (`dist/livewire.js`, função `on3`) chama o callback de `Livewire.on(name, cb)` passando **`e.detail` diretamente** (não o CustomEvent). O servidor envia `dispatches:[{name:"toast",params:[{type,message}]}]` → `e.detail = [{type,message}]`. O código antigo (`const data = event?.detail?.[0] ?? event`) fazia `event.detail` = `undefined` → `data = event` (o array) → `data?.message` = `undefined` → **return early, sem toast**.
+   - **Correção** em `resources/js/app.js` e `resources/js/front.js` (ambos tinham o mesmo bug):
+     ```js
+     Livewire.on('toast', (params) => {
+         const data = params?.[0] ?? params;
+         if (!data?.message) return;
+         showToast(data.type, data.message);
+     });
+     ```
+   - O `ToastrNotification` (`app/Livewire/Components/ToastrNotification.php` + view vazia) escuta `showToastr` (evento legado que ninguém dispara) e é código morto — a pipeline real é `WithToastr::toast*()` → `dispatch('toast', ...)` → handler do `app.js`/`front.js`.
+
+## Para continuar
+
+- [ ] Conferir visual em `/admin/sitemap-generator`: clicar "Gerar Sitemap Agora" → toast verde "Sitemap gerado com sucesso!", total = 28, "Visualizar Sitemap" abre `/sitemap.xml`.
+- [ ] Suíte completa: **73 testes passando (227 assertions)**; sem teste dedicado para o sitemap (rota `/sitemap` = 200 application/xml).
+- [ ] Rever outros handlers `Livewire.on(...)` no código se forem assumir `event.detail` (API do Livewire 3.8.4 passa `e.detail` direto ao callback).
+
+---
+
+# Teste Mercado Pago (PIX + Cartão) com chaves de TESTE - Status: Em andamento ✅
+
+## Contexto
+- Usuário colocou as chaves de teste no `.env`: `MERCADOPAGO_TOKEN` (TEST-, 71 chars), `MERCADOPAGO_PUBLIC_KEY` (TEST-, 41 chars), `MERCADOPAGO_WEBHOOK_SECRET` vazio. Conta: id `192815433`, site `MLB`, nickname `INFORMATICA-LIVRE`.
+
+## PIX — BLOQUEADO NA CONTA (ação do usuário necessária)
+- `GET /v1/payment_methods` NÃO lista `pix` na conta — só cartões, tickets e account_money. Criar PIX (SDK ou curl cru, com/sem notification_url/CPF/email) → HTTP 500 `{"message":"fill and validate error list: communication_error","status":500,"error":"internal_server_error","cause":[]}`. Sem `payer` → `payer_cannot_be_nil` (400), provando que o payload chega à API.
+- **Ação**: ativar PIX no painel do Mercado Pago (Checkout Transparente) para testar doações via PIX.
+- Webhook secret **não é necessário** para testes: cartão retorna status no `create()`; PIX confirmado via `find()`; `verifySignature()` ignora quando o secret está vazio.
+
+## Cartão — FLUXO VALIDADO (servidor + montagem do form)
+1. **Bug: `payment_method_id: 'card'` é inválido na API** (erro 3028 "Invalid payment_method_id"). Precisa da bandeira (`master`/`visa`). Correção:
+   - `GatewayCreateRequest` ganhou `?string $paymentMethodId = null`; `PaymentService::initiate` passa `$options['paymentMethodId']`; `MercadoPagoCardGateway::create` usa `$request->paymentMethodId ?? 'card'`.
+   - `DonationForm::payWithCard(string $token, ?string $paymentMethodId = null)` + nova propriedade `$paymentMethodId`; blade `onSubmit` chama `call('payWithCard', data.token, data.paymentMethodId)` (o SDK expõe `paymentMethodId` em `getCardFormData()`).
+2. **Bug: `notification_url` com localhost era rejeitado** (erro 4020). `MercadoPagoGateway::notificationUrl()` agora retorna `null` para host `localhost`/`127.0.0.1`/`::1` (usa `config('app.url')`); `buildRequest()` só inclui `notification_url` quando não é null. Em produção (domínio real) volta a incluir.
+3. **CardForm no `donation-form.blade.php`** (migrado do padrão do `checkout-form.blade.php`, que funciona):
+   - Elemento vira `<form id="mp-card-form">` com containers explícitos: divs `cardNumber`/`expirationDate`/`securityCode` (iframes), `<input id="cardholderName">`, `<select id="issuer">`, `<select id="installments">`.
+   - Config: `amount: amount.toFixed(2)` (**string**), `iframe: true`, form mapeando os ids acima (chave `expirationDate`, não `cardExpirationDate`).
+   - Trigger: div `<div wire:ignore x-data x-effect="$wire.paymentMethod === 'card' && window.__initMpCard()">` — o `x-effect` roda quando o div é criado (só existe quando `paymentMethod === 'card'`), evitando o bug antigo de montar com amount 0 no load da página. `__initMpCard` lê `$wire.get('amount')`, guarda `amount<=0`, é idempotente (`window.__mpCardForm`/`__mpCardAmount`) e dá `unmount()` + limpa `#mp-card-form` ao re-montar com valor diferente.
+   - Observação headless: os iframes do MP (`secure-fields.mercadopago.com`) não podem ser preenchidos via CDP neste ambiente (frame tree sem child frames), então o preenchimento foi validado só em navegador real / o fluxo foi testado via API direta.
+4. **Validação servidor→MP (via `sail artisan tinker` + token real criado por curl com a public key)**: `processDonation` com token + `paymentMethodId: 'master'`/`'visa'` cria Donation pending + Payment com `gateway_id` atribuído (ex.: 1327891756). Status retornado: `pending`/`pending_contingency` — **é comportamento do ambiente TEST** (o pagamento precisa ser aprovado no painel de testes do MP para virar `approved`), não é bug do código. Com credenciais LIVE cartões reais são aprovados normalmente.
+5. **Testes**: `./vendor/bin/sail artisan test --filter=DonationFormTest` → 7/7 passando.
+
+## Para continuar
+- [ ] **Aprovar os pagamentos TEST pendentes no painel do MP** (Test payments) e conferir se o polling/`checkPayment` marca a doação como paid (valida o fluxo webhook/polling ponta a ponta).
+- [ ] Testar o preenchimento do cartão em navegador real (`/doacoes` → Oferta → R$ 50 → Continuar → Cartão de crédito → preencher Mastercard `5031 7557 3453 0604` 11/27 CVC 123 APRO) e conferir a aprovação + registro no `/admin/doacoes`.
+- [ ] **Ativar PIX no painel MP** e então testar o QR Code PIX completo (gera `point_of_interaction.transaction_data.qr_code`/`qr_code_base64`).
+- [ ] Conferir se `pending_contingency` vira `approved` após aprovação manual (ajustar `checkPayment` se necessário).
+
+## Bug: "cliquei em Confirmar pagamento e nada acontece" - Corrigido ✅
+- **Causa raiz**: `getCardFormData()` **não contém o token** — o SDK só gera o token ao chamar `cardForm.createCardToken()`. O `onSubmit` antigo lia `getCardFormData().token` (sempre `""`) e retornava em silêncio (nada acontecia, sem toast/erro). Confirmado headless: `getCardFormData()` = `{token: "", paymentMethodId: "", ...}` antes do `createCardToken()`.
+- **Correção** (em `donation-form.blade.php`):
+  - `onSubmit` agora chama `cardForm.createCardToken()` e seta loading no botão (`#mp-card-submit`): `disabled` + "Processando...".
+  - `onCardTokenReceived(error, token)` (novo): restaura o botão; se erro/`!token` → toast "Verifique os dados do cartão e tente novamente."; senão lê `getCardFormData()` (agora com `token`/`paymentMethodId`) e chama `payWithCard(token, paymentMethodId)`.
+  - Novo painel de sucesso para cartão: `@if ($paid)` no branch cartão mostra "Doação confirmada!" + botão "Nova doação" (`restart`).
+  - Verificado headless: submit com campos vazios agora dispara toast de erro (antes: silêncio total).
+
+## Form de Doação - Loading nas etapas + Mensagens pós-compra ✅
+- **Loading nas transições de etapa** (`donation-form.blade.php`):
+  - Botões de tipo (passo 1) e valores rápidos (passo 2): `wire:loading.attr="disabled"`.
+  - Botões "Continuar"/"Voltar" (passos 2 e 3): `wire:loading.attr="disabled"` + `wire:target` + spinner ("Aguarde...") via `wire:loading`/`wire:loading.remove`.
+  - Botão "Gerar pagamento PIX": mesmo padrão, spinner "Gerando..." (`wire:target="createDonation"`).
+  - Botão "Confirmar pagamento" (cartão): já tem "Processando..." via `#mp-card-submit` no JS.
+- **Mensagens de sucesso/erro após a compra**:
+  - `createDonation()` agora dispara toast (`dispatch('toast', ...)`) conforme o resultado:
+    - pago → toast success "Doação confirmada! Muito obrigado pela sua contribuição." (além da tela de sucesso `@if ($paid)`).
+    - cartão `status === 'failed'` → toast error com `cardFailureMessage(status_detail)`.
+    - cartão pendente (TEST `pending_contingency`/`in_process`, não pago e não falho) → toast info "Pagamento em processamento..." + painel âmbar no branch do cartão ("Pagamento em processamento" + botão "Fazer outra doação").
+    - exceções (gateway/inesperado) → toast error + `errorMessage`.
+  - Box de erro no topo do wizard ganhou ícone ⚠️.
+  - **Importante**: painel de sucesso é o top-level `@if ($paid)` (substitui todo o wizard); o painel `@if ($paid)` interno ao branch do cartão foi removido por ser inalcançável.
+  - Verificado headless: clicar "Gerar pagamento PIX" (PIX bloqueado na conta) → toast vermelho + box de erro com ícone, sem erros JS. Testes 7/7 passando.
+
+---
+
+# Migração de Doações para PagBank (desacoplado do Mercado Pago) - Status: Implementado ✅
+
+## Contexto
+O usuário decidiu trocar o Mercado Pago pelo **PagBank** por instabilidade do MP. Foi criado um gateway PagBank desacoplado — o código MP (`app/Services/Payments/MercadoPago/`) foi **mantido** na base para retorno fácil.
+
+## O que foi feito
+
+1. **Gateway PagBank** (`app/Services/Payments/PagBank/`) implementando `PaymentGatewayInterface`:
+   - `PagBankGateway` (base): `name()` = `pagbank`; `client()` (Http facade, `baseUrl` sandbox `https://sandbox.api.pagseguro.com` / prod `https://api.pagseguro.com`, `Authorization: Bearer`); `find()` via `GET /orders/{order_id}`; `cancel()` via `GET /orders/{id}` → `POST /charges/{charge_id}/cancel`; `handleWebhook()` extrai `id` (ORDE_...) do payload; `statusFromCharge`: `PAID→approved`, `DECLINED→rejected`, `CANCELED→cancelled`, resto `pending`; `buildCustomer`/`buildItems` (valores em **centavos**); `notificationUrl()` = `/webhooks/payments/pagbank` (null para localhost); `wrap()` loga status+body.
+   - `PagBankPixGateway::create()`: `POST /orders` com `qr_codes[{amount.value, expiration_date (+30min)}]`, `customer`, `items`, `notification_urls`; grava `order['qr_code']` (copia-e-cola) e `order['qr_code_image']` (URL do PNG, link `QRCODE.PNG` — endpoints `/qrcode/{id}/png` são **públicos**, sem auth). `gateway_id` = id do pedido (ORDE_...).
+   - `PagBankCardGateway::create()`: `POST /orders` com `charges[{amount.value, payment_method:{type:CREDIT_CARD, installments, capture:true, **soft_descriptor** ("IGREJA SEMEAR" — **obrigatório na sandbox**, senão 400 `seller/soft_descriptor must not be empty`), card:{encrypted: $request->token}, holder:{name, tax_id}}}]`; `gateway_id` = id do pedido. **Importante**: o "token" enviado pelo front é o **criptograma** `encryptedCard` do SDK (`PagSeguro.encryptCard`), NÃO um token de sessão. `wrap()` loga classe/exceção + status/body reais (RequestException tem a propriedade pública `$response`, não método `response()`).
+
+2. **`PaymentGatewayFactory`**: `for(PaymentMethodEnum)` → PagBank; `byName('pagbank_pix'/'pagbank_card')` → PagBank (mantidos `mercadopago_pix`/`mercadopago_card` como legado para refresh/cancel de registros antigos); **novo** `byWebhook('pagbank'|'mercadopago')` para o controller de webhook (que recebe o nome base da rota).
+
+3. **`PaymentService`**: `processDonation()` agora grava `gateway` via factory (antes hardcoded `'mercadopago_'.$method`); `handleWebhook()` usa `byWebhook()` para parsear e `byName($payment->gateway)` para a re-consulta `find()` (usa o gateway real do pagamento).
+
+4. **Config**: `config/services.php` nova seção `pagbank` (`token`, `public_key`, `webhook_secret`, `sandbox` (bool), `currency=BRL`); `.env`/`.env.example` com `PAGBANK_TOKEN`, `PAGBANK_PUBLIC_KEY`, `PAGBANK_WEBHOOK_SECRET`, `PAGBANK_SANDBOX=true`.
+
+5. **Webhook**: `PaymentWebhookController` agora aceita `pagbank` e `mercadopago`; para PagBank valida **`x-authenticity-token` = `sha256(token_da_conta + "-" + corpo_bruto)`** (`verifyPagBankSignature`) — ignora se token/header vazios (status real confirmado via `find()`). Rota segue `POST /webhooks/payments/{gateway}` (sem CSRF).
+
+6. **Frontend** (`donation-form.blade.php`):
+   - **Cartão**: substituído o `mp.cardForm` (iframes) por formulário de inputs puros (`#pb-card-form`) + SDK `https://assets.pagseguro.com.br/checkout-sdk-js/rc/dist/browser/pagseguro.min.js`. Submit chama `PagSeguro.encryptCard({publicKey, holder, number, expMonth, expYear, securityCode})` → se `hasErrors` toast de erro; senão `payWithCard(card.encryptedCard)`. Botão com loading "Processando...". Texto "Pagamento processado pelo PagBank com criptografia de ponta a ponta."
+   - **PIX**: `DonationForm::createDonation()` agora lê `qr_code`/`qr_code_image` do raw (garantidos pelo gateway PagBank) e exibe o QR via URL pública do PNG (`<img src="{{ $qrCodeImage }}">`). QR/copia-e-cola/polling `wire:poll.4s` mantidos.
+   - **Não cria transação ao entrar no passo 4** (`nextStep()` não chama mais `createDonation` automaticamente — antes criava PIX no momento em que o usuário chegava à etapa de pagamento, antes de escolher cartão/PIX). Agora a transação só é criada no clique em "Gerar pagamento PIX" (PIX) ou "Confirmar pagamento" (cartão).
+   - `cardFailureMessage()` ampliado com códigos PagBank (`DECLINED/REJECTED/INSUFFICIENT_FUNDS/EXPIRED_CARD/INVALID_CARD`), mantendo os antigos do MP; lê `status_detail` ou `charges.0.payment_response.message`.
+
+7. **Testes**: `tests/Feature/PagBankWebhookTest.php` (4/4): gateway não suportado 404; assinatura inválida 401; assinatura válida 200; webhook marca payment+doação como paid (com `Http::fake` em `*/orders/ORDE_TESTE`). Suíte completa: **77 testes passando (234 assertions)**. `DonationFormTest` 7/7 seguem passando (falha de gateway sem credenciais → doação 'failed').
+
+## Para continuar / Notas
+
+- **Credenciais reais necessárias**: preencher `PAGBANK_TOKEN` (Integrações da conta PagBank; sandbox = Portal do Desenvolvedor) e `PAGBANK_PUBLIC_KEY` (`GET /public-keys/card` ou na config; sandbox é sempre a mesma). `PAGBANK_SANDBOX=true` para testar.
+- **PIX exige chave PIX ativa** na conta PagBank (mesmo caso do MP: `communication_error`). Verificar no painel PagBank.
+- **Webhook em produção**: apontar `https://DOMINIO/webhooks/payments/pagbank` (via `notification_urls` enviado no corpo do pedido; app envia quando `app.url` não é localhost).
+- **Módulo de Reservas continua no MP** (`app/Livewire/Web/ReservationForm.php` + `checkout-form.blade.php` — cardForm MP). Decidir se migra também.
+- Pagamentos antigos com `gateway = mercadopago_*` continuam funcionando para consulta/cancelamento (factory legado).
+- Testar em sandbox: `/doacoes` → PIX (QR + copia-e-cola + pagamento → webhook confirma paid) e cartão de teste PagBank.
+
+---
+
+# Remoção do Módulo de Reservas (outro sistema) - Status: Concluído ✅
+
+## Contexto
+O módulo de **Reservas/Booking/Hotel** (incluindo toda a área admin `company/` de tours, embarcações, finance e wallet) era de **outro sistema** copiado para dentro do projeto da igreja. O usuário pediu para remover. Todo o cluster era **código morto**: nenhuma rota apontava para os componentes/views (apenas `redirect()->route('company.dashboard')` em `routes/auth.php:37`, rota inexistente).
+
+## O que foi feito
+
+1. **Removidos componentes Livewire web** (`app/Livewire/Web/`): `ReservationForm.php`, `BookingForm.php`, `CheckoutPage.php`, `PropertySearch.php`, `PropertyFilter.php`, `ReviewForm.php`.
+2. **Removidas views órfãs**: `resources/views/livewire/web/checkout/` (checkout-form MP), `resources/views/livewire/web/components/` (tour-calendar) e `resources/views/livewire/web/customer/` (orders) + **toda** `resources/views/livewire/company/` (sidebar, dashboard, finance, tours, vessels, booking, user, notifications).
+3. **Corrigido `routes/auth.php:37`**: redirect de verificação de e-mail apontava para `company.dashboard` (inexistente) → agora `admin.dashboard`. Sem isso, verificar e-mail quebrava com `RouteNotFoundException`.
+4. **Não havia** models, migrations, seeders, factories nem mails de reserva no projeto (só `App\Mail\ReservationFormLinkMail` referenciado, que nunca existiu) — nada de BD a limpar.
+
+## Para continuar
+- Suíte completa: **77 testes passando (234 assertions)** após a remoção.
+- Sem pendências: o módulo de doações (PagBank) segue intacto e o MP fica só como gateway legado na factory.

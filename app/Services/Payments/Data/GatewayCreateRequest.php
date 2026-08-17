@@ -12,6 +12,7 @@ class GatewayCreateRequest
         public readonly ?string $payerEmail = null,
         public readonly ?string $payerCpf = null,
         public readonly ?string $token = null,
+        public readonly ?string $paymentMethodId = null,
         public readonly ?int $installments = 1,
         public readonly ?array $metadata = [],
     ) {

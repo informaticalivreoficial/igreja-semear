@@ -52,8 +52,8 @@ window.showToast = function (type, message) {
 };
 
 document.addEventListener('livewire:init', () => {
-    Livewire.on('toast', (event) => {
-        const data = event?.detail?.[0] ?? event;
+    Livewire.on('toast', (params) => {
+        const data = params?.[0] ?? params;
 
         if (!data?.message) {
             return;

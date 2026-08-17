@@ -16,7 +16,7 @@ class MercadoPagoCardGateway extends MercadoPagoGateway
         }
 
         $data = $this->buildRequest($request);
-        $data['payment_method_id'] = 'card';
+        $data['payment_method_id'] = $request->paymentMethodId ?? 'card';
         $data['token'] = $request->token;
         $data['installments'] = $request->installments ?? 1;
 

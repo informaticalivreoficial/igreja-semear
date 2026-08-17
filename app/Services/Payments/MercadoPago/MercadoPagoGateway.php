@@ -76,11 +76,10 @@ abstract class MercadoPagoGateway implements PaymentGatewayInterface
 
     protected function buildRequest(GatewayCreateRequest $request): array
     {
-        return [
+        $data = [
             'transaction_amount' => round($request->amount, 2),
             'description' => mb_substr($request->description, 0, 255),
             'external_reference' => $request->externalReference,
-            'notification_url' => $this->notificationUrl(),
             'metadata' => array_merge($request->metadata ?? [], [
                 'donation_reference' => $request->externalReference,
             ]),
@@ -93,6 +92,12 @@ abstract class MercadoPagoGateway implements PaymentGatewayInterface
                 ] : null,
             ],
         ];
+
+        if ($notificationUrl = $this->notificationUrl()) {
+            $data['notification_url'] = $notificationUrl;
+        }
+
+        return $data;
     }
 
     protected function map(mixed $payment): GatewayPayment
@@ -110,9 +115,16 @@ abstract class MercadoPagoGateway implements PaymentGatewayInterface
         );
     }
 
-    protected function notificationUrl(): string
+    protected function notificationUrl(): ?string
     {
-        return url('/webhooks/payments/mercadopago');
+        $appUrl = rtrim((string) config('app.url'), '/');
+        $host = parse_url($appUrl, PHP_URL_HOST);
+
+        if (in_array($host, ['localhost', '127.0.0.1', '::1'], true)) {
+            return null;
+        }
+
+        return $appUrl.'/webhooks/payments/mercadopago';
     }
 
     protected function wrap(MPApiException $e, string $message): PaymentGatewayException

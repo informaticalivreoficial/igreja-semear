@@ -37,11 +37,13 @@ class DonationForm extends Component
 
     public string $cardToken = '';
 
+    public ?string $paymentMethodId = null;
+
     public ?int $donationId = null;
 
     public ?string $qrCode = null;
 
-    public ?string $qrCodeBase64 = null;
+    public ?string $qrCodeImage = null;
 
     public ?string $pixCopyPaste = null;
 
@@ -109,10 +111,6 @@ class DonationForm extends Component
         }
 
         $this->step++;
-
-        if ($this->step === 4 && $this->paymentMethod === PaymentMethodEnum::Pix->value) {
-            $this->createDonation();
-        }
     }
 
     public function previousStep(): void
@@ -132,13 +130,14 @@ class DonationForm extends Component
         }
     }
 
-    public function payWithCard(string $token): void
+    public function payWithCard(string $token, ?string $paymentMethodId = null): void
     {
         if ($this->paymentMethod !== PaymentMethodEnum::Card->value) {
             return;
         }
 
         $this->cardToken = $token;
+        $this->paymentMethodId = $paymentMethodId;
         $this->createDonation();
     }
 
@@ -180,32 +179,52 @@ class DonationForm extends Component
                     'email' => $this->isAnonymous ? null : $this->email,
                     'cpf' => $this->isAnonymous ? null : preg_replace('/\D/', '', $this->cpf),
                 ],
-                ['token' => $this->cardToken],
+                ['token' => $this->cardToken, 'paymentMethodId' => $this->paymentMethodId],
             );
 
             $payload = $payment->gateway_payload ?? [];
 
             if ($payment->method === PaymentMethodEnum::Pix->value) {
-                $this->qrCode = data_get($payload, 'point_of_interaction.transaction_data.qr_code');
-                $this->qrCodeBase64 = data_get($payload, 'point_of_interaction.transaction_data.qr_code_base64');
-                $this->pixCopyPaste = data_get($payload, 'point_of_interaction.transaction_data.qr_code');
+                $this->qrCode = data_get($payload, 'qr_code') ?? data_get($payload, 'qr_codes.0.text');
+                $this->qrCodeImage = data_get($payload, 'qr_code_image');
+                $this->pixCopyPaste = $this->qrCode;
             }
 
             if ($payment->isPaid()) {
                 $this->paid = true;
+                $this->dispatch('toast', [
+                    'type' => 'success',
+                    'message' => 'Doação confirmada! Muito obrigado pela sua contribuição.',
+                ]);
             }
 
             if ($payment->status === 'failed') {
-                $this->errorMessage = $this->cardFailureMessage(data_get($payload, 'status_detail'));
+                $this->errorMessage = $this->cardFailureMessage(
+                    data_get($payload, 'status_detail') ?? data_get($payload, 'charges.0.payment_response.message')
+                );
+                $this->dispatch('toast', ['type' => 'error', 'message' => $this->errorMessage]);
+            }
+
+            if (
+                $this->paymentMethod === PaymentMethodEnum::Card->value
+                && ! $payment->isPaid()
+                && $payment->status !== 'failed'
+            ) {
+                $this->dispatch('toast', [
+                    'type' => 'info',
+                    'message' => 'Pagamento em processamento. Assim que for aprovado, sua doação será confirmada.',
+                ]);
             }
         } catch (PaymentGatewayException $e) {
             Log::error('Falha ao processar doação', ['donation_id' => $this->donationId, 'error' => $e->getMessage()]);
             $this->failDonation();
             $this->errorMessage = 'Não foi possível gerar o pagamento. Tente novamente em instantes.';
+            $this->dispatch('toast', ['type' => 'error', 'message' => $this->errorMessage]);
         } catch (\Throwable $e) {
             Log::error('Erro inesperado na doação', ['error' => $e->getMessage()]);
             $this->failDonation();
             $this->errorMessage = 'Ocorreu um erro inesperado. Tente novamente.';
+            $this->dispatch('toast', ['type' => 'error', 'message' => $this->errorMessage]);
         } finally {
             $this->processing = false;
         }
@@ -290,9 +309,12 @@ class DonationForm extends Component
 
     protected function cardFailureMessage(?string $statusDetail): string
     {
-        return match ($statusDetail) {
-            'cc_rejected_insufficient_amount' => 'Cartão sem limite disponível.',
-            'cc_rejected_other_reason', 'cc_rejected_card_error' => 'Não foi possível processar o cartão. Verifique os dados.',
+        return match (strtoupper((string) $statusDetail)) {
+            'DECLINED', 'REJECTED' => 'O cartão foi recusado pelo banco emissor.',
+            'INSUFFICIENT_FUNDS', 'CC_REJECTED_INSUFFICIENT_AMOUNT' => 'Cartão sem limite disponível.',
+            'EXPIRED_CARD' => 'Cartão vencido.',
+            'INVALID_CARD', 'CC_REJECTED_CARD_ERROR' => 'Número do cartão inválido.',
+            'CC_REJECTED_OTHER_REASON' => 'Não foi possível processar o cartão. Verifique os dados.',
             default => 'O pagamento não foi aprovado. Tente novamente.',
         };
     }
@@ -302,7 +324,7 @@ class DonationForm extends Component
         $this->reset([
             'step', 'type', 'amountInput', 'amount', 'description', 'isAnonymous',
             'name', 'email', 'cpf', 'paymentMethod', 'cardToken', 'donationId',
-            'qrCode', 'qrCodeBase64', 'pixCopyPaste', 'paid', 'errorMessage',
+            'qrCode', 'qrCodeImage', 'pixCopyPaste', 'paid', 'errorMessage',
         ]);
 
         $this->mount();
