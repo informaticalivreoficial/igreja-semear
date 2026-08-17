@@ -59,6 +59,9 @@ class Config extends Model
         'sitemap', 
         'sitemap_data',
         'donations_enabled',
+        'maintenance_mode',
+        'maintenance_message',
+        'maintenance_until',
         'analytics_id'
     ];
 
@@ -70,10 +73,12 @@ class Config extends Model
     protected $casts = [
         'status' => 'boolean',
         'donations_enabled' => 'boolean',
+        'maintenance_mode' => 'boolean',
         'init_date' => 'date',
         'rss_data' => 'date',
         'sitemap_data' => 'date',
         'next_transmission_at' => 'datetime',
+        'maintenance_until' => 'datetime',
     ];
 
     /**

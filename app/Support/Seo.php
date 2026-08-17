@@ -11,32 +11,48 @@ namespace App\Support;
 
 use CoffeeCode\Optimizer\Optimizer;
 
-// use App\Models\Configuracoes;
-
 class Seo
 {
     private $optimizer;
 
     public function __construct()
     {
-        // chama as configuracoes do site
-        // $Configuracoes = Configuracoes::where('id', '1')->first();
-
         $this->optimizer = new Optimizer;
         $this->optimizer->openGraph(
-            env('APP_NAME') ?? 'Imóveis em Ubatuba',
+            config('app.name'),
             'pt_BR',
-            'article'
+            'website'
         )->publisher(
-            env('CLIENT_SOCIAL_FACEBOOK_PAGE', 'default-page') ?: 'default-page',
-            env('CLIENT_SOCIAL_FACEBOOK_AUTHOR', 'default-author') ?: 'default-author'
+            env('CLIENT_SOCIAL_FACEBOOK_PAGE', '') ?: 'default-page',
+            env('CLIENT_SOCIAL_FACEBOOK_AUTHOR', '') ?: 'default-author'
         )->facebook(
-            env('CLIENT_SOCIAL_FACEBOOK_APP', '123456') ?: '123456'
+            env('CLIENT_SOCIAL_FACEBOOK_APP', '') ?: '123456'
+        )->twitterCard(
+            env('CLIENT_SOCIAL_TWITTER_CREATOR', '') ?: '@SemearUbatuba',
+            env('CLIENT_SOCIAL_TWITTER_PUBLISHER', '') ?: '@SemearUbatuba',
+            url('/'),
+            'summary_large_image'
         );
     }
 
-    public function render(string $title, string $description, string $url, string $image, bool $follow = true)
+    public function render(string $title, string $description, string $url, string $image, bool $follow = true, string $type = 'website')
     {
+        if ($type !== 'website') {
+            $this->setOgType($type);
+        }
+
         return $this->optimizer->optimize($title, $description, $url, $image, $follow)->render();
+    }
+
+    private function setOgType(string $type): void
+    {
+        $meta = $this->optimizer->meta();
+
+        foreach ($meta as $element) {
+            if ((string) $element['property'] === 'og:type') {
+                $element['content'] = $type;
+                break;
+            }
+        }
     }
 }

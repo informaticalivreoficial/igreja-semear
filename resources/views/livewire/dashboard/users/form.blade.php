@@ -20,7 +20,7 @@
                             if (!empty($user?->avatar) && Storage::exists($user->avatar)) {
                                 $cover = Storage::url($user->avatar);
                             } else {
-                                $cover = asset('backend/assets/images/avatar3.png');
+                                $cover = asset('theme/images/avatar3.png');
                             }
                         @endphp
                         <input type="file" id="foto" wire:model="foto" accept="image/jpeg,image/jpg,image/png,image/webp" style="display: none;">

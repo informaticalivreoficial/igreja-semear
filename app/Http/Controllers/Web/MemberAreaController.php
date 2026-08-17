@@ -5,16 +5,19 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Models\Announcement;
 use App\Models\Config;
-use App\Models\Donation;
 use App\Models\Event;
 use App\Models\EventRegistration;
 use App\Models\Member;
 use App\Models\PrayerRequest;
+use App\Models\User;
+use App\Notifications\NewEventRegistration;
+use App\Notifications\NewPrayerRequest;
 use App\Support\ImageService;
 use App\Support\Seo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 
 class MemberAreaController extends Controller
@@ -177,15 +180,6 @@ class MemberAreaController extends Controller
         return back()->with('toast', ['type' => 'success', 'message' => 'Perfil atualizado com sucesso!']);
     }
 
-    public function familia()
-    {
-        $data = $this->layoutData('Minha família', 'familia');
-
-        $data['familia'] = $this->member()->family;
-
-        return $this->view('familia', $data);
-    }
-
     public function agenda()
     {
         $data = $this->layoutData('Agenda de eventos', 'agenda');
@@ -224,6 +218,8 @@ class MemberAreaController extends Controller
             'notes' => $request->notes,
             'created_by' => Auth::id(),
         ])->save();
+
+        $this->notifyAdmins(new NewEventRegistration($registration));
 
         return back()->with('toast', ['type' => 'success', 'message' => 'Inscrição realizada com sucesso!']);
     }
@@ -276,7 +272,7 @@ class MemberAreaController extends Controller
 
         $member = $this->member();
 
-        PrayerRequest::create([
+        $prayerRequest = PrayerRequest::create([
             'member_id' => $member->id,
             'name' => $member->name,
             'email' => $member->email ?? Auth::user()->email,
@@ -285,20 +281,18 @@ class MemberAreaController extends Controller
             'status' => PrayerRequest::STATUS_PENDENTE,
         ]);
 
+        $this->notifyAdmins(new NewPrayerRequest($prayerRequest));
+
         return back()->with('toast', ['type' => 'success', 'message' => 'Pedido de oração enviado! Estamos orando por você.']);
     }
 
-    public function contribuicoes()
+    private function notifyAdmins(\Illuminate\Notifications\Notification $notification): void
     {
-        $data = $this->layoutData('Minhas contribuições', 'contribuicoes');
+        $admins = User::role(['super admin', 'admin', 'pastor', 'lider'])->get();
 
-        $data['doacoes'] = Donation::whereHas('member', function ($q) {
-            $q->where('user_id', Auth::id());
-        })->orderByDesc('created_at')->get();
-
-        $data['total'] = $data['doacoes']->sum('amount');
-
-        return $this->view('contribuicoes', $data);
+        if ($admins->isNotEmpty()) {
+            Notification::send($admins, $notification);
+        }
     }
 
     public function avisos()

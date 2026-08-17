@@ -66,6 +66,7 @@
                         'new_member'           => 'fas fa-user-plus',
                         'new_prayer_request'   => 'fas fa-praying-hands',
                         'new_atendimento'      => 'fas fa-envelope',
+                        'new_event_registration' => 'fas fa-calendar-check',
                         default => 'fas fa-bell',
                     };
 

@@ -36,7 +36,7 @@ use Illuminate\Support\Facades\Route;
 
 require __DIR__.'/auth.php';
 
-Route::group(['as' => 'web.'], function () {
+Route::group(['as' => 'web.', 'middleware' => ['maintenance']], function () {
 
     /** Página Inicial */
     Route::get('/', [WebController::class, 'home'])->name('home');
@@ -44,8 +44,8 @@ Route::group(['as' => 'web.'], function () {
     // **************************** Emails ********************************************/
     Route::get('/atendimento', [WebController::class, 'atendimento'])->name('atendimento');
     Route::get('/cadastro-novo-membro', [WebController::class, 'createMember'])->name('create.member');
-    Route::get('/cadastro-novo-membro-send', [WebController::class, 'createMemberSend'])->name('create.member.send');
-    Route::get('/sendEmail', [SendEmailController::class, 'sendEmail'])->name('sendEmail');
+    Route::get('/cadastro-novo-membro-send', [WebController::class, 'createMemberSend'])->name('create.member.send')->middleware('throttle:5,1');
+    Route::get('/sendEmail', [SendEmailController::class, 'sendEmail'])->name('sendEmail')->middleware('throttle:5,1');
 
     // ****************************** Blog ***********************************************/
     Route::get('/blog/artigo/{slug}', [WebController::class, 'artigo'])->name('blog.artigo');
@@ -76,14 +76,16 @@ Route::group(['as' => 'web.'], function () {
     // ****************************** Doações *****************************************/
     Route::get('/doacoes', \App\Livewire\Web\DonationForm::class)->name('doacoes');
 
+    // ****************************** Manutenção *************************************/
+    Route::get('/manutencao', [WebController::class, 'manutencao'])->name('manutencao');
+
 });
 
 /** Área do membro */
-Route::middleware(['auth', 'member'])->prefix('minha-conta')->as('member.')->group(function () {
+Route::middleware(['auth', 'member', 'maintenance'])->prefix('minha-conta')->as('member.')->group(function () {
     Route::get('/', [MemberAreaController::class, 'dashboard'])->name('dashboard');
     Route::get('/perfil', [MemberAreaController::class, 'perfil'])->name('perfil');
     Route::post('/perfil', [MemberAreaController::class, 'updatePerfil'])->name('perfil.update');
-    Route::get('/familia', [MemberAreaController::class, 'familia'])->name('familia');
     Route::get('/agenda', [MemberAreaController::class, 'agenda'])->name('agenda');
     Route::post('/inscrever', [MemberAreaController::class, 'inscrever'])->name('inscrever');
     Route::post('/inscricao/{registration}/cancelar', [MemberAreaController::class, 'cancelarInscricao'])->name('inscricao.cancelar');
@@ -91,7 +93,6 @@ Route::middleware(['auth', 'member'])->prefix('minha-conta')->as('member.')->gro
     Route::get('/historico', [MemberAreaController::class, 'historico'])->name('historico');
     Route::get('/oracoes', [MemberAreaController::class, 'oracoes'])->name('oracoes');
     Route::post('/oracoes', [MemberAreaController::class, 'storeOracao'])->name('oracoes.store');
-    Route::get('/contribuicoes', [MemberAreaController::class, 'contribuicoes'])->name('contribuicoes');
     Route::get('/avisos', [MemberAreaController::class, 'avisos'])->name('avisos');
 });
 

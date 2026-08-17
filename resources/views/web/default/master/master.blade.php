@@ -253,39 +253,61 @@
 
         {{-- FOOTER --}}
         <footer class="bg-brand-900 text-brand-100">
-            <div class="container-site grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4">
+            <div class="container-site grid gap-10 py-16 sm:grid-cols-2 lg:grid-cols-4">
                 <div>
                     <a href="{{ route('web.home') }}" class="flex shrink-0 items-center gap-3">
                         @if($configuracoes && $configuracoes->watermark)
-                            <img src="{{ $configuracoes->getwatermark() }}" alt="{{ $configuracoes->app_name }}" class="h-12 w-auto">
+                            <img src="{{ $configuracoes->getwatermark() }}" alt="{{ $configuracoes->app_name }}" class="h-16 w-auto">
                         @else
                             <span class="font-display text-xl font-bold text-brand-100">
                                 {{ optional($configuracoes)->app_name ?: 'Semear' }}
                             </span>
                         @endif
                     </a>
-                    <p class="mt-4 text-sm leading-6 text-brand-300/80">
+                    <p class="mt-4 max-w-xs text-sm leading-6 text-brand-300/80">
                         {{ optional($configuracoes)->information ?: 'Comunidade Cristã Semear.' }}
                     </p>
+                    @php
+                        $socials = array_filter([
+                            'facebook-f' => $configuracoes?->facebook ? 'https://facebook.com/'.basename(parse_url($configuracoes->facebook, PHP_URL_PATH) ?: $configuracoes->facebook) : null,
+                            'instagram' => $configuracoes?->instagram,
+                            'youtube' => $configuracoes?->youtube,
+                            'twitter' => $configuracoes?->twitter,
+                            'linkedin-in' => $configuracoes?->linkedin,
+                        ], fn ($url) => !empty($url));
+                    @endphp
+                    @if($socials)
+                        <div class="mt-6 flex items-center gap-2">
+                            @foreach($socials as $icon => $url)
+                                <a href="{{ $url }}" target="_blank" rel="noopener noreferrer" aria-label="{{ ucfirst($icon) }}"
+                                    class="flex h-9 w-9 items-center justify-center rounded-full bg-brand-800 text-brand-300/80 transition hover:bg-accent-500 hover:text-brand-900">
+                                    <i class="fab fa-{{ $icon }} text-sm"></i>
+                                </a>
+                            @endforeach
+                        </div>
+                    @endif
                 </div>
 
                 <div>
                     <h4 class="text-sm font-bold uppercase tracking-wider text-white">Navegação</h4>
                     <ul class="mt-4 space-y-2 text-sm">
-                        <li><a href="{{ route('web.home') }}" class="transition hover:text-white">Início</a></li>
-                        <li><a href="{{ route('web.pagina', ['slug' => 'sobre-a-igreja']) }}" class="transition hover:text-white">Sobre a igreja</a></li>
-                        <li><a href="{{ route('web.blog.artigos') }}" class="transition hover:text-white">Blog</a></li>
-                        <li><a href="{{ route('web.noticias') }}" class="transition hover:text-white">Notícias</a></li>
-                        <li><a href="{{ route('web.eventos') }}" class="transition hover:text-white">Eventos</a></li>
+                        <li><a href="{{ route('web.home') }}" class="transition hover:text-accent-400">Início</a></li>
+                        <li><a href="{{ route('web.pagina', ['slug' => 'sobre-a-igreja']) }}" class="transition hover:text-accent-400">Sobre a igreja</a></li>
+                        <li><a href="{{ route('web.blog.artigos') }}" class="transition hover:text-accent-400">Blog</a></li>
+                        <li><a href="{{ route('web.noticias') }}" class="transition hover:text-accent-400">Notícias</a></li>
+                        <li><a href="{{ route('web.eventos') }}" class="transition hover:text-accent-400">Eventos</a></li>
                     </ul>
                 </div>
 
                 <div>
                     <h4 class="text-sm font-bold uppercase tracking-wider text-white">A Igreja</h4>
                     <ul class="mt-4 space-y-2 text-sm">
-                        <li><a href="{{ route('web.ministerios') }}" class="transition hover:text-white">Ministérios</a></li>
-                        <li><a href="{{ route('web.pagina', ['slug' => 'cultos-e-horarios']) }}" class="transition hover:text-white">Cultos e horários</a></li>
-                        <li><a href="{{ route('web.cultos') }}" class="transition hover:text-white">Cultos Online</a></li>
+                        <li><a href="{{ route('web.ministerios') }}" class="transition hover:text-accent-400">Ministérios</a></li>
+                        <li><a href="{{ route('web.pagina', ['slug' => 'cultos-e-horarios']) }}" class="transition hover:text-accent-400">Cultos e horários</a></li>
+                        <li><a href="{{ route('web.cultos') }}" class="transition hover:text-accent-400">Cultos Online</a></li>
+                        @if(optional($configuracoes)->donations_enabled)
+                            <li><a href="{{ route('web.doacoes') }}" class="transition hover:text-accent-400">Doações</a></li>
+                        @endif
                     </ul>
                 </div>
 
@@ -317,18 +339,21 @@
             </div>
 
             <div class="border-t border-brand-100">
-                <div class="container-site flex flex-col items-center justify-between gap-3 py-5 text-xs text-brand-300/70 sm:flex-row">
-                    <div class="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
+                <div class="container-site flex flex-col items-center justify-between gap-4 py-6 lg:flex-row">
+                    <div class="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[11px] text-brand-300/60 lg:justify-start">
                         @if(optional($configuracoes)->donations_enabled)
-                            <a href="{{ route('web.doacoes') }}" class="transition hover:text-white">Doações</a>
+                            <a href="{{ route('web.doacoes') }}" class="transition hover:text-accent-400">Doações</a>
                         @endif
-                        <a href="{{ route('web.pedido-oracao') }}" class="transition hover:text-white">Pedido de oração</a>
-                        <a href="{{ route('web.pagina', ['slug' => 'localizacao']) }}" class="transition hover:text-white">Localização</a>
-                        <button type="button" onclick="window.dispatchEvent(new CustomEvent('open-cookie-modal'))" class="cursor-pointer transition hover:text-white">Configurar cookies</button>
-                        <a href="{{ route('web.politica') }}" class="transition hover:text-white">Política de Privacidade</a>
+                        <a href="{{ route('web.pedido-oracao') }}" class="transition hover:text-accent-400">Pedido de oração</a>
+                        <a href="{{ route('web.pagina', ['slug' => 'localizacao']) }}" class="transition hover:text-accent-400">Localização</a>
+                        <button type="button" onclick="window.dispatchEvent(new CustomEvent('open-cookie-modal'))" class="cursor-pointer transition hover:text-accent-400">Configurar cookies</button>
+                        <a href="{{ route('web.politica') }}" class="transition hover:text-accent-400">Política de Privacidade</a>
                     </div>
-                    <span>&copy; {{ date('Y') }} {{ optional($configuracoes)->app_name ?: 'Semear' }}. Todos os direitos reservados.</span>
-                    <a href="{{ env('DESENVOLVEDOR_URL', 'https://informaticalivre.com.br') }}" target="_blank" rel="noopener" class="transition hover:text-white">Feito com &#128153; por {{ env('DESENVOLVEDOR', 'Informática Livre') }}</a>
+                    <div class="flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-[11px] text-brand-300/60">
+                        <span>&copy; {{ date('Y') }} {{ optional($configuracoes)->app_name ?: 'Semear' }} &mdash; Todos os direitos reservados.</span>
+                        <span class="hidden text-brand-300/30 sm:inline">&bull;</span>
+                        <a href="{{ env('DESENVOLVEDOR_URL', 'https://informaticalivre.com.br') }}" target="_blank" rel="noopener" class="transition hover:text-accent-400">Feito com &#128153; por {{ env('DESENVOLVEDOR', 'Informática Livre') }}</a>
+                    </div>
                 </div>
             </div>
         </footer>

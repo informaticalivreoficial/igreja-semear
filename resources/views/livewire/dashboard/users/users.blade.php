@@ -37,11 +37,11 @@
                                         $cover = \Illuminate\Support\Facades\Storage::url($user->avatar);
                                     } else {
                                         if ($user->gender == 'masculino') {
-                                            $cover = url(asset('backend/assets/images/avatar5.png'));
+                                            $cover = url(asset('theme/images/avatar5.png'));
                                         } elseif ($user->gender == 'feminino') {
-                                            $cover = url(asset('backend/assets/images/avatar3.png'));
+                                            $cover = url(asset('theme/images/avatar3.png'));
                                         } else {
-                                            $cover = url(asset('backend/assets/images/avatar3.png'));
+                                            $cover = url(asset('theme/images/avatar3.png'));
                                         }
                                     }
                                 @endphp

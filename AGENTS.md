@@ -1,3 +1,33 @@
+# Igreja Semear - Modo Manutenção (site + área do membro) - Status: Concluído ✅
+
+## O que foi feito
+
+1. **Campos novos na tabela `config`** (migration `2026_08_17_000001_add_maintenance_fields_to_config_table`):
+   - `maintenance_mode` (boolean, default false)
+   - `maintenance_message` (text, nullable)
+   - `maintenance_until` (timestamp, nullable)
+
+2. **`Config` model**: `fillable` + casts (`maintenance_mode` boolean, `maintenance_until` datetime).
+
+3. **Admin - aba "Manutenção"** (`Settings` + `settings.blade.php`): toggle "Ativar modo manutenção", campo "Retorno automático" (datetime-local → `maintenance_until`, se preenchido o site volta sozinho) e textarea "Mensagem personalizada". Aviso amber explicando o comportamento. `normalizeDates()` converte bool→int e `maintenance_until`→`Y-m-d H:i:s`; `mount()` formata para `Y-m-d\TH:i` (formato do input).
+
+4. **Middleware `App\Http\Middleware\MaintenanceMode`** (alias `maintenance`, registrado no Kernel):
+   - Ativo quando `maintenance_mode=true` E (`maintenance_until` vazio OU futuro).
+   - Redireciona para `web.manutencao` toda requisição das rotas web/member, exceto: a própria página de manutenção e usuários autenticados com role `super admin`/`admin`/`pastor`/`lider` (staff pode pré-visualizar).
+   - Aplicado em `routes/web.php`: grupo `web.` (`middleware: ['maintenance']`) e grupo `member.` (`['auth', 'member', 'maintenance']`). **Admin, login e webhooks não são bloqueados** — só a parte administrativa segue funcionando.
+
+5. **Página de manutenção** (`WebController::manutencao()` → `resources/views/web/default/manutencao.blade.php`, rota `web.manutencao` = `/manutencao`):
+   - Standalone (inline CSS, sem Tailwind/master), paleta do tema: fundo `linear-gradient(#f0f7f0 → #e6f0e6)`, logo (ou fallback com app_name), ícone engrenagem em tile, h1 "Em manutenção", mensagem (`maintenance_message` ou padrão), **último culto do YouTube** (`YoutubeVideo::TYPE_CULTO`, embed 16:9 + título), contatos (endereço exibição, telefone/celular `tel:`, e-mail `mailto:`) e redes sociais (YouTube/Facebook/Instagram). `noindex`.
+
+6. **Testes** `tests/Feature/MaintenanceModeTest.php` (7/7): site público 200 com manutenção off; `/` e `/minha-conta` redirecionam quando on; staff (role admin) passa; página `/manutencao` mostra mensagem/contatos/último culto; `maintenance_until` expirado desativa; Settings salva os 3 campos. Suíte completa: **93 testes passando (285 assertions)**.
+
+## Para continuar
+- [ ] Conferir visual em `/admin/configuracoes` → aba "Manutenção" (toggle, retorno automático, mensagem) e a página `/manutencao` com manutenção ativada (logo, mensagem, contatos, último culto).
+- [ ] Com manutenção ativa, validar que admin (`/admin`) e login continuam funcionando e membro/visitante veem a página personalizada.
+- [ ] Lembrar que staff (roles admin/pastor/lider/super admin) consegue navegar no site normalmente mesmo com manutenção ativa.
+
+---
+
 # Igreja Semear - Menu Mobile (Minha conta) + Páginas de Erro Refatoradas - Status: Concluído ✅
 
 ## O que foi feito

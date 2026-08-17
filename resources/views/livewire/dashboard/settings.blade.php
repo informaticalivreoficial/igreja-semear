@@ -55,6 +55,12 @@
                 @click="tab = 'imagens'">
                 <i class="fas fa-image mr-1.5"></i> Imagens
             </button>
+            <button type="button"
+                class="border-b-2 px-4 py-3 text-sm font-semibold transition-colors duration-200 focus:outline-none"
+                :class="tab === 'manutencao' ? '-mb-0.5 border-forest-600 text-forest-700' : 'border-transparent text-slate-500 hover:text-forest-600'"
+                @click="tab = 'manutencao'">
+                <i class="fas fa-wrench mr-1.5"></i> Manutenção
+            </button>
         </div>
 
         <div class="card">
@@ -86,7 +92,7 @@
                                 <div class="grid grid-cols-1 gap-x-6 md:grid-cols-2 lg:grid-cols-6">
                                     <div class="form-group lg:col-span-1" x-ref="configData_zipcode">
                                         <label class="labelforms"><b>*CEP:</b></label>
-                                        <input type="text" x-mask="99.999-999" class="form-control @error('configData.zipcode') is-invalid @enderror" id="zipcode" wire:model.lazy="configData.zipcode">
+                                        <input type="text" x-mask="99999-999" class="form-control @error('configData.zipcode') is-invalid @enderror" id="zipcode" wire:model.lazy="configData.zipcode">
                                         @error('configData.zipcode')
                                             <span class="error erro-feedback">{{ $message }}</span>
                                         @enderror
@@ -353,6 +359,39 @@
                                 wire:model.defer="imgheader"
                                 target="imgheader"
                             />
+                        </div>
+                    </div>
+
+                    <!-- Conteúdo da aba Manutenção -->
+                    <div x-show="tab === 'manutencao'" x-cloak x-transition>
+                        <div class="mb-4 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+                            <p><b>Importante:</b> com o modo de manutenção ativo, o site público e a área do membro ficam indisponíveis para os visitantes. Ao acessar o site, eles verão uma página personalizada com o logo, a mensagem abaixo, os contatos da igreja e o último culto transmitido no YouTube. Apenas o painel administrativo continua funcionando.</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 gap-x-6 md:grid-cols-2">
+                            <div class="form-group">
+                                <div class="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50/60 p-4">
+                                    <input type="checkbox" id="maintenance_mode" class="h-5 w-5 rounded border-slate-300 text-forest-600 focus:ring-gold-400" wire:model="configData.maintenance_mode">
+                                    <label for="maintenance_mode" class="labelforms mb-0"><b>Ativar modo manutenção</b></label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="labelforms"><b>Retorno automático (opcional)</b></label>
+                                <input type="datetime-local" class="form-control @error('configData.maintenance_until') is-invalid @enderror" id="maintenance_until" wire:model="configData.maintenance_until">
+                                <small class="text-muted">Se preenchido, o site volta automaticamente a partir desta data/hora.</small>
+                                @error('configData.maintenance_until')
+                                    <span class="error erro-feedback">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="form-group mt-4">
+                            <label class="labelforms"><b>Mensagem personalizada</b></label>
+                            <textarea class="form-control @error('configData.maintenance_message') is-invalid @enderror" rows="4" wire:model="configData.maintenance_message" placeholder="Ex.: Estamos realizando melhorias no nosso site. Voltamos em breve!">{{ $configData['maintenance_message'] ?? '' }}</textarea>
+                            <small class="text-muted">Texto exibido na página de manutenção. Se vazio, é usada uma mensagem padrão.</small>
+                            @error('configData.maintenance_message')
+                                <span class="error erro-feedback">{{ $message }}</span>
+                            @enderror
                         </div>
                     </div>
 

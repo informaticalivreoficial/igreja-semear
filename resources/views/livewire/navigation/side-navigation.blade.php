@@ -69,6 +69,52 @@
                 </ul>
             </li>
 
+            {{-- YouTube --}}
+            <li x-data="{ open: @js(Route::is(['admin.youtube.index'])) }">
+                <button type="button" @click="collapsed ? collapsed = false : open = !open"
+                        class="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition
+                               {{ Route::is(['admin.youtube.index']) ? 'bg-gold-500/15 text-gold-400' : 'text-slate-300 hover:bg-white/10 hover:text-white' }}">
+                    <i class="w-5 text-center text-base {{ Route::is(['admin.youtube.index']) ? 'text-gold-400' : 'text-slate-400' }} fab fa-youtube"></i>
+                    <span :class="collapsed ? 'lg:hidden' : ''">YouTube</span>
+                    <i class="fas fa-chevron-down ml-auto text-[10px] transition-transform duration-200 {{ Route::is(['admin.youtube.index']) ? 'text-gold-400' : 'text-slate-500' }}"
+                       :class="collapsed ? 'lg:hidden' : ''" x-show="open" x-cloak></i>
+                </button>
+                <ul x-show="open" class="mt-0.5 space-y-0.5 border-l border-white/10 pl-2.5" x-cloak>
+                    <li>
+                        <a href="{{ route('admin.youtube.index', ['tab' => 'videos']) }}" wire:navigate @click="closeMobile()"
+                           class="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm transition
+                                  {{ Route::is('admin.youtube.index') && request('tab', 'videos') === 'videos' ? 'text-gold-400' : 'text-slate-400 hover:bg-white/10 hover:text-white' }}">
+                            <i class="fas fa-video text-[11px]"></i>
+                            <span :class="collapsed ? 'lg:hidden' : ''">Vídeos</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.youtube.index', ['tab' => 'playlists']) }}" wire:navigate @click="closeMobile()"
+                           class="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm transition
+                                  {{ Route::is('admin.youtube.index') && request('tab', 'videos') !== 'playlists' && request('tab') === 'playlists' ? 'text-gold-400' : 'text-slate-400 hover:bg-white/10 hover:text-white' }}">
+                            <i class="fas fa-list text-[11px]"></i>
+                            <span :class="collapsed ? 'lg:hidden' : ''">Playlists</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.youtube.index', ['tab' => 'canal']) }}" wire:navigate @click="closeMobile()"
+                           class="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm transition
+                                  {{ Route::is('admin.youtube.index') && request('tab') === 'canal' ? 'text-gold-400' : 'text-slate-400 hover:bg-white/10 hover:text-white' }}">
+                            <i class="fab fa-youtube text-[11px]"></i>
+                            <span :class="collapsed ? 'lg:hidden' : ''">Canal</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.youtube.index', ['tab' => 'configuracoes']) }}" wire:navigate @click="closeMobile()"
+                           class="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm transition
+                                  {{ Route::is('admin.youtube.index') && request('tab') === 'configuracoes' ? 'text-gold-400' : 'text-slate-400 hover:bg-white/10 hover:text-white' }}">
+                            <i class="fas fa-sliders-h text-[11px]"></i>
+                            <span :class="collapsed ? 'lg:hidden' : ''">Configurações</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
             {{-- Usuários --}}
             <li x-data="{ open: @js(Route::is('admin.users.*')) }">
                 <button type="button" @click="collapsed ? collapsed = false : open = !open"
@@ -238,53 +284,7 @@
                     <span :class="collapsed ? 'lg:hidden' : ''">Avisos</span>
                     <span class="ml-auto rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-slate-300" :class="collapsed ? 'lg:hidden' : ''">{{ $announcementsCount }}</span>
                 </a>
-            </li>
-
-            {{-- YouTube --}}
-            <li x-data="{ open: @js(Route::is(['admin.youtube.index'])) }">
-                <button type="button" @click="collapsed ? collapsed = false : open = !open"
-                        class="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition
-                               {{ Route::is(['admin.youtube.index']) ? 'bg-gold-500/15 text-gold-400' : 'text-slate-300 hover:bg-white/10 hover:text-white' }}">
-                    <i class="w-5 text-center text-base {{ Route::is(['admin.youtube.index']) ? 'text-gold-400' : 'text-slate-400' }} fab fa-youtube"></i>
-                    <span :class="collapsed ? 'lg:hidden' : ''">YouTube</span>
-                    <i class="fas fa-chevron-down ml-auto text-[10px] transition-transform duration-200 {{ Route::is(['admin.youtube.index']) ? 'text-gold-400' : 'text-slate-500' }}"
-                       :class="collapsed ? 'lg:hidden' : ''" x-show="open" x-cloak></i>
-                </button>
-                <ul x-show="open" class="mt-0.5 space-y-0.5 border-l border-white/10 pl-2.5" x-cloak>
-                    <li>
-                        <a href="{{ route('admin.youtube.index', ['tab' => 'videos']) }}" wire:navigate @click="closeMobile()"
-                           class="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm transition
-                                  {{ Route::is('admin.youtube.index') && request('tab', 'videos') === 'videos' ? 'text-gold-400' : 'text-slate-400 hover:bg-white/10 hover:text-white' }}">
-                            <i class="fas fa-video text-[11px]"></i>
-                            <span :class="collapsed ? 'lg:hidden' : ''">Vídeos</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('admin.youtube.index', ['tab' => 'playlists']) }}" wire:navigate @click="closeMobile()"
-                           class="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm transition
-                                  {{ Route::is('admin.youtube.index') && request('tab', 'videos') !== 'playlists' && request('tab') === 'playlists' ? 'text-gold-400' : 'text-slate-400 hover:bg-white/10 hover:text-white' }}">
-                            <i class="fas fa-list text-[11px]"></i>
-                            <span :class="collapsed ? 'lg:hidden' : ''">Playlists</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('admin.youtube.index', ['tab' => 'canal']) }}" wire:navigate @click="closeMobile()"
-                           class="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm transition
-                                  {{ Route::is('admin.youtube.index') && request('tab') === 'canal' ? 'text-gold-400' : 'text-slate-400 hover:bg-white/10 hover:text-white' }}">
-                            <i class="fab fa-youtube text-[11px]"></i>
-                            <span :class="collapsed ? 'lg:hidden' : ''">Canal</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('admin.youtube.index', ['tab' => 'configuracoes']) }}" wire:navigate @click="closeMobile()"
-                           class="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm transition
-                                  {{ Route::is('admin.youtube.index') && request('tab') === 'configuracoes' ? 'text-gold-400' : 'text-slate-400 hover:bg-white/10 hover:text-white' }}">
-                            <i class="fas fa-sliders-h text-[11px]"></i>
-                            <span :class="collapsed ? 'lg:hidden' : ''">Configurações</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
+            </li>            
 
             @if (auth()->user()?->isSuperAdmin())
                 {{-- Cargos & Permissões --}}

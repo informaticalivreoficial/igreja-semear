@@ -67,6 +67,20 @@ class SettingsTest extends TestCase
             ->assertHasErrors(['configData.telegram']);
     }
 
+    public function test_update_accepts_masked_cep_and_stores_digits_only(): void
+    {
+        Config::create(['id' => 1, 'app_name' => 'Semear Teste']);
+
+        $this->actingAs(User::factory()->create());
+
+        Livewire::test(Settings::class)
+            ->set('configData.zipcode', '11680-000')
+            ->call('update')
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseHas('config', ['id' => 1, 'zipcode' => '11680000']);
+    }
+
     public function test_logo_upload_is_saved_as_webp(): void
     {
         Storage::fake('public');

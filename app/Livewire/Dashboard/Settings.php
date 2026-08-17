@@ -178,6 +178,8 @@ class Settings extends Component
             'configData.linkedin' => 'nullable|url|max:255',
             'configData.terms_conditions' => 'nullable|string',
             'configData.cookies_preference' => 'nullable|string|max:500',
+            'configData.maintenance_message' => 'nullable|string|max:1000',
+            'configData.maintenance_until' => 'nullable|date',
         ], $this->imageValidationRules());
     }
 
@@ -209,6 +211,10 @@ class Settings extends Component
         }
 
         $this->tags = explode(',', $config->metatags ?? '');
+
+        if (! empty($this->configData['maintenance_until'])) {
+            $this->configData['maintenance_until'] = Carbon::parse($this->configData['maintenance_until'])->format('Y-m-d\TH:i');
+        }
     }
 
     public function render()
@@ -385,6 +391,13 @@ class Settings extends Component
         }
 
         $this->configData['status'] = (int) filter_var($this->configData['status'] ?? false, FILTER_VALIDATE_BOOLEAN);
+        $this->configData['maintenance_mode'] = (int) filter_var($this->configData['maintenance_mode'] ?? false, FILTER_VALIDATE_BOOLEAN);
+
+        $zipcode = (string) ($this->configData['zipcode'] ?? '');
+        $this->configData['zipcode'] = $zipcode !== '' ? preg_replace('/[^0-9]/', '', $zipcode) : null;
+
+        $until = trim((string) ($this->configData['maintenance_until'] ?? ''));
+        $this->configData['maintenance_until'] = $until !== '' ? Carbon::parse($until)->format('Y-m-d H:i:s') : null;
     }
 
     protected function fillableConfigData(): array
@@ -397,6 +410,7 @@ class Settings extends Component
             'neighborhood', 'state', 'city', 'facebook', 'twitter', 'youtube', 'instagram', 'linkedin',
             'information', 'privacy_policy', 'terms_conditions', 'cookies_preference', 'maps_google',
             'metatags', 'analytics_id', 'rss', 'rss_data', 'sitemap', 'sitemap_data',
+            'donations_enabled', 'maintenance_mode', 'maintenance_message', 'maintenance_until',
         ];
 
         return array_intersect_key($this->configData, array_flip($columns));
