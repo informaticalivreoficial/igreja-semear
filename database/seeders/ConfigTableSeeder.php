@@ -53,6 +53,7 @@ class ConfigTableSeeder extends Seeder
                 'sitemap' => '/sitemap.xml',
                 'rss_data' => now()->format('Y-m-d'),
                 'sitemap_data' => now()->format('Y-m-d'),
+                'donations_enabled' => true,
             ]
         );
     }

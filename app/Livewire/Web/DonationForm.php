@@ -5,6 +5,7 @@ namespace App\Livewire\Web;
 use App\Enums\DonationStatusEnum;
 use App\Enums\DonationTypeEnum;
 use App\Enums\PaymentMethodEnum;
+use App\Models\Config;
 use App\Models\Donation;
 use App\Services\Donations\DonationService;
 use App\Services\Payments\Exceptions\PaymentGatewayException;
@@ -57,6 +58,10 @@ class DonationForm extends Component
 
     public function mount(): void
     {
+        if (! (bool) (Config::find(1)?->donations_enabled ?? true)) {
+            abort(404);
+        }
+
         $user = auth()->user();
 
         if (! $user) {

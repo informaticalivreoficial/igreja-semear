@@ -13,12 +13,12 @@
         </div>
     </section>
 
-    <section class="bg-slate-50 py-16">
+    <section class="bg-brand-50 py-16">
         <div class="container-site grid gap-10 lg:grid-cols-5">
             <div class="lg:col-span-3">
-                <div class="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
-                    <div class="border-b border-slate-100 p-6 sm:p-8">
-                        <h2 class="font-display text-lg font-bold text-slate-900">Envie sua mensagem</h2>
+                <div class="overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-sm">
+                    <div class="border-b border-brand-100 p-6 sm:p-8">
+                        <h2 class="font-display text-lg font-bold text-brand-900">Envie sua mensagem</h2>
                         <p class="mt-1 text-sm text-slate-500">Preencha o formulário abaixo e entraremos em contato.</p>
                     </div>
 
@@ -30,19 +30,19 @@
 
                         <div class="grid gap-5 sm:grid-cols-2">
                             <div>
-                                <label for="input_name" class="mb-1.5 block text-sm font-semibold text-slate-800">Seu Nome <span class="text-red-500">*</span></label>
+                                <label for="input_name" class="mb-1.5 block text-sm font-semibold text-brand-800">Seu Nome <span class="text-red-500">*</span></label>
                                 <input type="text" id="input_name" name="nome" class="input-site" placeholder="Nome completo">
                                 <span class="field-error"></span>
                             </div>
                             <div>
-                                <label for="input_email" class="mb-1.5 block text-sm font-semibold text-slate-800">E-mail <span class="text-red-500">*</span></label>
+                                <label for="input_email" class="mb-1.5 block text-sm font-semibold text-brand-800">E-mail <span class="text-red-500">*</span></label>
                                 <input type="email" id="input_email" name="email" class="input-site" placeholder="Seu melhor e-mail">
                                 <span class="field-error"></span>
                             </div>
                         </div>
 
                         <div class="mt-5">
-                            <label for="input_phone" class="mb-1.5 block text-sm font-semibold text-slate-800">Telefone / WhatsApp</label>
+                            <label for="input_phone" class="mb-1.5 block text-sm font-semibold text-brand-800">Telefone / WhatsApp</label>
                             <input
                                 type="text"
                                 id="input_phone"
@@ -57,7 +57,7 @@
                         </div>
 
                         <div class="mt-5">
-                            <label for="textarea_message" class="mb-1.5 block text-sm font-semibold text-slate-800">Mensagem <span class="text-red-500">*</span></label>
+                            <label for="textarea_message" class="mb-1.5 block text-sm font-semibold text-brand-800">Mensagem <span class="text-red-500">*</span></label>
                             <textarea id="textarea_message" name="mensagem" rows="5" class="input-site resize-none" placeholder="Digite sua mensagem"></textarea>
                             <span class="field-error"></span>
                         </div>
@@ -81,42 +81,42 @@
 
             @if($configuracoes)
                 <div class="space-y-5 lg:col-span-2">
-                    <div class="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+                    <div class="rounded-2xl border border-brand-100 bg-white p-6 shadow-sm">
                         <div class="flex items-center gap-3">
                             <span class="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-50 text-brand-700"><i class="fas fa-map-marker-alt"></i></span>
-                            <h3 class="font-display text-lg font-bold text-slate-900">Endereço</h3>
+                            <h3 class="font-display text-lg font-bold text-brand-900">Endereço</h3>
                         </div>
                         <p class="mt-3 text-sm leading-6 text-slate-600">
                             {{ trim(implode(', ', array_filter([$configuracoes->street, $configuracoes->number, $configuracoes->neighborhood, $configuracoes->city, $configuracoes->state]))) ?: 'Informação não preenchida.' }}
                         </p>
                     </div>
 
-                    <div class="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+                    <div class="rounded-2xl border border-brand-100 bg-white p-6 shadow-sm">
                         <div class="flex items-center gap-3">
                             <span class="flex h-10 w-10 items-center justify-center rounded-lg bg-accent-500/15 text-accent-700"><i class="fas fa-phone-alt"></i></span>
-                            <h3 class="font-display text-lg font-bold text-slate-900">Telefones</h3>
+                            <h3 class="font-display text-lg font-bold text-brand-900">Telefones</h3>
                         </div>
                         <div class="mt-3 space-y-2 text-sm text-slate-600">
                             @if($configuracoes->phone || $configuracoes->cell_phone)
-                                <p><a href="tel:{{ $configuracoes->cell_phone ?: $configuracoes->phone }}" class="text-sky-600 hover:text-sky-700"><i class="fas fa-phone mr-1"></i>{{ $configuracoes->cell_phone ?: $configuracoes->phone }}</a></p>
+                                <p><a href="tel:{{ $configuracoes->cell_phone ?: $configuracoes->phone }}" class="text-brand-600 hover:text-brand-700"><i class="fas fa-phone mr-1"></i>{{ $configuracoes->cell_phone ?: $configuracoes->phone }}</a></p>
                             @endif
                             @if($configuracoes->whatsapp)
-                                <p><a href="https://wa.me/{{ preg_replace('/\D/', '', $configuracoes->whatsapp) }}" target="_blank" rel="noopener noreferrer" class="text-sky-600 hover:text-sky-700"><i class="fab fa-whatsapp mr-1"></i>{{ $configuracoes->whatsapp }}</a></p>
+                                <p><a href="https://wa.me/{{ preg_replace('/\D/', '', $configuracoes->whatsapp) }}" target="_blank" rel="noopener noreferrer" class="text-brand-600 hover:text-brand-700"><i class="fab fa-whatsapp mr-1"></i>{{ $configuracoes->whatsapp }}</a></p>
                             @endif
                         </div>
                     </div>
 
-                    <div class="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+                    <div class="rounded-2xl border border-brand-100 bg-white p-6 shadow-sm">
                         <div class="flex items-center gap-3">
                             <span class="flex h-10 w-10 items-center justify-center rounded-lg bg-sky-100 text-sky-700"><i class="fas fa-envelope"></i></span>
-                            <h3 class="font-display text-lg font-bold text-slate-900">E-mail</h3>
+                            <h3 class="font-display text-lg font-bold text-brand-900">E-mail</h3>
                         </div>
                         <div class="mt-3 space-y-1 text-sm">
                             @if($configuracoes->email)
-                                <p><a href="mailto:{{ $configuracoes->email }}" class="text-sky-600 hover:text-sky-700">{{ $configuracoes->email }}</a></p>
+                                <p><a href="mailto:{{ $configuracoes->email }}" class="text-brand-600 hover:text-brand-700">{{ $configuracoes->email }}</a></p>
                             @endif
                             @if($configuracoes->additional_email)
-                                <p><a href="mailto:{{ $configuracoes->additional_email }}" class="text-sky-600 hover:text-sky-700">{{ $configuracoes->additional_email }}</a></p>
+                                <p><a href="mailto:{{ $configuracoes->additional_email }}" class="text-brand-600 hover:text-brand-700">{{ $configuracoes->additional_email }}</a></p>
                             @endif
                         </div>
                     </div>

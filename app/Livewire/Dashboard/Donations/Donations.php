@@ -5,6 +5,7 @@ namespace App\Livewire\Dashboard\Donations;
 use App\Enums\DonationStatusEnum;
 use App\Enums\DonationTypeEnum;
 use App\Enums\PaymentMethodEnum;
+use App\Models\Config;
 use App\Models\Donation;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -29,7 +30,35 @@ class Donations extends Component
 
     public string $endDate = '';
 
+    public bool $donationsEnabled = true;
+
     public ?int $selectedDonationId = null;
+
+    public function mount(): void
+    {
+        $this->donationsEnabled = (bool) (Config::find(1)?->donations_enabled ?? true);
+    }
+
+    public function toggleDonations(): void
+    {
+        $config = Config::find(1);
+
+        if (! $config) {
+            return;
+        }
+
+        $config->donations_enabled = ! $this->donationsEnabled;
+        $config->save();
+
+        $this->donationsEnabled = (bool) $config->donations_enabled;
+
+        $this->dispatch('toast', [
+            'type' => $this->donationsEnabled ? 'success' : 'warning',
+            'message' => $this->donationsEnabled
+                ? 'Doações habilitadas no site.'
+                : 'Doações desabilitadas no site.',
+        ]);
+    }
 
     public function getSelectedDonationProperty()
     {

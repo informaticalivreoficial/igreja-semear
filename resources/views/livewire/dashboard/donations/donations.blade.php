@@ -42,42 +42,57 @@
     <div class="card mt-6">
         <div class="card-header">
             <div class="flex flex-1 flex-wrap items-center gap-2">
-                <input type="text"
-                    wire:model.live.debounce.500ms="search"
-                    class="form-control form-control-sm min-w-36 flex-1"
-                    placeholder="Pesquisar contribuinte">
+                <div class="relative min-w-44 flex-1">
+                    <i class="fas fa-search pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-400"></i>
+                    <input type="text"
+                        wire:model.live.debounce.500ms="search"
+                        class="form-control form-control-sm pl-8"
+                        placeholder="Buscar contribuinte, descrição ou referência">
+                </div>
 
-                <select wire:model.live="typeFilter" class="form-control form-control-sm w-28">
-                    <option value="">Tipo</option>
+                <select wire:model.live="typeFilter" class="form-control form-control-sm w-32">
+                    <option value="">Tipo: todos</option>
                     @foreach ($types as $key => $label)
                         <option value="{{ $key }}">{{ $label }}</option>
                     @endforeach
                 </select>
 
-                <select wire:model.live="statusFilter" class="form-control form-control-sm w-28">
-                    <option value="">Status</option>
+                <select wire:model.live="statusFilter" class="form-control form-control-sm w-32">
+                    <option value="">Status: todos</option>
                     @foreach ($statuses as $key => $label)
                         <option value="{{ $key }}">{{ $label }}</option>
                     @endforeach
                 </select>
 
-                <select wire:model.live="methodFilter" class="form-control form-control-sm w-28">
-                    <option value="">Pagamento</option>
+                <select wire:model.live="methodFilter" class="form-control form-control-sm w-36">
+                    <option value="">Pagamento: todos</option>
                     @foreach ($methods as $key => $label)
                         <option value="{{ $key }}">{{ $label }}</option>
                     @endforeach
                 </select>
 
-                <input type="date" wire:model.live="startDate" class="form-control form-control-sm w-36">
-                <input type="date" wire:model.live="endDate" class="form-control form-control-sm w-36">
+                <div class="flex items-center gap-1.5">
+                    <input type="date" wire:model.live="startDate" class="form-control form-control-sm w-32" title="Data inicial">
+                    <span class="text-slate-400">–</span>
+                    <input type="date" wire:model.live="endDate" class="form-control form-control-sm w-32" title="Data final">
+                </div>
 
-                <button type="button" wire:click="clearFilters" class="btn btn-xs btn-default">
+                <button type="button" wire:click="clearFilters" class="btn btn-sm btn-light">
                     <i class="fas fa-times"></i> Limpar
                 </button>
             </div>
 
             <div class="flex shrink-0 flex-wrap items-center gap-2">
                 <span class="badge badge-info">{{ $donations->total() }} registros</span>
+                <button type="button"
+                    wire:click="toggleDonations"
+                    class="inline-flex items-center gap-2 rounded-lg border px-3 py-1.5 text-xs font-semibold transition {{ $donationsEnabled ? 'border-brand-200 bg-brand-50 text-brand-700 hover:bg-brand-100' : 'border-slate-300 bg-slate-100 text-slate-600 hover:bg-slate-200' }}"
+                    title="Mostrar ou ocultar as doações no site">
+                    <span class="relative inline-flex h-4 w-8 items-center rounded-full transition {{ $donationsEnabled ? 'bg-brand-600' : 'bg-slate-400' }}">
+                        <span class="inline-block h-3 w-3 transform rounded-full bg-white transition {{ $donationsEnabled ? 'translate-x-4' : 'translate-x-0.5' }}"></span>
+                    </span>
+                    {{ $donationsEnabled ? 'Ativas' : 'Desativadas' }}
+                </button>
                 <a wire:navigate href="{{ route('admin.donations.create') }}" class="btn btn-sm btn-default">
                     <i class="fas fa-plus"></i> Cadastrar Manual
                 </a>
@@ -85,7 +100,6 @@
                     <i class="fas fa-plus"></i> Nova Doação
                 </a>
             </div>
-        </div>
         </div>
 
         <div class="card-body p-0 sm:p-5">

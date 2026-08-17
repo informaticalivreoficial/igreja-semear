@@ -13,12 +13,12 @@
 @endphp
 
 <aside class="shrink-0 lg:w-64">
-    <div class="flex items-center gap-3 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm">
-        <div class="flex h-12 w-12 items-center justify-center rounded-full bg-sky-600 text-lg font-bold text-white">
+    <div class="flex items-center gap-3 rounded-2xl border border-brand-100 bg-white p-4 shadow-sm">
+        <div class="flex h-12 w-12 items-center justify-center rounded-full bg-brand-600 text-lg font-bold text-white">
             {{ strtoupper(substr($member->name, 0, 1)) }}
         </div>
         <div class="min-w-0">
-            <p class="truncate font-display font-bold text-slate-900">{{ $member->name }}</p>
+            <p class="truncate font-display font-bold text-brand-900">{{ $member->name }}</p>
             <p class="text-xs text-slate-500">{{ $member->family?->name ?? 'Sem família' }} · {{ $member->family_role_label }}</p>
         </div>
     </div>
@@ -26,7 +26,7 @@
     <nav class="mt-5 space-y-1">
         @foreach($links as $key => [$url, $label, $icon])
             <a href="{{ $url }}"
-                class="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold transition {{ $active === $key ? 'bg-sky-600 text-white shadow-sm' : 'text-slate-600 hover:bg-sky-50 hover:text-sky-700' }}">
+                class="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold transition {{ $active === $key ? 'bg-brand-600 text-white shadow-sm' : 'text-slate-600 hover:bg-brand-50 hover:text-brand-700' }}">
                 <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $icon }}"/></svg>
                 {{ $label }}
             </a>

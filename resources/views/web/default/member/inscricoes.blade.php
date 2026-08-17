@@ -13,15 +13,15 @@
         </div>
     </section>
 
-    <section class="bg-slate-50 py-12">
+    <section class="bg-brand-50 py-12">
         <div class="container-site flex flex-col gap-8 lg:flex-row">
             @include('web.'.$configuracoes->template.'.member.sidebar')
 
             <div class="min-w-0 flex-1">
                 @forelse($inscricoes as $inscricao)
-                    <div class="mb-4 flex flex-col gap-3 rounded-2xl border border-slate-100 bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+                    <div class="mb-4 flex flex-col gap-3 rounded-2xl border border-brand-100 bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between">
                         <div>
-                            <p class="font-display text-base font-bold text-slate-900">{{ $inscricao->event?->title }}</p>
+                            <p class="font-display text-base font-bold text-brand-900">{{ $inscricao->event?->title }}</p>
                             <p class="text-sm text-slate-500">
                                 {{ $inscricao->event?->start_at?->translatedFormat('d \d\e F \à\s H:i') ?? '—' }}
                             </p>
@@ -30,7 +30,7 @@
                         <div class="flex items-center gap-3">
                             @php
                                 $badge = match ($inscricao->status) {
-                                    'confirmada' => 'bg-emerald-100 text-emerald-700',
+                                    'confirmada' => 'bg-accent-500/15 text-accent-700',
                                     'cancelada' => 'bg-rose-100 text-rose-700',
                                     default => 'bg-amber-100 text-amber-700',
                                 };
@@ -45,9 +45,9 @@
                         </div>
                     </div>
                 @empty
-                    <div class="rounded-2xl border border-slate-100 bg-white p-12 text-center shadow-sm">
-                        <p class="font-display text-xl font-bold text-slate-900">Você ainda não se inscreveu em nenhum evento</p>
-                        <p class="mt-2 text-sm text-slate-500"><a href="{{ route('member.agenda') }}" class="font-semibold text-sky-600">Ver agenda</a> para se inscrever.</p>
+                    <div class="rounded-2xl border border-brand-100 bg-white p-12 text-center shadow-sm">
+                        <p class="font-display text-xl font-bold text-brand-900">Você ainda não se inscreveu em nenhum evento</p>
+                        <p class="mt-2 text-sm text-slate-500"><a href="{{ route('member.agenda') }}" class="font-semibold text-brand-600">Ver agenda</a> para se inscrever.</p>
                     </div>
                 @endforelse
             </div>

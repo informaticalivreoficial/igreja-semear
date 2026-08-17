@@ -13,15 +13,15 @@
         </div>
     </section>
 
-    <section class="bg-slate-50 py-12">
+    <section class="bg-brand-50 py-12">
         <div class="container-site flex flex-col gap-8 lg:flex-row">
             @include('web.'.$configuracoes->template.'.member.sidebar')
 
             <div class="min-w-0 flex-1">
                 @forelse($inscricoes as $inscricao)
-                    <div class="mb-4 flex flex-col gap-2 rounded-2xl border border-slate-100 bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+                    <div class="mb-4 flex flex-col gap-2 rounded-2xl border border-brand-100 bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between">
                         <div>
-                            <p class="font-display text-base font-bold text-slate-900">{{ $inscricao->event?->title }}</p>
+                            <p class="font-display text-base font-bold text-brand-900">{{ $inscricao->event?->title }}</p>
                             <p class="text-sm text-slate-500">
                                 {{ $inscricao->event?->start_at?->translatedFormat('d \d\e F \à\s H:i') ?? '—' }}
                             </p>
@@ -29,12 +29,12 @@
                         @if($inscricao->status === 'cancelada')
                             <span class="rounded-full bg-rose-100 px-3 py-1 text-xs font-semibold text-rose-700">Cancelada</span>
                         @else
-                            <span class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">Realizado</span>
+                            <span class="rounded-full bg-accent-500/15 px-3 py-1 text-xs font-semibold text-accent-700">Realizado</span>
                         @endif
                     </div>
                 @empty
-                    <div class="rounded-2xl border border-slate-100 bg-white p-12 text-center shadow-sm">
-                        <p class="font-display text-xl font-bold text-slate-900">Nenhum registro por enquanto</p>
+                    <div class="rounded-2xl border border-brand-100 bg-white p-12 text-center shadow-sm">
+                        <p class="font-display text-xl font-bold text-brand-900">Nenhum registro por enquanto</p>
                         <p class="mt-2 text-sm text-slate-500">Seu histórico de eventos aparecerá aqui.</p>
                     </div>
                 @endforelse

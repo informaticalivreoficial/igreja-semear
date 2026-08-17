@@ -1,3 +1,28 @@
+# Igreja Semear - Área do Membro Refatorada para o Tema - Status: Concluído ✅
+
+## O que foi feito
+
+Todas as páginas da área do membro (`resources/views/web/default/member/`) foram refatoradas para a paleta do tema (antes usavam `slate`/`sky` fora do padrão):
+
+- **sidebar.blade.php**: avatar `bg-brand-600`, nome `text-brand-900`, nav ativa `bg-brand-600 text-white`, hover `hover:bg-brand-50 hover:text-brand-700`.
+- **dashboard.blade.php**: stats `text-brand-700`, cards `border-brand-100`, tiles de data `bg-brand-600/10 text-brand-700`, links `text-brand-600`, badge "Confirmada" `bg-accent-500/15 text-accent-700`.
+- **perfil.blade.php**: labels `text-brand-700`, títulos `text-brand-900`, card `border-brand-100`.
+- **contribuicoes.blade.php**: card total `bg-brand-700 text-white` (subtext `text-brand-100`), valores `text-brand-700`.
+- **agenda.blade.php**: tiles de data `bg-brand-600/10 text-brand-700`, badge "Inscrito" `bg-accent-500/15 text-accent-700`.
+- **familia.blade.php**: badges por papel — chefe `bg-brand-600/10 text-brand-700`, conjuge `bg-accent-500/15 text-accent-700`, filho `bg-sky-600/10 text-sky-700`; avatar inicial `bg-brand-100 text-brand-700`; anel do membro `ring-brand-200`.
+- **historico.blade.php**: badge "Realizado" `bg-accent-500/15 text-accent-700` (cancelada segue `rose`).
+- **oracoes.blade.php**: resposta `bg-brand-50 text-brand-800`, badge "Respondido" `bg-accent-500/15 text-accent-700`.
+- **avisos.blade.php**: data `text-brand-600`, título `text-brand-900`.
+- **inscricoes.blade.php**: badge confirmada `bg-accent-500/15 text-accent-700`, link "Ver agenda" `text-brand-600`.
+
+Padrão do tema aplicado em todas: seção `bg-brand-50`, cards `border-brand-100 bg-white`, títulos `font-display text-brand-900`, acentos em `brand`, sucesso em `accent`, cores semânticas de estado (amber/rose) mantidas.
+
+## Para continuar
+- [ ] Conferir visual em `/minha-conta` (login: `serra.caio@example.org` / senha padrão do seeder).
+- Suíte completa: **77 testes passando (234 assertions)** após a refatoração.
+
+---
+
 # Igreja Semear - Frontend Color Customization
 
 ## Status: Concluído ✅

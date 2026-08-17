@@ -58,6 +58,7 @@ class Config extends Model
         'rss_data', 
         'sitemap', 
         'sitemap_data',
+        'donations_enabled',
         'analytics_id'
     ];
 
@@ -68,6 +69,7 @@ class Config extends Model
      */
     protected $casts = [
         'status' => 'boolean',
+        'donations_enabled' => 'boolean',
         'init_date' => 'date',
         'rss_data' => 'date',
         'sitemap_data' => 'date',

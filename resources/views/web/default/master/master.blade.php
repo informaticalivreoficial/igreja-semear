@@ -132,7 +132,9 @@
                                 <a href="{{ route('web.atendimento') }}" class="block rounded-lg px-3 py-2 text-[13px] font-semibold text-brand-700 transition hover:bg-brand-50 hover:text-brand-900">Contato</a>
                                 <a href="{{ route('web.pagina', ['slug' => 'localizacao']) }}" class="block rounded-lg px-3 py-2 text-[13px] font-semibold text-brand-700 transition hover:bg-brand-50 hover:text-brand-900">Localização</a>
                                 <a href="{{ route('web.pedido-oracao') }}" class="block rounded-lg px-3 py-2 text-[13px] font-semibold text-brand-700 transition hover:bg-brand-50 hover:text-brand-900">Pedido de oração</a>
-                                <a href="{{ route('web.doacoes') }}" class="block rounded-lg px-3 py-2 text-[13px] font-semibold text-brand-700 transition hover:bg-brand-50 hover:text-brand-900">Doações</a>
+                                @if(optional($configuracoes)->donations_enabled)
+                                    <a href="{{ route('web.doacoes') }}" class="block rounded-lg px-3 py-2 text-[13px] font-semibold text-brand-700 transition hover:bg-brand-50 hover:text-brand-900">Doações</a>
+                                @endif
                                 <a href="{{ route('web.pregacoes') }}" class="block rounded-lg px-3 py-2 text-[13px] font-semibold text-brand-700 transition hover:bg-brand-50 hover:text-brand-900">Pregações</a>
                             </div>
                         </div>
@@ -144,9 +146,11 @@
                         <livewire:web.site-search />
                     </div>
 
+                    @if(optional($configuracoes)->donations_enabled)
                     <a href="{{ route('web.doacoes') }}" class="btn-secondary btn-sm hidden md:inline-flex">
                         Doações
                     </a>
+                @endif
 
                     <a href="{{ route('web.atendimento') }}" class="btn-primary btn-sm hidden md:inline-flex">
                         Atendimento
@@ -227,7 +231,9 @@
                             <a href="{{ route('web.atendimento') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-[13px] font-medium text-brand-600 transition hover:bg-brand-50">Contato</a>
                             <a href="{{ route('web.pagina', ['slug' => 'localizacao']) }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-[13px] font-medium text-brand-600 transition hover:bg-brand-50">Localização</a>
                             <a href="{{ route('web.pedido-oracao') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-[13px] font-medium text-brand-600 transition hover:bg-brand-50">Pedido de oração</a>
-                            <a href="{{ route('web.doacoes') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-[13px] font-medium text-brand-600 transition hover:bg-brand-50">Doações</a>
+                            @if(optional($configuracoes)->donations_enabled)
+                                <a href="{{ route('web.doacoes') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2 text-[13px] font-medium text-brand-600 transition hover:bg-brand-50">Doações</a>
+                            @endif
                         </div>
 
                         <a href="{{ route('web.politica') }}" @click="mobileOpen = false" class="rounded-lg px-3 py-2.5 text-[13px] font-semibold text-brand-700 transition hover:bg-brand-50">Política de Privacidade</a>
@@ -309,7 +315,9 @@
             <div class="border-t border-brand-100">
                 <div class="container-site flex flex-col items-center justify-between gap-3 py-5 text-xs text-brand-300/70 sm:flex-row">
                     <div class="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
-                        <a href="{{ route('web.doacoes') }}" class="transition hover:text-white">Doações</a>
+                        @if(optional($configuracoes)->donations_enabled)
+                            <a href="{{ route('web.doacoes') }}" class="transition hover:text-white">Doações</a>
+                        @endif
                         <a href="{{ route('web.pedido-oracao') }}" class="transition hover:text-white">Pedido de oração</a>
                         <a href="{{ route('web.pagina', ['slug' => 'localizacao']) }}" class="transition hover:text-white">Localização</a>
                         <button type="button" onclick="window.dispatchEvent(new CustomEvent('open-cookie-modal'))" class="cursor-pointer transition hover:text-white">Configurar cookies</button>
