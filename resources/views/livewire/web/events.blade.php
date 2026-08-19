@@ -82,7 +82,7 @@
                         </div>
 
                         @if($evento->description)
-                            <p class="mt-2 text-sm leading-6 text-slate-600">{{ \Illuminate\Support\Str::limit($evento->description, 140) }}</p>
+                            <p class="mt-2 text-sm leading-6 text-slate-600">{!! \Illuminate\Support\Str::limit($evento->description, 140) !!}</p>
                         @endif
 
                         @if($evento->location)
