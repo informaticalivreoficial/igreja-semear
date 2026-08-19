@@ -1,3 +1,12 @@
+# Igreja Semear - Bug: método `WebController::manutencao` inexistente - Corrigido ✅
+
+## O que foi feito
+- **Bug**: ao ativar o modo manutenção, o middleware redirecionava para `web.manutencao` (`/manutencao`) e o Laravel estourava `Method App\Http\Controllers\Web\WebController::manutencao does not exist` — a rota `routes/web.php:80` referenciava o método, mas ele não existia no controller (ficou perdido em algum merge/checkout). A view `web/default/manutencao.blade.php` já existia.
+- **Correção**: método `manutencao()` adicionado em `app/Http/Controllers/Web/WebController.php` — busca `Config::find(1)`, o último culto (`YoutubeVideo::where('type', TYPE_CULTO)->where('status', true)->orderByDesc('publish_at')`) e renderiza `view('web.'.$config->template.'.manutencao')` com `config` e `ultimoCulto`.
+- **Testes**: `MaintenanceModeTest` 7/7 passando (página `/manutencao` mostra mensagem/contatos/último culto, redirecionamentos e bypass de staff). Suíte completa: **94 testes passando (287 assertions)**.
+
+---
+
 # Igreja Semear - Modo Manutenção (site + área do membro) - Status: Concluído ✅
 
 ## O que foi feito

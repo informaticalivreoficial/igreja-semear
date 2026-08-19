@@ -275,6 +275,24 @@ class WebController extends Controller
         return response($xml, 200, ['Content-Type' => 'application/xml']);
     }
 
+    // ************************************ Manutenção *******************************************/
+
+    public function manutencao()
+    {
+        $config = $this->config();
+
+        $ultimoCulto = YoutubeVideo::where('type', YoutubeVideo::TYPE_CULTO)
+            ->where('status', true)
+            ->orderByDesc('publish_at')
+            ->orderByDesc('id')
+            ->first();
+
+        return view('web.'.$config->template.'.manutencao', [
+            'config' => $config,
+            'ultimoCulto' => $ultimoCulto,
+        ]);
+    }
+
     // ************************************ Blog *******************************************/
 
     public function artigos(Request $request)
